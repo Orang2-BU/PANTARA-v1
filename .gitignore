@@ -1,0 +1,9 @@
+# Lingkungan & rahasia
+.env*
+!.env.example
+
+# OS & editor
+.DS_Store
+Thumbs.db
+.vscode/
+.claude/settings.local.json
