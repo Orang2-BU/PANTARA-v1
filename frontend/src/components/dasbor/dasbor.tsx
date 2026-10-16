@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ClipboardList, Hourglass, Plus, UserCheck } from "lucide-react";
+import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ClipboardList, Hourglass, Inbox, Plus, UserCheck } from "lucide-react";
 import { CapacityBar, DataBadge, MetricCard, PageHeading, Person, PriorityBadge, SectionTitle } from "@/components/app/parts";
 import { Icon } from "@/components/ui";
 import { PERIOD, NOW } from "@/lib/demo/seed";
@@ -20,13 +20,16 @@ export function Dasbor() {
       return near.length && m.id === "citra" ? [{ id: m.id, name: m.name, text: `Tenggat pekerjaan lain berdekatan pada ${shortDate(near[0].dueDate)}.`, href: `/tim/${m.id}` }] : [];
     }),
   ];
+  const waiting = tasks.filter(t => t.status === "menunggu").length;
+  const rejected = open.filter(t => t.responseReason).length;
   const next = open[0];
   return <div className="page-enter">
     <PageHeading title="Dasbor" subtitle={`${dayDate(NOW)} · Gambaran kerja tim, sebelum keputusan berikutnya.`} actions={<Link className="button primary" href="/tugas/baru"><Icon icon={Plus} />Buat tugas</Link>} />
-    <div className="metrics-grid three">
+    <div className="metrics-grid">
       <MetricCard icon={ClipboardList} label="Tugas belum ditugaskan" value={String(open.length)} unit="tugas" note="Menunggu keputusan penugasan" tone={open.length ? "warn" : undefined} href="/tugas?status=belum" />
       <MetricCard icon={UserCheck} label="Data kapasitas lengkap" value={String(complete.length)} unit={`dari ${members.length} anggota`} note="Kompetensi dan ketersediaan tercatat" tone="brand" href="/tim" />
       <MetricCard icon={AlertTriangle} label="Perlu ditinjau" value={String(notes.length)} unit="konteks kerja" note="Kelengkapan data dan potensi konflik" tone={notes.length ? "warn" : undefined} href="#catatan" />
+      <MetricCard icon={Inbox} label="Menunggu jawaban anggota" value={String(waiting)} unit="penugasan" note={rejected ? `${rejected} ditolak anggota, perlu ditugaskan ulang` : "Belum ada penugasan yang ditolak"} tone={rejected ? "warn" : undefined} href={rejected ? "/tugas?status=belum" : "/tugas?status=menunggu"} />
     </div>
     <div className="split-main">
       <section className="card">

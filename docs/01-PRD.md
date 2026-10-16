@@ -187,7 +187,7 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 **Inti manajer (area aplikasi, mode Operate)**
 | # | Halaman | Rute | Peran | Tugas | Info utama (besar) | Info pendukung (kecil) | Aksi utama | Aksi sekunder (menu ⋯) | State khusus | Prioritas |
 |---|---|---|---|---|---|---|---|---|---|---|
-| P10 | Dasbor | `/dasbor` | manajer | Melihat apa yang perlu diputuskan sekarang | Tugas belum ditugaskan, kapasitas tim periode ini, catatan yang perlu ditinjau (data belum lengkap, tenggat berdekatan) | Periode, waktu sinkron | Buat tugas | Ganti periode | kosong (ruang kerja baru → ke P9), data tidak lengkap | Must |
+| P10 | Dasbor | `/dasbor` | manajer | Melihat apa yang perlu diputuskan sekarang | Tugas belum ditugaskan, kapasitas tim periode ini, catatan yang perlu ditinjau (data belum lengkap, tenggat berdekatan), penugasan yang menunggu jawaban atau ditolak anggota | Periode, waktu sinkron | Buat tugas | Ganti periode | kosong (ruang kerja baru → ke P9), data tidak lengkap | Must |
 | P11 | Daftar tugas | `/tugas` | manajer | Mengelola semua tugas dan statusnya | Judul, kebutuhan, prioritas, status, penanggung jawab, sisa estimasi, tenggat | ID tugas, proyek | Buat tugas | Cari kandidat, Buka, Arsipkan | kosong, filter tanpa hasil, loading | Must |
 | P12 | Buat tugas | `/tugas/baru` | manajer | Memasukkan tugas baru | Judul, deskripsi, tenggat, prioritas | Proyek, lampiran tautan | Analisis kebutuhan | Simpan draf | validasi, tenggat lewat | Must |
 | P13 | Tinjau Task DNA | `/tugas/[id]/dna` | manajer | Memeriksa dan mengoreksi hasil uraian | Kompetensi + level, estimasi upaya (jam), kompleksitas, dependensi; tiap isian dengan tanda yakin/ragu | Versi model & prompt, kutipan kalimat sumber | Konfirmasi & cari kandidat | Analisis ulang | analisis gagal (isi manual), isian ragu, kompetensi di luar katalog | Must |
@@ -350,3 +350,4 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | 2026-10-16 | Bagian bisnis (§3, §3b, harga di P2/L6) ditunda sampai tim bisnis menyerahkan rancangan |
 | 2026-10-16 | Alur inti langkah 5 + P14: tolak rekomendasi dengan alasan wajib (proposal §3.2); P37 memakai `app/error.tsx` |
 | 2026-10-16 | P30 Katalog kompetensi dipindah dari Pengaturan ke tab di halaman Tim (`/tim/kompetensi`), atas permintaan user |
+| 2026-10-16 | P10 Dasbor: kartu "Menunggu jawaban anggota" (termasuk jumlah yang ditolak anggota) |

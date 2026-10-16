@@ -140,3 +140,4 @@
 | 2026-10-16 | Audit menyeluruh: 36 rute x 2 lebar bersih; perbaiki overflow tooltip /laporan di mobile dan kutipan bukti Task DNA (utamakan deskripsi); alur inti lulus (110 -> 113 jam) |
 | 2026-10-16 | Tolak rekomendasi + alasan (Riwayat & Laporan), judul jumlah kandidat dinamis, tombol Sudah benar di estimasi; halaman /syarat, /pengaturan/tagihan, /pemeliharaan, galat server (error.tsx) |
 | 2026-10-16 | Katalog kompetensi pindah ke tab Tim (/tim/kompetensi); Pengaturan tinggal Umum, Aturan rekomendasi, Anggota & peran, Tagihan |
+| 2026-10-16 | Dasbor: kartu ke-4 "Menunggu jawaban anggota" (jumlah menunggu + ditolak anggota, tautan ke filter terkait) |
