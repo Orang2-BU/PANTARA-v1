@@ -22,7 +22,7 @@
 | 4 | Rekomendasi: Bima 0,66 · Ayu 0,38 · Dimas 0,26; Citra, Nadia, Rafi tersaring dengan alasan | "Kandidat yang tidak memenuhi syarat wajib dibuang dengan alasan. Bima di atas karena kompetensinya cocok, masih punya 16 jam, dan pernah mengerjakan login OTP & SSO." |
 | 5 | Ganti preset ke "Sebar pengetahuan" → Dimas naik ke #2 | "Kalau tim ingin pengetahuan OAuth tidak hanya di satu orang, preset ini menaikkan anggota yang belum pernah, selama levelnya cukup." |
 | 6 | Simulasi: skenario #1 Bima lalu #2 Ayu | "Kalau ke Ayu, bebannya jadi 113% dan tenggatnya berdekatan. Kalau ke Bima, 75%, aman. Konsekuensinya terlihat sebelum keputusan." |
-| 7 | Tetapkan ke Bima → Dasbor/Kapasitas berubah, kartu "Menunggu jawaban anggota" jadi 1 | "Keputusan tetap di manajer, dan Bima masih bisa menolak dengan alasan. Kapasitas tim langsung diperbarui untuk keputusan berikutnya, dan waktu keputusan tercatat untuk mengukur dampak." |
+| 7 | Tetapkan ke Bima → Dasbor/Kapasitas berubah, kartu "Menunggu jawaban anggota" jadi 1 | "Keputusan tetap di manajer, dan Bima masih bisa menolak dengan alasan. Kapasitas semua anggota langsung diperbarui untuk keputusan berikutnya, dan waktu keputusan tercatat untuk mengukur dampak." |
 
 **Cadangan:** video rekaman alur inti (T26) · data demo di seed (bisa direset dengan reload).
 

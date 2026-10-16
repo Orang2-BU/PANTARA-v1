@@ -123,7 +123,7 @@ Urutan disusun supaya alur inti bisa didemokan paling cepat; task bertanda ∥ b
 | T3 | Seed demo + tipe: 6 anggota (Ayu Pramesti, Bima Pradana, Citra Maheswari, Dimas Saputra, Nadia Putri, Rafi Ramadhan), katalog 14 kompetensi, 8 tugas, ketersediaan 28 Sep-2 Okt 2026 (32 jam), 3 Task DNA hasil "AI" dengan p per isian; store React context | — | F3 | Data sama dengan prototipe proposal; tipe sesuai §3 |
 | T4 | Engine: syarat wajib + skor + 4 preset + alasan dari faktor (TS murni) | — | F4 | Vitest: kandidat cuti tersaring, level kurang tersaring, preset mengubah peringkat, alasan sesuai angka |
 | T5 | Engine: what-if (utilisasi sebelum/sesudah, konflik tenggat ≤ 1 hari, utilisasi ≥ 90%, dependensi), skenario bagi 2 orang | — | F5 | Vitest untuk tiap jenis konflik |
-| T6 ∥ | P10 Dasbor (pola Monitor): 3 kartu metrik, kapasitas tim, perlu penugasan, catatan tinjau | — | F8 | Semua state; angka dari store |
+| T6 ∥ | P10 Dasbor (pola Monitor): 4 kartu metrik, kapasitas anggota (total + per anggota), perlu penugasan, catatan tinjau | — | F8 | Semua state; angka dari store |
 | T7 ∥ | P11 Daftar tugas: tabel + filter status/prioritas + cari | — | F1 | Kosong/filter tanpa hasil; angka rata kanan |
 | T8 ∥ | P12 Buat tugas: form + validasi + simpan draf | — | F1 | Kriteria F1; error per field |
 | T9 | P13 Tinjau Task DNA: skeleton "menganalisis", isian dengan tanda yakin/ragu + kutipan sumber, edit, konfirmasi | — | F2 | Isian ragu wajib dibuka sebelum konfirmasi; state gagal → isi manual |
@@ -211,3 +211,4 @@ Urutan disusun supaya alur inti bisa didemokan paling cepat; task bertanda ∥ b
 | Q14 | Bagaimana "menolak rekomendasi" (proposal §3.2) dicatat? | Tombol "Tolak rekomendasi" di P14 dengan alasan wajib; tercatat sebagai Decision `ditolak` tanpa penerima. Menurunkan tingkat penerimaan, tidak ikut rata-rata Tp maupun hitungan konflik. Statistik di `lib/engine/metrics.ts` (Vitest) | 2026-10-16 |
 | Q15 | Halaman galat server `/500` di App Router? | Memakai `app/error.tsx` (error boundary dengan "Coba lagi"), bukan rute `/500` terpisah | 2026-10-16 |
 | Q16 | Katalog kompetensi di Pengaturan membingungkan (user: pengaturan = urusan sistem) | Dipindah ke tab di halaman Tim (`/tim/kompetensi`). Pengaturan tinggal Umum, Aturan rekomendasi, Anggota & peran, Tagihan. Pola serupa: Runn menaruh Skills di menu Manage, terpisah dari Settings | 2026-10-16 |
+| Q17 | Bagaimana manajer melihat keahlian semua anggota sekaligus? | Tab "Peta keahlian" di Tim (`/tim/keahlian`, P40): matriks + kompetensi rawan = dikuasai ≤ 1 anggota di level Mandiri ke atas (truck factor, R4). Fungsi murni `atRiskCompetencies` di `lib/engine/skills.ts` (Vitest). Menampilkan level kompetensi, bukan kinerja | 2026-10-16 |

@@ -295,13 +295,13 @@ Onest (sans, angka tabular `font-variant-numeric: tabular-nums` untuk metrik dan
 
 | Jenis / layar | Tugas | Pola layout | Info utama (besar) | Info pendukung (kecil) |
 |---|---|---|---|---|
-| Dasbor (P10) | Melihat yang perlu diputuskan | **Monitor:** 3 kartu metrik → kiri 8 kolom tabel kapasitas tim → kanan 4 kolom "Perlu penugasan" + "Catatan untuk ditinjau" | Tugas belum ditugaskan, utilisasi per anggota | Waktu sinkron |
+| Dasbor (P10) | Melihat yang perlu diputuskan | **Monitor:** 4 kartu metrik → kiri 8 kolom kartu Kapasitas anggota (ringkasan total + tabel per anggota) → kanan 4 kolom "Perlu penugasan" + "Catatan untuk ditinjau" | Tugas belum ditugaskan, utilisasi per anggota | Waktu sinkron |
 | Daftar (P11, P18, P20, P22) | Menemukan & memilih | Filter pill + cari di atas, tabel dalam kartu, aksi baris di kanan, aksi sekunder di ⋯ | Judul, status, angka | ID mono, proyek |
 | Detail (P16, P19) | Memahami satu objek | Kiri 8 kolom isi utama, kanan 4 kolom ringkasan + aksi | Status, penanggung jawab / kapasitas | Riwayat, log |
 | Form (P12, P25) | Memasukkan data | Satu kolom maks 720px dalam kartu; opsi lanjutan dilipat | Field wajib | Bantuan field |
 | Tinjau Task DNA (P13) | Memeriksa uraian AI | Kiri 5 kolom: teks tugas dengan kutipan tersorot; kanan 7 kolom: isian per kelompok dengan badge "Yakin"/"Perlu dicek" | Kompetensi + level, estimasi jam | Versi model, p |
 | Rekomendasi (P14) | Membandingkan kandidat | **Rencana:** kartu sorotan gelap kandidat #1 (skor besar `on-inverse-accent`, 3 alasan) → 3 kartu kandidat berdampingan dengan batang kontribusi 5 faktor → "Tidak lolos syarat (2)" dilipat | Skor, sisa kapasitas | Faktor rinci |
-| Simulasi (P15) | Melihat konsekuensi | Toggle skenario (maks 3) → kartu sorotan perbandingan sebelum → sesudah → tabel sebaran beban tim (batang `neutral-fill` sebelum, `accent-fill` sesudah) → daftar konflik → dialog Tetapkan | Utilisasi sesudah, konflik | Asumsi |
+| Simulasi (P15) | Melihat konsekuensi | Toggle skenario (maks 3) → kartu sorotan perbandingan sebelum → sesudah → tabel sebaran beban anggota (batang `neutral-fill` sebelum, `accent-fill` sesudah) → daftar konflik → dialog Tetapkan | Utilisasi sesudah, konflik | Asumsi |
 | Kapasitas (P21) | Melihat alokasi waktu | 3 kartu metrik → tabel anggota dengan batang | Jam tersedia/teralokasi, % | Status data |
 | Pengaturan (P28, P29, P31, P32) | Mengubah aturan sistem & administrasi | Tab di atas, kartu per kelompok | Nilai saat ini | Penjelasan |
 | Auth (P5-P8) | Masuk/daftar | Kartu tengah 420px di kanvas | Form | Tautan |
@@ -341,6 +341,8 @@ Tanpa bayangan untuk kartu; kedalaman dari lapisan `canvas` → `surface-muted` 
 
 ### Area Aplikasi
 - **Kartu metrik:** ikon dalam lingkaran 36px + label; angka `metric`; keterangan satu baris. Tanpa sparkline di M0 (belum ada data tren).
+- **Peta keahlian (P40):** kartu "Kompetensi rawan" (grid item `canvas`, badge `warn` "Hanya {nama} ({level})" atau `crit` "Belum ada yang Mandiri") di atas matriks. Matriks dalam wadah geser horizontal (`position: relative` supaya teks `sr-only` ikut terpotong), kolom anggota menempel di kiri, header dua baris (kategori lalu kompetensi, ikon peringatan untuk yang rawan). Sel level berurutan terang ke gelap dan selalu bertulisan: Dasar (`canvas` bergaris), Mandiri (`accent-soft`), Mahir (`primary`), kosong "-".
+- **Ringkasan total semua anggota (P10):** blok `canvas` di atas tabel per anggota: label "Total semua anggota", persen besar, keterangan jumlah anggota yang dihitung, lalu batang kapasitas total. Anggota tanpa data ketersediaan tidak ikut dihitung dan disebut di keterangan.
 - **Batang kapasitas:** track `surface-muted` 8px, isi `accent-fill`; ≥ 85% isi `status-warn`, ≥ 100% `status-crit` dan melewati track dengan penanda; teks "28 / 32 jam" tabular + "Sisa 4 jam". Selalu ada teks, bukan warna saja.
 - **Kartu kandidat (P14):** inisial + nama + peran; skor `metric` (0,00-1,00, dua desimal koma); 5 baris faktor (Kompetensi, Kapasitas setelah, Ketersediaan, Riwayat relevan, Risiko konflik) dengan batang kontribusi kecil (risiko ditampilkan sebagai pengurang); 2-3 kalimat alasan dari engine; aksi "Simulasikan". Kandidat #1 sebagai kartu sorotan gelap.
 - **Isian Task DNA (P13):** baris per isian; badge "Yakin" (`badge-ok`) atau "Perlu dicek" (`badge-warn`, baris berlatar `status-warn-soft`); kutipan kalimat sumber disorot di kolom kiri (diambil dari deskripsi, judul hanya cadangan); setiap isian ragu (kompetensi, estimasi, dependensi) punya aksi "Sudah benar" atau ditandai dicek saat nilainya diubah; konfirmasi ditolak dengan pesan bila masih ada yang belum dicek. Tombol hapus kompetensi: ikon 36px transparan, merah saat hover.
@@ -348,6 +350,7 @@ Tanpa bayangan untuk kartu; kedalaman dari lapisan `canvas` → `surface-muted` 
 - **Dialog keputusan:** `<dialog>` native, focus trap, Esc; memilih kandidat teratas → catatan opsional; memilih orang lain → alasan wajib (pilihan: "Pertimbangan klien", "Pengembangan anggota", "Info yang tidak ada di sistem", "Lainnya" + teks); menolak rekomendasi (P14) → alasan wajib ("Kandidat tidak sesuai kondisi nyata", "Kebutuhan tugas perlu diubah", "Tugas ditunda", "Lainnya" + teks); hasil tercatat dengan nama + waktu. Judul daftar kandidat mengikuti jumlah nyata ("3 kandidat teratas", "Satu kandidat lolos syarat").
 - **Tabel:** header `label` muted, tanpa garis vertikal, garis baris `border`, angka rata kanan tabular, ID `mono`, hover baris `canvas` dengan sudut membulat `sm` dan jarak 12px di tepi.
 - **Placeholder (M0):** kartu tengah, ikon dalam lingkaran, judul halaman, satu kalimat fungsi halaman (dari 01-PRD §5a), badge "Belum tersedia di mockup", tombol "Kembali ke Dasbor".
+- **Istilah "anggota", bukan "tim":** kapasitas dan beban dihitung untuk semua anggota ruang kerja di semua proyek, jadi labelnya "Kapasitas anggota", "Total semua anggota", "Beban tertinggi anggota". Kata "Tim" hanya untuk nama menu daftar anggota dan peran "Manajer tim".
 - **Tanpa chip "Data contoh":** label data contoh tidak ditampilkan di layar (keputusan user 16 Okt 2026).
 
 ### Area Landing

@@ -155,7 +155,7 @@ PM di software house kecil membagi tugas tiap minggu, tapi info siapa yang bisa,
 3. **Melihat Top 3 kandidat:** kandidat yang lolos syarat wajib diperingkat, dengan skor dan alasan per faktor (P14).
 4. **Membandingkan konsekuensi (what-if):** perubahan kapasitas tiap kandidat, konflik tenggat/beban/dependensi, dampak ke tim (P15).
 5. **Menetapkan penugasan:** terima rekomendasi, pilih kandidat lain (alasan wajib), tolak rekomendasi (alasan wajib, tercatat di P22/P23), atau simpan sebagai draf (P15 dialog).
-6. **Kapasitas tim diperbarui** dan terlihat di Dasbor, Tim, dan Kapasitas sebagai konteks keputusan berikutnya (P10, P18, P21).
+6. **Kapasitas anggota diperbarui** dan terlihat di Dasbor, Tim, dan Kapasitas sebagai konteks keputusan berikutnya (P10, P18, P21).
 
 Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa masuk (P5).
 
@@ -163,7 +163,7 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 > Lengkap untuk produk; mockup M0 hanya mengerjakan halaman Must secara penuh, sisanya placeholder rapi yang tetap ada di navigasi.
 
 **Peran:** tamu · manajer (PM/ketua tim) · anggota (karyawan) · admin organisasi (pemilik; di MVP sama dengan manajer pertama).
-**Total:** 39 halaman. Must 12 · Should 22 · Could 5.
+**Total:** 40 halaman. Must 12 · Should 23 · Could 5.
 
 ### 5a. Daftar halaman
 
@@ -187,7 +187,7 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 **Inti manajer (area aplikasi, mode Operate)**
 | # | Halaman | Rute | Peran | Tugas | Info utama (besar) | Info pendukung (kecil) | Aksi utama | Aksi sekunder (menu ⋯) | State khusus | Prioritas |
 |---|---|---|---|---|---|---|---|---|---|---|
-| P10 | Dasbor | `/dasbor` | manajer | Melihat apa yang perlu diputuskan sekarang | Tugas belum ditugaskan, kapasitas tim periode ini, catatan yang perlu ditinjau (data belum lengkap, tenggat berdekatan), penugasan yang menunggu jawaban atau ditolak anggota | Periode, waktu sinkron | Buat tugas | Ganti periode | kosong (ruang kerja baru → ke P9), data tidak lengkap | Must |
+| P10 | Dasbor | `/dasbor` | manajer | Melihat apa yang perlu diputuskan sekarang | Tugas belum ditugaskan, kapasitas semua anggota periode ini (total + per anggota, semua proyek), catatan yang perlu ditinjau (data belum lengkap, tenggat berdekatan), penugasan yang menunggu jawaban atau ditolak anggota | Periode, waktu sinkron | Buat tugas | Ganti periode | kosong (ruang kerja baru → ke P9), data tidak lengkap | Must |
 | P11 | Daftar tugas | `/tugas` | manajer | Mengelola semua tugas dan statusnya | Judul, kebutuhan, prioritas, status, penanggung jawab, sisa estimasi, tenggat | ID tugas, proyek | Buat tugas | Cari kandidat, Buka, Arsipkan | kosong, filter tanpa hasil, loading | Must |
 | P12 | Buat tugas | `/tugas/baru` | manajer | Memasukkan tugas baru | Judul, deskripsi, tenggat, prioritas | Proyek, lampiran tautan | Analisis kebutuhan | Simpan draf | validasi, tenggat lewat | Must |
 | P13 | Tinjau Task DNA | `/tugas/[id]/dna` | manajer | Memeriksa dan mengoreksi hasil uraian | Kompetensi + level, estimasi upaya (jam), kompleksitas, dependensi; tiap isian dengan tanda yakin/ragu | Versi model & prompt, kutipan kalimat sumber | Konfirmasi & cari kandidat | Analisis ulang | analisis gagal (isi manual), isian ragu, kompetensi di luar katalog | Must |
@@ -197,6 +197,7 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | P17 | Alokasi batch | `/tugas/alokasi-batch` | manajer | Membagi banyak tugas belum ditugaskan sekaligus (OR-Tools) | Usulan pasangan tugas → anggota, total skor, utilisasi akhir per anggota | Tugas yang tidak bisa dialokasikan + sebab | Tinjau & tetapkan terpilih | Ubah pasangan | tidak feasible | Should |
 | P18 | Tim | `/tim` | manajer | Melihat Work Twin semua anggota | Nama, keahlian, peran, alokasi kapasitas, tugas aktif, status kelengkapan data | Waktu sinkron | Tambah anggota (modal) | Impor CSV, Ingatkan lengkapi data | data belum lengkap, kosong | Must |
 | P19 | Profil kerja (Work Twin) anggota | `/tim/[id]` | manajer | Memahami kondisi satu anggota | Kapasitas & ketersediaan periode, kompetensi + level + sumber (klaim/verifikasi/riwayat), tugas aktif | Preferensi, batas kerja, riwayat tugas relevan | Verifikasi kompetensi | Ubah data, Nonaktifkan | data belum lengkap | Must |
+| P40 | Peta keahlian | `/tim/keahlian` | manajer | Melihat siapa menguasai apa untuk semua anggota | Kompetensi rawan (dikuasai ≤ 1 anggota di level Mandiri ke atas), matriks anggota × kompetensi per kategori | Tautan ke profil anggota dan preset Sebar pengetahuan | Buka profil | Atur preset | semua aman (tidak ada kompetensi rawan) | Should |
 | P20 | Proyek | `/proyek`, `/proyek/[id]` | manajer | Mengelompokkan tugas per proyek/klien | Nama proyek, tenggat, tugas terbuka, anggota terlibat | Klien | Buat proyek (modal) | Arsipkan | kosong | Should |
 | P21 | Kapasitas | `/kapasitas` | manajer | Melihat alokasi waktu tim per periode | Tersedia vs teralokasi per anggota, utilisasi %, total tim | Status data ketersediaan | Perbarui ketersediaan | Ganti periode (mingguan/2 mingguan) | ketersediaan belum diisi, mendekati penuh (≥ 85%) | Must |
 | P22 | Riwayat keputusan | `/keputusan` | manajer | Meninjau keputusan & override untuk belajar | Tugas, kandidat dipilih, peringkatnya, alasan override, waktu keputusan | Preset yang dipakai | Ekspor CSV | Filter | kosong | Should |
@@ -239,7 +240,7 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
   - Bawah sidebar: Panduan demo (dialog) + kartu akun (dialog profil: Akun saya, Notifikasi, Keluar). Halaman yang belum dibangun di mockup ditandai titik.
 - **Menu utama anggota (sidebar):** Beranda saya, Ketersediaan, Profil kerja saya.
 - **Menu akun (kartu akun di bawah sidebar → popover):** Akun saya, Notifikasi, Pengaturan (admin), Bantuan, Keluar.
-- **Tim (sub-navigasi tab di dalam P18):** Anggota, Kompetensi (P30).
+- **Tim (sub-navigasi tab di dalam P18):** Anggota, Peta keahlian (P40), Kompetensi (P30).
 - **Pengaturan (sub-navigasi tab di dalam P28), hanya urusan sistem & admin:** Umum, Aturan rekomendasi, Anggota & peran, Tagihan.
 - **Hanya lewat tautan/aksi:**
   - P12 → P13 → P14 → P15 (alur inti, dengan stepper "Tugas · Kebutuhan · Kandidat · Simulasi").
@@ -315,10 +316,10 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | F2 | Task DNA + koreksi | Must | 2 · P13 | Kompetensi+level, upaya, kompleksitas, dependensi tampil dengan tanda yakin/ragu; setiap isian bisa diubah; isian ragu wajib dilihat sebelum konfirmasi; versi model & prompt tercatat. Mockup: hasil dari seed |
 | F3 | Work Twin minimum | Must | prasyarat · P18, P19 | Kompetensi+level+sumber, kapasitas, ketersediaan periode, tugas aktif, preferensi, batas kerja; status "lengkap/belum lengkap" |
 | F4 | Top 3 kandidat + alasan | Must | 3 · P14 | Kandidat gagal syarat wajib dibuang dengan alasan; 3 teratas tampil dengan skor dan kontribusi 5 faktor; alasan berupa kalimat dari angka; preset bisa diganti dan peringkat berubah langsung |
-| F5 | Simulasi what-if | Must | 4 · P15 | Untuk 1-3 kandidat: utilisasi sebelum → sesudah, konflik (tenggat ≤ 1 hari, utilisasi ≥ 90%, dependensi), sebaran beban tim; skenario bagi ke 2 orang |
+| F5 | Simulasi what-if | Must | 4 · P15 | Untuk 1-3 kandidat: utilisasi sebelum → sesudah, konflik (tenggat ≤ 1 hari, utilisasi ≥ 90%, dependensi), sebaran beban anggota; skenario bagi ke 2 orang |
 | F6 | Tetapkan / ubah / tolak + log | Must | 5 · P15, P16 | Pilih di luar Top 3 → alasan wajib (pilihan + teks); simpan draf; log keputusan berisi Tp, peringkat, preset, alasan |
 | F7 | Pembaruan kapasitas | Must | 6 · P10, P18, P21 | Setelah tetapkan, utilisasi anggota dan daftar tugas langsung berubah di semua halaman |
-| F8 | Dasbor keputusan | Must | P10 | Tugas belum ditugaskan, kapasitas tim, catatan tinjau |
+| F8 | Dasbor keputusan | Must | P10 | Tugas belum ditugaskan, kapasitas semua anggota, catatan tinjau |
 | F9 | Masuk | Must | P5 | Mockup: pilih peran demo. MVP: email + sandi, sesi aman |
 | F10 | Landing page | Must | P1 | Section L1-L8; lulus larangan AI slop; reduced-motion |
 | F11 | Sisi anggota minimal | Should | P24-P27 | Isi ketersediaan, terima/tolak dengan alasan, ubah status, ubah klaim kompetensi |
@@ -351,3 +352,6 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | 2026-10-16 | Alur inti langkah 5 + P14: tolak rekomendasi dengan alasan wajib (proposal §3.2); P37 memakai `app/error.tsx` |
 | 2026-10-16 | P30 Katalog kompetensi dipindah dari Pengaturan ke tab di halaman Tim (`/tim/kompetensi`), atas permintaan user |
 | 2026-10-16 | P10 Dasbor: kartu "Menunggu jawaban anggota" (termasuk jumlah yang ditolak anggota) |
+| 2026-10-16 | P10 Dasbor: kartu Kapasitas tim diberi ringkasan total tim (persen + jam, dari anggota dengan data lengkap) di atas rincian per anggota |
+| 2026-10-16 | Istilah: kapasitas/beban dihitung untuk semua anggota ruang kerja di semua proyek, jadi teks UI memakai "anggota", bukan "tim" (permintaan user) |
+| 2026-10-16 | P40 Peta keahlian (tab Tim): matriks anggota × kompetensi + kompetensi rawan (konsentrasi pengetahuan, R4), atas persetujuan user |

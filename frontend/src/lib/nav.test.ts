@@ -27,6 +27,7 @@ describe("matchPage", () => {
   it("mendahulukan segmen statis bila panjangnya sama", () => {
     expect(matchPage("/tugas/baru")?.id).toBe("P12");
     expect(matchPage("/tim/kompetensi")?.id).toBe("P30");
+    expect(matchPage("/tim/keahlian")?.id).toBe("P40");
   });
 
   it("mengembalikan undefined untuk rute yang tidak ada", () => {

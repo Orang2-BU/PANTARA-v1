@@ -79,15 +79,15 @@ export function Simulation({ params }: { params: Promise<{ id: string }> }) {
       <div className="highlight-top"><span>Kalau ditugaskan ke {names2}</span><Badge tone={crit ? "crit" : sim.conflicts.length ? "warn" : "ok"}>{crit ? "Ada konflik kritis" : sim.conflicts.length ? `${sim.conflicts.length} perlu diperhatikan` : "Aman"}</Badge></div>
       <div className="comparison-grid">
         {mainRow && <Metric label={`Beban ${mainRow.member.name.split(" ")[0]}`} before={percent(mainRow.before / mainRow.available)} after={percent(mainRow.after / mainRow.available)} />}
-        <Metric label="Puncak beban tim" before={percent(sim.peakBefore)} after={percent(sim.peakAfter)} />
-        <Metric label="Rata-rata tim" before={percent(sim.teamBefore, 1)} after={percent(sim.teamAfter, 1)} />
+        <Metric label="Beban tertinggi anggota" before={percent(sim.peakBefore)} after={percent(sim.peakAfter)} />
+        <Metric label="Rata-rata semua anggota" before={percent(sim.teamBefore, 1)} after={percent(sim.teamAfter, 1)} />
         <Metric label="Konflik terdeteksi" before="0" after={String(sim.conflicts.length)} />
       </div>
     </section>
 
     <div className="split-detail spaced">
       <section className="card">
-        <SectionTitle title="Sebaran beban tim" subtitle="Batang atas sebelum, batang bawah sesudah penugasan." />
+        <SectionTitle title="Sebaran beban anggota" subtitle="Batang atas sebelum, batang bawah sesudah penugasan." />
         <div className="table-scroll stack-table"><table>
           <thead><tr><th>Anggota</th><th>Sebelum → sesudah</th><th className="numeric">Perubahan</th></tr></thead>
           <tbody>{sim.rows.map(r => <tr key={r.member.id} className={r.added ? "row-highlight" : ""}>

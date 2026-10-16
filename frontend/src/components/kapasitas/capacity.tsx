@@ -31,7 +31,7 @@ export function Capacity() {
   const shown = rows.filter(r => filter === "semua" || r.group === filter);
   const member = members.find(m => m.id === editing);
   return <div className="page-enter">
-    <PageHeading title="Kapasitas" subtitle="Alokasi waktu dan ketersediaan kerja tim dalam periode aktif. Jam kerja, bukan ukuran produktivitas pribadi." actions={<button className="button primary" onClick={() => setEditing(missing[0]?.m.id ?? members[0].id)}><Icon icon={CalendarRange} />Perbarui ketersediaan</button>} />
+    <PageHeading title="Kapasitas" subtitle="Alokasi waktu dan ketersediaan kerja semua anggota dalam periode aktif. Jam kerja, bukan ukuran produktivitas pribadi." actions={<button className="button primary" onClick={() => setEditing(missing[0]?.m.id ?? members[0].id)}><Icon icon={CalendarRange} />Perbarui ketersediaan</button>} />
     <div className="metrics-grid three">
       <MetricCard icon={Clock3} label="Total kapasitas tersedia" value={number(capacity)} unit="jam" note={`Dari ${filled.length} anggota dengan data terisi`} />
       <MetricCard icon={Gauge} label="Total teralokasi" value={number(allocated)} unit={`/ ${number(capacity)} jam · ${percent(allocated / capacity, 1)}`} note={`Sisa ${number(capacity - allocated)} jam untuk penugasan baru`} tone="brand" />
@@ -45,7 +45,7 @@ export function Capacity() {
         <span className="small muted">Periode {PERIOD.label} · mingguan</span>
       </div>
       <div className="table-scroll stack-table"><table>
-        <thead><tr><th>Anggota tim</th><th className="numeric">Tersedia</th><th className="numeric">Teralokasi</th><th className="numeric">Sisa waktu</th><th>Visualisasi kapasitas</th><th className="numeric">Terisi</th><th>Status data</th><th className="numeric">Aksi</th></tr></thead>
+        <thead><tr><th>Anggota</th><th className="numeric">Tersedia</th><th className="numeric">Teralokasi</th><th className="numeric">Sisa waktu</th><th>Visualisasi kapasitas</th><th className="numeric">Terisi</th><th>Status data</th><th className="numeric">Aksi</th></tr></thead>
         <tbody>{shown.map(({ m, allocated: a, util }) => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
           <td><Person member={m} /></td>
           <td data-label="Tersedia" className="numeric">{m.availableHours === null ? <span className="muted">Belum diisi</span> : hours(m.availableHours)}</td>

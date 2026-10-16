@@ -44,7 +44,7 @@ export function allocatedHours(memberId: string, tasks: Task[]): number {
     .reduce((sum, a) => sum + a.hours, 0);
 }
 
-function memberLevel(member: Member, competencyId: string): Level {
+export function memberLevel(member: Member, competencyId: string): Level {
   return member.competencies.find(c => c.id === competencyId)?.level ?? 0;
 }
 
@@ -145,7 +145,7 @@ function explain(f: Factors, ctx: { history: number; bonus: number; utilAfter: n
   if (f.a >= 1) reasons.push("Jam tersisa cukup untuk seluruh estimasi sebelum tenggat");
   else cautions.push("Jam tersisa hanya cukup untuk sebagian estimasi");
   if (ctx.history >= 2) reasons.push(`Pernah menyelesaikan ${ctx.history} tugas sejenis`);
-  if (ctx.bonus) reasons.push("Belum pernah memegang kompetensi ini: menyebar pengetahuan tim");
+  if (ctx.bonus) reasons.push("Belum pernah memegang kompetensi ini: menyebar pengetahuan antar anggota");
   if (ctx.utilAfter >= 1) cautions.push(`Beban jadi ${Math.round(ctx.utilAfter * 100)}%, melebihi kapasitas`);
   else if (ctx.utilAfter >= 0.85) cautions.push(`Beban jadi ${Math.round(ctx.utilAfter * 100)}%, mendekati penuh`);
   else reasons.push(`Beban setelah penugasan ${Math.round(ctx.utilAfter * 100)}%, masih aman`);

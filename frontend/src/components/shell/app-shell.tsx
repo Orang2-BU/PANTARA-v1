@@ -127,7 +127,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <li><strong>Buat tugas</strong><p>Tulis judul, deskripsi, tenggat, dan prioritas seperti biasa.</p></li>
           <li><strong>Tinjau kebutuhan (Task DNA)</strong><p>Periksa kompetensi, estimasi, dan dependensi. Isian yang ragu ditandai untuk dicek.</p></li>
           <li><strong>Bandingkan kandidat</strong><p>Tiga kandidat teratas beserta skor dan alasan per faktor.</p></li>
-          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibat ke kapasitas tim sebelum menetapkan. Keputusan tetap di manajer.</p></li>
+          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibat ke kapasitas anggota sebelum menetapkan. Keputusan tetap di manajer.</p></li>
         </ol>
         <Badge>Semua data adalah contoh</Badge>
         <p className="spaced"><button className="button secondary" onClick={() => { demo.dispatch({ type: "reset" }); setPanel(null); }}>Reset data contoh</button></p>

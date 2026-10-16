@@ -16,7 +16,7 @@
 | T3 | Seed demo + tipe + store | — | Must | ✅ | Seed konsisten dengan prototipe (28/16/20/22/24/0 = 110 dari 160 jam), store + sessionStorage + reset, 16 Okt |
 | T4 | Engine: syarat wajib + skor + preset + alasan (Vitest) | — | Must | ✅ | Engine skor + 4 preset + alasan dari faktor; Vitest (Bima 0,6625 sesuai hitung manual), 16 Okt |
 | T5 | Engine: what-if + konflik (Vitest) | — | Must | ✅ | What-if (beban sebelum/sesudah, konflik kapasitas/tenggat/dependensi, bagi 2 orang); Vitest, 16 Okt |
-| T6 | P10 Dasbor | — | Must | ✅ | Dasbor sesuai prototipe (3 metrik, kapasitas tim, sorotan tugas berikutnya, catatan), 16 Okt |
+| T6 | P10 Dasbor | — | Must | ✅ | Dasbor sesuai prototipe (4 metrik, kapasitas anggota, sorotan tugas berikutnya, catatan), 16 Okt |
 | T7 | P11 Daftar tugas | — | Must | ✅ | Daftar tugas: cari, filter status (URL) & prioritas, aksi per status, 16 Okt |
 | T8 | P12 Buat tugas | — | Must | ✅ | Buat tugas: validasi per field, simpan draf, Task DNA simulasi kata kunci, 16 Okt |
 | T9 | P13 Tinjau Task DNA | — | Must | ✅ | Task DNA: bukti tersorot, zona yakin/perlu dicek, isian ragu wajib ditinjau, edit level/upaya/dependensi, 16 Okt |
@@ -74,7 +74,7 @@
 | 3. Melihat Top 3 kandidat + alasan (P14) | ✅ | Uji browser 16 Okt (TGS-0142 → Bima, KPT-032) |
 | 4. Membandingkan konsekuensi what-if (P15) | ✅ | Uji browser 16 Okt (TGS-0142 → Bima, KPT-032) |
 | 5. Menetapkan / override dengan alasan / tolak rekomendasi dengan alasan / draf (P14, P15) | ✅ | Uji browser 16 Okt (TGS-0142 → Bima, KPT-032; tolak rekomendasi tercatat di P22/P23) |
-| 6. Kapasitas tim diperbarui di P10, P18, P21 | ✅ | Uji browser 16 Okt (TGS-0142 → Bima, KPT-032) |
+| 6. Kapasitas anggota diperbarui di P10, P18, P21 | ✅ | Uji browser 16 Okt (TGS-0142 → Bima, KPT-032) |
 
 ## Halaman
 > Dari 01-PRD §5. Selesai di M0 = halaman jalan dengan data seed + semua state (kosong, loading, error) + responsif. Halaman non-Must di M0 = Placeholder rapi.
@@ -100,6 +100,7 @@
 | P17 | Alokasi batch | Should | ✅ | Mockup M0 dengan data contoh |
 | P18 | Tim | Must | ✅ | Mockup M0 dengan data contoh |
 | P19 | Profil kerja anggota | Must | ✅ | Mockup M0 dengan data contoh |
+| P40 | Peta keahlian | Should | ✅ | Tab Tim `/tim/keahlian`: matriks + kompetensi rawan, 16 Okt |
 | P20 | Proyek | Should | ✅ | Mockup M0 dengan data contoh |
 | P21 | Kapasitas | Must | ✅ | Mockup M0 dengan data contoh |
 | P22 | Riwayat keputusan | Should | ✅ | Mockup M0 dengan data contoh |
@@ -141,3 +142,6 @@
 | 2026-10-16 | Tolak rekomendasi + alasan (Riwayat & Laporan), judul jumlah kandidat dinamis, tombol Sudah benar di estimasi; halaman /syarat, /pengaturan/tagihan, /pemeliharaan, galat server (error.tsx) |
 | 2026-10-16 | Katalog kompetensi pindah ke tab Tim (/tim/kompetensi); Pengaturan tinggal Umum, Aturan rekomendasi, Anggota & peran, Tagihan |
 | 2026-10-16 | Dasbor: kartu ke-4 "Menunggu jawaban anggota" (jumlah menunggu + ditolak anggota, tautan ke filter terkait) |
+| 2026-10-16 | Dasbor: ringkasan total tim di kartu Kapasitas tim; baris sorot di tabel mobile jadi satu blok; "Lihat semua" tidak terpotong |
+| 2026-10-16 | Teks kapasitas/beban: "tim" diganti "anggota"/"semua anggota" (Dasbor, Kapasitas, Simulasi, detail tugas, panduan) |
+| 2026-10-16 | P40 Peta keahlian di tab Tim (matriks anggota × kompetensi, kompetensi rawan, Vitest atRiskCompetencies); perbaikan overflow teks sr-only di wadah geser |

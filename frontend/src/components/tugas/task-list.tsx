@@ -34,7 +34,7 @@ export function TaskList() {
   );
   const count = (s: TaskStatus | "semua") => s === "semua" ? current.length : current.filter(t => t.status === s).length;
   return <div className="page-enter">
-    <PageHeading title="Tugas" subtitle="Kelola daftar tugas, alokasi kerja tim, dan status penugasan adaptif." actions={<>
+    <PageHeading title="Tugas" subtitle="Kelola daftar tugas, alokasi kerja anggota, dan status penugasan adaptif." actions={<>
       <Link className="button secondary" href="/tugas/alokasi-batch"><Icon icon={Layers} />Alokasi batch</Link>
       <Link className="button primary" href="/tugas/baru"><Icon icon={Plus} />Buat tugas</Link>
     </>} />

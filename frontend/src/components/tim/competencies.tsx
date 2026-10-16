@@ -15,7 +15,7 @@ export function Competencies() {
   const [category, setCategory] = useState("Backend");
   const [error, setError] = useState("");
   return <div className="page-enter">
-    <PageHeading title="Katalog kompetensi" subtitle="Daftar kompetensi tim yang dipakai Task DNA dan Work Twin. AI hanya memilih dari katalog ini." actions={<button className="button primary" onClick={() => setAdding(true)}><Icon icon={Plus} />Tambah kompetensi</button>} />
+    <PageHeading title="Katalog kompetensi" subtitle="Daftar kompetensi ruang kerja yang dipakai Task DNA dan Work Twin. AI hanya memilih dari katalog ini." actions={<button className="button primary" onClick={() => setAdding(true)}><Icon icon={Plus} />Tambah kompetensi</button>} />
     <TeamTabs current="/tim/kompetensi" />
     <section className="card">
       <div className="table-scroll stack-table"><table>

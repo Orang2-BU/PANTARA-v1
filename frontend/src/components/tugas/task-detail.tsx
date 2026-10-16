@@ -32,7 +32,7 @@ export function TaskDetail({ params }: { params: Promise<{ id: string }> }) {
       {task.status === "draf" && <Link className="button primary" href={`/tugas/${id}/dna`}>Lanjutkan analisis</Link>}
       {NEXT_STATUS[task.status]?.map(s => <button key={s} className="button primary" onClick={() => dispatch({ type: "setStatus", id, status: s })}><Icon icon={CircleCheck} size={16} />Tandai {statusLabel(s).toLowerCase()}</button>)}
     </>} />
-    {justAssigned && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Penugasan ditetapkan</strong><span>{assignees.map(a => a.member!.name).join(" dan ")} menerima notifikasi. Kapasitas tim sudah diperbarui di Dasbor, Tim, dan Kapasitas.</span></span><Link className="row-link" href="/dasbor">Lihat dasbor</Link></div>}
+    {justAssigned && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Penugasan ditetapkan</strong><span>{assignees.map(a => a.member!.name).join(" dan ")} menerima notifikasi. Kapasitas anggota sudah diperbarui di Dasbor, Tim, dan Kapasitas.</span></span><Link className="row-link" href="/dasbor">Lihat dasbor</Link></div>}
     {task.status === "belum" && task.responseReason && <div className="decision-banner warn"><Icon icon={CircleAlert} /><span><strong>Penugasan sebelumnya ditolak anggota</strong><span>{task.responseReason}</span></span></div>}
     <div className="split-detail">
       <div className="stack">

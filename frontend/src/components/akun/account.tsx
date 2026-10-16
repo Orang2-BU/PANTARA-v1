@@ -74,8 +74,8 @@ export function Help() {
           <li><strong>Buat tugas</strong><p>Tulis judul, deskripsi, tenggat, dan prioritas.</p></li>
           <li><strong>Tinjau Task DNA</strong><p>AI mengurai kompetensi, level, estimasi, dan dependensi. Isian ragu ditandai dan wajib dicek.</p></li>
           <li><strong>Bandingkan kandidat</strong><p>Anggota yang gagal syarat wajib dibuang; tiga teratas ditampilkan dengan skor dan alasan.</p></li>
-          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibatnya ke beban tim. Memilih di luar tiga teratas boleh, dengan alasan.</p></li>
-          <li><strong>Anggota menjawab</strong><p>Anggota menerima atau menolak dengan alasan. Kapasitas tim langsung diperbarui.</p></li>
+          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibatnya ke beban anggota. Memilih di luar tiga teratas boleh, dengan alasan.</p></li>
+          <li><strong>Anggota menjawab</strong><p>Anggota menerima atau menolak dengan alasan. Kapasitas anggota langsung diperbarui.</p></li>
         </ol>
       </section>
       <section className="card">

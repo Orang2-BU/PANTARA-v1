@@ -13,6 +13,7 @@ import { shortDate } from "@/lib/format";
 
 const TEAM_TABS = [
   { href: "/tim", label: "Anggota" },
+  { href: "/tim/keahlian", label: "Peta keahlian" },
   { href: "/tim/kompetensi", label: "Kompetensi" },
 ];
 
