@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ClipboardList, Hourglass, Inbox, Plus, UserCheck } from "lucide-react";
 import { CapacityBar, DataBadge, MetricCard, PageHeading, Person, PriorityBadge, SectionTitle } from "@/components/app/parts";
 import { Icon } from "@/components/ui";
+import { FluidArt } from "@/components/ui/fluid-art";
 import { PERIOD, NOW } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
 import { allocatedHours, nearbyDeadlines } from "@/lib/engine/score";
@@ -50,7 +51,7 @@ export function Dasbor() {
         </table></div>
       </section>
       <div className="stack">
-        {next ? <section className="highlight-card" aria-label="Penugasan berikutnya">
+        {next ? <section className="highlight-card" aria-label="Penugasan berikutnya"><FluidArt className="highlight-art" style="streak" seed={3} w={720} h={360} />
           <div className="highlight-top"><span>Perlu penugasan · {open.length} tugas</span><span className="mono">{next.id}</span></div>
           <h2>{next.title}</h2>
           <div className="highlight-row">

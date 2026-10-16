@@ -9,7 +9,7 @@ import {
   FolderKanban,
   Gauge,
   GitCompareArrows,
-  Grid3x3,
+  IdCard,
   History,
   Inbox,
   LayoutDashboard,
@@ -18,7 +18,8 @@ import {
   Settings,
   ShieldAlert,
   SlidersHorizontal,
-  Tags,
+  Library,
+  Network,
   UserCheck,
   ReceiptText,
   UserCog,
@@ -53,8 +54,8 @@ const PAGE_MAP = {
   "/tugas/[id]/simulasi": { id: "P15", label: "Simulasi what-if", group: "Tugas", icon: GitCompareArrows, description: "Melihat konsekuensi tiap pilihan sebelum menetapkan penugasan." },
   "/tugas/alokasi-batch": { id: "P17", label: "Alokasi batch", group: "Perencanaan", icon: Layers, description: "Membagi banyak tugas yang belum ditugaskan sekaligus dengan OR-Tools." },
   "/tim": { id: "P18", label: "Tim", group: "Ruang kerja", icon: Users, description: "Mengelola profil kerja (Work Twin), kompetensi, dan kelengkapan data anggota." },
-  "/tim/keahlian": { id: "P40", label: "Peta keahlian", group: "Tim", icon: Grid3x3, description: "Melihat siapa menguasai apa untuk semua anggota, termasuk kompetensi rawan." },
-  "/tim/kompetensi": { id: "P30", label: "Katalog kompetensi", group: "Tim", icon: Tags, description: "Mengelola daftar kompetensi ruang kerja yang dipakai Task DNA dan Work Twin." },
+  "/tim/keahlian": { id: "P40", label: "Peta keahlian", group: "Tim", icon: Network, description: "Melihat siapa menguasai apa untuk semua anggota, termasuk kompetensi rawan." },
+  "/tim/kompetensi": { id: "P30", label: "Katalog kompetensi", group: "Tim", icon: Library, description: "Mengelola daftar kompetensi ruang kerja yang dipakai Task DNA dan Work Twin." },
   "/tim/[id]": { id: "P19", label: "Profil kerja anggota", group: "Tim", icon: UserRound, description: "Memahami kapasitas, ketersediaan, dan kompetensi satu anggota." },
   "/proyek": { id: "P20", label: "Proyek", group: "Perencanaan", icon: FolderKanban, description: "Mengelompokkan tugas per proyek atau klien." },
   "/proyek/[id]": { id: "P20", label: "Detail proyek", group: "Perencanaan", icon: Building2, description: "Melihat tugas terbuka dan anggota yang terlibat di satu proyek." },
@@ -91,11 +92,34 @@ export function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-/** Menu sidebar yang aktif: kecocokan paling spesifik (/tugas/alokasi-batch menang atas /tugas). */
+/** Sub-menu bercabang di sidebar (Tim dan Pengaturan). */
+export const SUBNAV: Partial<Record<PageRoute, { href: PageRoute; label: string; icon: LucideIcon }[]>> = {
+  "/tim": [
+    { href: "/tim", label: "Anggota", icon: IdCard },
+    { href: "/tim/keahlian", label: "Peta keahlian", icon: Network },
+    { href: "/tim/kompetensi", label: "Kompetensi", icon: Library },
+  ],
+  "/pengaturan": [
+    { href: "/pengaturan", label: "Umum", icon: Building2 },
+    { href: "/pengaturan/rekomendasi", label: "Aturan rekomendasi", icon: SlidersHorizontal },
+    { href: "/pengaturan/anggota", label: "Anggota & peran", icon: UserCog },
+    { href: "/pengaturan/tagihan", label: "Tagihan", icon: ReceiptText },
+  ],
+};
+
+/** Kecocokan paling spesifik di antara href (/tugas/alokasi-batch menang atas /tugas). */
+function mostSpecific(pathname: string, hrefs: string[]) {
+  return hrefs.filter(href => isActive(pathname, href)).sort((a, b) => b.length - a.length)[0];
+}
+
+/** Menu sidebar yang aktif. */
 export function activeNav(pathname: string): string | undefined {
-  return NAVIGATION.flatMap(g => g.routes)
-    .filter(href => isActive(pathname, href))
-    .sort((a, b) => b.length - a.length)[0];
+  return mostSpecific(pathname, NAVIGATION.flatMap(g => g.routes));
+}
+
+/** Sub-menu yang aktif; profil anggota (/tim/[id]) termasuk "Anggota". */
+export function activeSub(pathname: string): string | undefined {
+  return mostSpecific(pathname, Object.values(SUBNAV).flatMap(items => items.map(i => i.href)));
 }
 
 /** Cocokkan URL nyata (mis. /tugas/TGS-0142/kandidat) ke rute di PAGES. */

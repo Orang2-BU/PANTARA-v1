@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activeNav, isActive, matchPage } from "./nav";
+import { activeNav, activeSub, isActive, matchPage } from "./nav";
 
 describe("isActive", () => {
   it("menandai link aktif pada halamannya sendiri", () => {
@@ -45,3 +45,25 @@ describe("activeNav", () => {
     expect(activeNav("/saya")).toBeUndefined();
   });
 });
+
+describe("activeSub", () => {
+  it("memilih sub-menu Tim paling spesifik", () => {
+    expect(activeSub("/tim/keahlian")).toBe("/tim/keahlian");
+    expect(activeSub("/tim/kompetensi")).toBe("/tim/kompetensi");
+  });
+
+  it("profil anggota termasuk sub-menu Anggota", () => {
+    expect(activeSub("/tim")).toBe("/tim");
+    expect(activeSub("/tim/bima")).toBe("/tim");
+  });
+
+  it("memilih sub-menu Pengaturan", () => {
+    expect(activeSub("/pengaturan")).toBe("/pengaturan");
+    expect(activeSub("/pengaturan/tagihan")).toBe("/pengaturan/tagihan");
+  });
+
+  it("tidak ada sub-menu aktif di luar Tim", () => {
+    expect(activeSub("/dasbor")).toBeUndefined();
+  });
+});
+

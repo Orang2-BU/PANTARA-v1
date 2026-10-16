@@ -11,16 +11,6 @@ import type { Member } from "@/lib/demo/types";
 import { allocatedHours, nearbyDeadlines } from "@/lib/engine/score";
 import { shortDate } from "@/lib/format";
 
-const TEAM_TABS = [
-  { href: "/tim", label: "Anggota" },
-  { href: "/tim/keahlian", label: "Peta keahlian" },
-  { href: "/tim/kompetensi", label: "Kompetensi" },
-];
-
-export function TeamTabs({ current }: { current: string }) {
-  return <nav className="toggle flow-steps" aria-label="Bagian tim">{TEAM_TABS.map(t => <Link key={t.href} href={t.href} className={`toggle-item ${current === t.href ? "selected" : ""}`} aria-current={current === t.href ? "page" : undefined}>{t.label}</Link>)}</nav>;
-}
-
 export function Team() {
   const { members, tasks, names, dispatch } = useDemo();
   const [query, setQuery] = useState("");
@@ -37,7 +27,6 @@ export function Team() {
   const incomplete = members.filter(m => m.availableHours === null);
   return <div className="page-enter">
     <PageHeading title="Tim" subtitle="Kelola profil kerja (Work Twin), verifikasi kompetensi, dan status kelengkapan data kapasitas anggota." actions={<button className="button primary" onClick={() => setAdding(true)}><Icon icon={UserPlus} />Tambah anggota</button>} />
-    <TeamTabs current="/tim" />
     <div className="metrics-grid three">
       <MetricCard icon={Users} label="Total anggota" value={String(members.length)} unit="anggota" note={roles.map(r => `${members.filter(m => m.role === r).length} ${r.split(" ")[0].toLowerCase()}`).join(", ")} />
       <MetricCard icon={UserCheck} label="Kelengkapan data kapasitas" value={String(complete.length)} unit={`dari ${members.length} terverifikasi`} note="Ketersediaan dan beban aktif tercatat" tone="brand" />

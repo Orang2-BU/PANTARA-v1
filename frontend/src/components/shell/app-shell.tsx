@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, Bell, CalendarDays, ChevronDown, ChevronsLeft, ChevronsRight, CircleHelp, Menu, X } from "lucide-react";
-import { NAVIGATION, PAGES, activeNav, matchPage } from "@/lib/nav";
+import { NAVIGATION, PAGES, SUBNAV, activeNav, activeSub, matchPage, type PageRoute } from "@/lib/nav";
 import { Badge, Icon, Modal } from "@/components/ui";
 import { managerNotices } from "@/lib/demo/notifications";
 import { useDemo } from "@/lib/demo/store";
@@ -150,13 +150,39 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate: () =
       {routes.map(href => {
         const item = PAGES[href];
         const active = current === href;
-        return <Link key={href} href={href} className={`nav-item ${active ? "active" : ""}`} title={item.label} aria-label={item.label} aria-current={active ? "page" : undefined} onClick={onNavigate}>
+        const sub = SUBNAV[href];
+        const link = <Link key={href} href={href} className={`nav-item ${active ? "active" : ""}`} title={`${item.label} · ${group}`} aria-label={`${item.label}, grup ${group}`} aria-current={active && !sub ? "page" : undefined} onClick={onNavigate}>
           <span className="nav-icon"><Icon icon={item.icon} size={19} /></span>
           <span className="nav-label">{item.label}</span>
         </Link>;
+        return sub ? <div key={href}>{link}<NavBranch items={sub} open={active} current={activeSub(pathname)} onNavigate={onNavigate} /></div> : link;
       })}
     </div>)}
   </nav>;
+}
+
+// Geometri cabang (px): batang di tengah ikon menu induk, cabang melengkung ke tiap baris anak.
+const ROW = 36, PAD = 4, TRUNK = 22, END = 36, R = 8;
+const rowY = (k: number) => PAD + k * ROW + ROW / 2;
+const branchPath = (k: number) => `M ${TRUNK} ${rowY(k) - R} A ${R} ${R} 0 0 0 ${TRUNK + R} ${rowY(k)} H ${END}`;
+const reachPath = (k: number) => `M ${TRUNK} 0 V ${rowY(k) - R} A ${R} ${R} 0 0 0 ${TRUNK + R} ${rowY(k)} H ${END}`;
+const reachLength = (k: number) => rowY(k) - R + (Math.PI * R) / 2 + (END - TRUNK - R);
+
+/** Sub-menu bercabang (pola React Bits "BranchedMenu", disesuaikan ke token & lucide; 03-ARCHITECTURE Q21). */
+function NavBranch({ items, open, current, onNavigate }: { items: NonNullable<(typeof SUBNAV)[PageRoute]>; open: boolean; current?: string; onNavigate: () => void }) {
+  const height = PAD * 2 + items.length * ROW;
+  return <div className="nav-branch" data-open={open || undefined} inert={!open}>
+    <div className="nav-branch-fold"><div className="nav-branch-tree" style={{ height }}>
+      <svg className="nav-branch-lines" width={END + 4} height={height} aria-hidden="true">
+        <path className="nav-branch-base" d={`M ${TRUNK} 0 V ${rowY(items.length - 1) - R}`} />
+        {items.map((it, k) => <path key={it.href} className="nav-branch-base" d={branchPath(k)} />)}
+        {items.map((it, k) => <path key={`${it.href}-on`} className="nav-branch-reach" d={reachPath(k)} style={{ strokeDasharray: reachLength(k), strokeDashoffset: current === it.href ? 0 : reachLength(k) }} />)}
+      </svg>
+      {items.map(it => <Link key={it.href} href={it.href} className={`nav-sub ${current === it.href ? "active" : ""}`} title={it.label} aria-current={current === it.href ? "page" : undefined} onClick={onNavigate}>
+        <span className="nav-sub-icon"><Icon icon={it.icon} size={15} /></span><span className="nav-sub-label">{it.label}</span>
+      </Link>)}
+    </div></div>
+  </div>;
 }
 
 function Breadcrumb() {

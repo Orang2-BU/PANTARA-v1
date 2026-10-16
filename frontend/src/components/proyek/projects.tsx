@@ -2,28 +2,28 @@
 
 import Link from "next/link";
 import { use, useState } from "react";
-import { CalendarClock, CircleAlert, FolderPlus, ListTodo } from "lucide-react";
+import { ArrowRight, CircleAlert, FolderPlus } from "lucide-react";
 import { EmptyState, PageHeading, Person, PriorityBadge, SectionTitle, StatusBadge } from "@/components/app/parts";
 import { Icon, Modal } from "@/components/ui";
+import { GlassFolder } from "@/components/ui/glass-folder";
 import { NOW } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
 import { hours, shortDate } from "@/lib/format";
 
 export function Projects() {
-  const { projects, tasks, memberById, dispatch } = useDemo();
+  const { projects, tasks, dispatch } = useDemo();
   const [adding, setAdding] = useState(false);
   return <div className="page-enter">
     <PageHeading title="Proyek" subtitle="Kelompokkan tugas per proyek atau klien untuk melihat beban dan tenggat bersama." actions={<button className="button primary" onClick={() => setAdding(true)}><Icon icon={FolderPlus} />Buat proyek</button>} />
-    <div className="candidate-grid">{projects.map(p => {
+    <div className="project-folders">{projects.map((p, i) => {
       const own = tasks.filter(t => t.projectId === p.id && t.assignments.every(a => a.hours > 0));
-      const open = own.filter(t => t.status !== "selesai");
-      const people = [...new Set(own.flatMap(t => t.assignments.map(a => a.memberId)))].map(memberById).filter(m => m !== undefined);
-      return <Link key={p.id} href={`/proyek/${p.id}`} className="card candidate-card">
-        <div><h2>{p.name}</h2><p className="small muted">{p.client}</p></div>
-        <div className="dna-row"><span className="muted small with-icon"><Icon icon={CalendarClock} size={13} />Tenggat proyek</span><strong>{shortDate(p.dueDate)}</strong></div>
-        <div className="dna-row"><span className="muted small with-icon"><Icon icon={ListTodo} size={13} />Tugas terbuka</span><strong>{open.length} dari {own.length}</strong></div>
-        <div className="chips">{people.map(m => <span key={m.id} className="chip">{m.name}</span>)}</div>
-      </Link>;
+      const open = own.filter(t => t.status !== "selesai").sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+      return <div key={p.id} className="project-folder">
+        <GlassFolder label={p.name} meta={`${open.length} tugas terbuka · tenggat ${shortDate(p.dueDate)}`} seed={i * 7 + 3} art={i % 2 ? "streak" : "marble"}
+          files={open.map(t => ({ name: t.title, meta: shortDate(t.dueDate), href: `/tugas/${t.id}` }))}
+          menu={[{ label: "Lihat detail proyek", href: `/proyek/${p.id}` }, { label: "Buat tugas", href: "/tugas/baru" }]} />
+        <div className="project-folder-info"><span>{p.client}</span><Link className="text-link" href={`/proyek/${p.id}`}>Detail proyek<Icon icon={ArrowRight} size={14} /></Link></div>
+      </div>;
     })}</div>
     {adding && <AddProject onClose={() => setAdding(false)} onSave={(name, client, dueDate) => { dispatch({ type: "addProject", project: { id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name, client, dueDate } }); setAdding(false); }} />}
   </div>;

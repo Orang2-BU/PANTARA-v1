@@ -199,7 +199,7 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | P19 | Profil kerja (Work Twin) anggota | `/tim/[id]` | manajer | Memahami kondisi satu anggota | Kapasitas & ketersediaan periode, kompetensi + level + sumber (klaim/verifikasi/riwayat), tugas aktif | Preferensi, batas kerja, riwayat tugas relevan | Verifikasi kompetensi | Ubah data, Nonaktifkan | data belum lengkap | Must |
 | P40 | Peta keahlian | `/tim/keahlian` | manajer | Melihat siapa menguasai apa untuk semua anggota | Kompetensi rawan (dikuasai ≤ 1 anggota di level Mandiri ke atas), matriks anggota × kompetensi per kategori | Tautan ke profil anggota dan preset Sebar pengetahuan | Buka profil | Atur preset | semua aman (tidak ada kompetensi rawan) | Should |
 | P20 | Proyek | `/proyek`, `/proyek/[id]` | manajer | Mengelompokkan tugas per proyek/klien | Nama proyek, tenggat, tugas terbuka, anggota terlibat | Klien | Buat proyek (modal) | Arsipkan | kosong | Should |
-| P21 | Kapasitas | `/kapasitas` | manajer | Melihat alokasi waktu tim per periode | Tersedia vs teralokasi per anggota, utilisasi %, total tim | Status data ketersediaan | Perbarui ketersediaan | Ganti periode (mingguan/2 mingguan) | ketersediaan belum diisi, mendekati penuh (≥ 85%) | Must |
+| P21 | Kapasitas | `/kapasitas` | manajer | Melihat alokasi waktu semua anggota per periode | Tersedia vs teralokasi per anggota, utilisasi %, total | Status data ketersediaan | Perbarui ketersediaan | Ganti periode (mingguan/2 mingguan) | ketersediaan belum diisi, mendekati penuh (≥ 85%) | Must |
 | P22 | Riwayat keputusan | `/keputusan` | manajer | Meninjau keputusan & override untuk belajar | Tugas, kandidat dipilih, peringkatnya, alasan override, waktu keputusan | Preset yang dipakai | Ekspor CSV | Filter | kosong | Should |
 | P23 | Laporan dampak | `/laporan` | manajer, admin | Mengukur dampak pilot | Tp rata-rata vs Tb, konflik terdeteksi, tingkat penerimaan, override, kelengkapan Work Twin | Periode, jumlah keputusan | Ekspor | Isi baseline Tb | data < 10 keputusan ("belum cukup data") | Should |
 
@@ -240,8 +240,8 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
   - Bawah sidebar: Panduan demo (dialog) + kartu akun (dialog profil: Akun saya, Notifikasi, Keluar). Halaman yang belum dibangun di mockup ditandai titik.
 - **Menu utama anggota (sidebar):** Beranda saya, Ketersediaan, Profil kerja saya.
 - **Menu akun (kartu akun di bawah sidebar → popover):** Akun saya, Notifikasi, Pengaturan (admin), Bantuan, Keluar.
-- **Tim (sub-navigasi tab di dalam P18):** Anggota, Peta keahlian (P40), Kompetensi (P30).
-- **Pengaturan (sub-navigasi tab di dalam P28), hanya urusan sistem & admin:** Umum, Aturan rekomendasi, Anggota & peran, Tagihan.
+- **Tim (sub-menu bercabang di sidebar, terbuka saat berada di halaman Tim):** Anggota (P18, termasuk profil P19), Peta keahlian (P40), Kompetensi (P30).
+- **Pengaturan (sub-menu bercabang di sidebar, terbuka saat berada di Pengaturan), hanya urusan sistem & admin:** Umum (P28), Aturan rekomendasi (P29), Anggota & peran (P31), Tagihan (P32).
 - **Hanya lewat tautan/aksi:**
   - P12 → P13 → P14 → P15 (alur inti, dengan stepper "Tugas · Kebutuhan · Kandidat · Simulasi").
   - P16 dari P11, P19 dari P18, P26 dari notifikasi/P24.
@@ -355,3 +355,7 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | 2026-10-16 | P10 Dasbor: kartu Kapasitas tim diberi ringkasan total tim (persen + jam, dari anggota dengan data lengkap) di atas rincian per anggota |
 | 2026-10-16 | Istilah: kapasitas/beban dihitung untuk semua anggota ruang kerja di semua proyek, jadi teks UI memakai "anggota", bukan "tim" (permintaan user) |
 | 2026-10-16 | P40 Peta keahlian (tab Tim): matriks anggota × kompetensi + kompetensi rawan (konsentrasi pengetahuan, R4), atas persetujuan user |
+| 2026-10-16 | P21 Kapasitas: heatmap beban harian dicoba lalu dihapus total atas permintaan user (tidak ada kode tersisa) |
+| 2026-10-17 | P20 Proyek: tampilan folder kaca (isi = tugas terbuka proyek), atas permintaan user |
+| 2026-10-17 | Sub-halaman Tim pindah dari tab di halaman ke sub-menu bercabang di sidebar |
+| 2026-10-17 | Sub-halaman Pengaturan pindah dari tab di halaman ke sub-menu bercabang di sidebar |

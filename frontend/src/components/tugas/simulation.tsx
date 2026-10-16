@@ -6,6 +6,7 @@ import { use, useState } from "react";
 import { CheckCheck, CircleAlert, CircleCheck, Save, TriangleAlert } from "lucide-react";
 import { CapacityBar, EmptyState, FlowSteps, PageHeading, Person, SectionTitle } from "@/components/app/parts";
 import { Badge, Icon, Modal } from "@/components/ui";
+import { FluidArt } from "@/components/ui/fluid-art";
 import { NOW } from "@/lib/demo/seed";
 import { OVERRIDE_REASONS } from "@/lib/demo/reasons";
 import { useDemo } from "@/lib/demo/store";
@@ -75,7 +76,7 @@ export function Simulation({ params }: { params: Promise<{ id: string }> }) {
       <span className="small muted">Simulasi tidak mengubah data sampai kamu menetapkan.</span>
     </div>
 
-    <section className="highlight-card" aria-label="Ringkasan simulasi">
+    <section className="highlight-card" aria-label="Ringkasan simulasi"><FluidArt className="highlight-art" style="streak" seed={19} w={720} h={360} />
       <div className="highlight-top"><span>Kalau ditugaskan ke {names2}</span><Badge tone={crit ? "crit" : sim.conflicts.length ? "warn" : "ok"}>{crit ? "Ada konflik kritis" : sim.conflicts.length ? `${sim.conflicts.length} perlu diperhatikan` : "Aman"}</Badge></div>
       <div className="comparison-grid">
         {mainRow && <Metric label={`Beban ${mainRow.member.name.split(" ")[0]}`} before={percent(mainRow.before / mainRow.available)} after={percent(mainRow.after / mainRow.available)} />}

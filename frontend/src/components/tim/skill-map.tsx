@@ -7,7 +7,6 @@ import { Badge, Icon } from "@/components/ui";
 import { useDemo } from "@/lib/demo/store";
 import { LEVEL_LABEL, memberLevel } from "@/lib/engine/score";
 import { atRiskCompetencies } from "@/lib/engine/skills";
-import { TeamTabs } from "./team";
 
 /** P40: siapa bisa apa untuk semua anggota, plus kompetensi rawan (konsentrasi pengetahuan, 01-PRD R4). */
 export function SkillMap() {
@@ -17,7 +16,6 @@ export function SkillMap() {
   const risky = atRiskCompetencies(competencies, members);
   return <div className="page-enter">
     <PageHeading title="Peta keahlian" subtitle="Siapa menguasai apa, untuk semua anggota. Level dari profil kerja masing-masing, bukan penilaian kinerja." />
-    <TeamTabs current="/tim/keahlian" />
 
     <section className="card">
       <SectionTitle title="Kompetensi rawan" subtitle="Dikuasai paling banyak 1 anggota di level Mandiri ke atas. Berisiko bila orang itu cuti, penuh, atau keluar." action={<Link className="text-link" href="/pengaturan/rekomendasi">Preset Sebar pengetahuan<Icon icon={ArrowRight} size={14} /></Link>} />
@@ -34,7 +32,7 @@ export function SkillMap() {
       <div className="table-scroll skill-map"><table>
         <thead>
           <tr><th rowSpan={2}>Anggota</th>{categories.map(cat => <th key={cat} colSpan={competencies.filter(c => c.category === cat).length} className="skill-cat">{cat}</th>)}</tr>
-          <tr>{ordered.map(c => <th key={c.id} scope="col">{c.name}{risky.some(r => r.competency.id === c.id) && <><Icon icon={TriangleAlert} size={11} className="warn-text" /><span className="sr-only"> (rawan)</span></>}</th>)}</tr>
+          <tr>{ordered.map(c => <th key={c.id} scope="col"><span className="skill-head">{risky.some(r => r.competency.id === c.id) && <><Icon icon={TriangleAlert} size={12} className="warn-text" /><span className="sr-only">Rawan: </span></>}<span>{c.name}</span></span></th>)}</tr>
         </thead>
         <tbody>{members.map(m => <tr key={m.id}>
           <th scope="row"><Link href={`/tim/${m.id}`}><Person member={m} /></Link></th>

@@ -145,3 +145,16 @@
 | 2026-10-16 | Dasbor: ringkasan total tim di kartu Kapasitas tim; baris sorot di tabel mobile jadi satu blok; "Lihat semua" tidak terpotong |
 | 2026-10-16 | Teks kapasitas/beban: "tim" diganti "anggota"/"semua anggota" (Dasbor, Kapasitas, Simulasi, detail tugas, panduan) |
 | 2026-10-16 | P40 Peta keahlian di tab Tim (matriks anggota × kompetensi, kompetensi rawan, Vitest atRiskCompetencies); perbaikan overflow teks sr-only di wadah geser |
+| 2026-10-16 | Peta keahlian: ikon kompetensi rawan dipindah ke depan nama supaya tidak turun ke baris baru |
+| 2026-10-16 | Heatmap beban harian di P21 dicoba lalu dihapus total atas permintaan user (komponen, engine, test, CSS, docs) |
+| 2026-10-17 | Sidebar ciut: logo diberi lebar 44px seperti kotak menu supaya sejajar tengah dengan ikon (sebelumnya geser 8px ke kiri) |
+| 2026-10-17 | Sidebar ciut: garis pemisah antar grup + nama grup di tooltip/aria-label ikon |
+| 2026-10-17 | Top bar menempel di atas saat scroll (sticky), seperti sidebar |
+| 2026-10-17 | Proyek: kartu jadi Glass Folder (port 21st.dev ke token), isi folder = tugas terbuka, menu ⋯ ke detail & buat tugas |
+| 2026-10-17 | Aksen kaca terarah (top bar, dialog, drawer) + motif cair di kartu sorotan + gerak fluid CSS (masuk bertahap, hover pegas, batang tumbuh, dialog pegas) |
+| 2026-10-17 | GlassSurface (React Bits) dicoba di kapsul topbar lalu dihapus total atas permintaan user; efek pembiasan hampir tak terlihat di latar polos |
+| 2026-10-17 | Sidebar: sub-menu bercabang Tim (pola BranchedMenu, lucide + token); tab di halaman Tim dihapus |
+| 2026-10-17 | Sidebar: sub-menu bercabang Pengaturan; tab di halaman Pengaturan dihapus |
+| 2026-10-17 | Sidebar ciut: sub-halaman tampil sebagai rel mini dengan bulatan ikon (aktif bercincin teal) |
+| 2026-10-17 | Ikon sub-menu disesuaikan isi: Anggota IdCard, Peta keahlian Network, Kompetensi Library (bukan label harga), Umum Building2 |
+| 2026-10-17 | Checkbox di seluruh aplikasi jadi bulat (tercentang teal + centang putih) |

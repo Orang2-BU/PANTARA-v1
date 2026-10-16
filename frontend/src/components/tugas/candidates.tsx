@@ -6,6 +6,7 @@ import { use, useEffect, useState } from "react";
 import { ArrowUpRight, Check, CircleAlert, CircleX, GitCompareArrows, UserRoundSearch, UserX } from "lucide-react";
 import { CapacityBar, EmptyState, FlowSteps, PageHeading, Person, SectionTitle } from "@/components/app/parts";
 import { Badge, Icon, Modal } from "@/components/ui";
+import { FluidArt } from "@/components/ui/fluid-art";
 import { REJECT_REASONS } from "@/lib/demo/reasons";
 import { NOW } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
@@ -70,7 +71,7 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
     </div>
 
     {!best ? <section className="card"><EmptyState icon={UserX} title="Tidak ada kandidat yang lolos syarat wajib" text="Coba pecah tugas jadi lebih kecil, geser tenggat, atau lengkapi data ketersediaan anggota. Rincian syarat yang gagal ada di bawah." /></section> : <>
-      <section className="highlight-card" aria-label="Kandidat teratas">
+      <section className="highlight-card" aria-label="Kandidat teratas"><FluidArt className="highlight-art" style="streak" seed={7} w={720} h={360} />
         <div className="highlight-top"><span>Kandidat #1 · preset {PRESETS[preset].label}</span><span className="mono">S = w1K + w2C + w3A + w4R − w5F</span></div>
         <div className="highlight-row">
           <div><h2>{best.member.name}</h2><p>{best.member.role} · beban {number(best.allocated)} → {number(best.allocated + effort)} dari {number(best.available)} jam</p></div>

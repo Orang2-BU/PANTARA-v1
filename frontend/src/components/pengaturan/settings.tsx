@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CircleCheck, ReceiptText, RotateCcw, UserPlus } from "lucide-react";
 import { EmptyState, MetricCard, PageHeading, SectionTitle } from "@/components/app/parts";
@@ -11,18 +10,6 @@ import { useDemo } from "@/lib/demo/store";
 import type { Member, PresetId } from "@/lib/demo/types";
 import { DEFAULT_SETTINGS, PRESETS } from "@/lib/engine/score";
 import { number } from "@/lib/format";
-
-const TABS = [
-  { href: "/pengaturan", label: "Umum" },
-  { href: "/pengaturan/rekomendasi", label: "Aturan rekomendasi" },
-  { href: "/pengaturan/anggota", label: "Anggota & peran" },
-  { href: "/pengaturan/tagihan", label: "Tagihan" },
-];
-
-function SettingsTabs() {
-  const pathname = usePathname();
-  return <nav className="toggle flow-steps" aria-label="Bagian pengaturan" ref={el => { const active = el?.querySelector<HTMLElement>("[aria-current]"); if (el && active) el.scrollLeft = active.offsetLeft - el.offsetLeft - 4; }}>{TABS.map(t => <Link key={t.href} href={t.href} className={`toggle-item ${pathname === t.href ? "selected" : ""}`} aria-current={pathname === t.href ? "page" : undefined}>{t.label}</Link>)}</nav>;
-}
 
 function Saved({ show, text }: { show: boolean; text: string }) {
   return show ? <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Tersimpan</strong><span>{text}</span></span></div> : null;
@@ -35,7 +22,6 @@ export function GeneralSettings() {
   const [saved, setSaved] = useState(false);
   return <div className="page-enter">
     <PageHeading title="Pengaturan" subtitle={`Ruang kerja ${WORKSPACE.name}`} />
-    <SettingsTabs />
     <form className="card form-card" onSubmit={e => { e.preventDefault(); setSaved(true); }}>
       <Saved show={saved} text="Periode dan jam kerja default dipakai untuk anggota baru." />
       <div className="form-grid">
@@ -57,7 +43,6 @@ export function RecommendationSettings() {
   const w = PRESETS[draft.preset].weights;
   return <div className="page-enter">
     <PageHeading title="Aturan rekomendasi" subtitle="Preset bobot dan syarat wajib kandidat. Bobot bukan angka universal: dikalibrasi dari data override di pilot." />
-    <SettingsTabs />
     <Saved show={saved} text="Rekomendasi berikutnya memakai aturan ini." />
     <div className="split-detail">
       <section className="card">
@@ -102,7 +87,6 @@ export function MemberSettings() {
   const [error, setError] = useState("");
   return <div className="page-enter">
     <PageHeading title="Anggota & peran" subtitle="Atur siapa yang bisa menugaskan dan siapa yang hanya menerima penugasan." actions={<button className="button primary" onClick={() => setInviting(true)}><Icon icon={UserPlus} />Undang anggota</button>} />
-    <SettingsTabs />
     <section className="card">
       <div className="table-scroll stack-table"><table>
         <thead><tr><th>Nama</th><th>Email</th><th>Peran akses</th><th>Status</th></tr></thead>
@@ -135,7 +119,6 @@ export function Billing() {
   const seats = members.length + 1;
   return <div className="page-enter">
     <PageHeading title="Tagihan" subtitle="Paket, jumlah kursi, dan riwayat invoice ruang kerja." />
-    <SettingsTabs />
     <div className="metrics-grid three">
       <MetricCard icon={UserPlus} label="Kursi terpakai" value={String(seats)} unit="pengguna" note={`Admin + ${members.length} anggota`} />
       <MetricCard icon={ReceiptText} label="Paket" value="Belum dipilih" note="Pilihan paket menyusul rancangan bisnis" />

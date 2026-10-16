@@ -3,6 +3,7 @@
 import { GitCompareArrows, ShieldAlert, Timer, UserCheck, Users } from "lucide-react";
 import { MetricCard, PageHeading, SectionTitle } from "@/components/app/parts";
 import { Badge, Icon } from "@/components/ui";
+import { FluidArt } from "@/components/ui/fluid-art";
 import { BASELINE_MINUTES } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
 import { decisionStats } from "@/lib/engine/metrics";
@@ -20,7 +21,7 @@ export function Report() {
   const max = Math.max(tb, ...ordered.map(d => d.decisionMs)) * 1.1;
   return <div className="page-enter">
     <PageHeading title="Laporan dampak" subtitle="Mengukur dampak pilot dengan membandingkan proses manual (baseline) dan proses berbantuan Pantara." />
-    <section className="highlight-card" aria-label="Efisiensi waktu keputusan">
+    <section className="highlight-card" aria-label="Efisiensi waktu keputusan"><FluidArt className="highlight-art" style="streak" seed={11} w={720} h={360} />
       <div className="highlight-top"><span>Efisiensi waktu keputusan</span><Badge tone="warn">{s.n < 10 ? `Belum cukup data (${s.n} keputusan, minimal 10)` : `${s.n} keputusan`}</Badge></div>
       <div className="highlight-row">
         <div><h2>(Tb − Tp) / Tb × 100%</h2><p>Tb {BASELINE_MINUTES} menit dari observasi manual sebelum pilot [asumsi data contoh] · Tp rata-rata {minutes(s.avgMs)} tercatat otomatis</p></div>
