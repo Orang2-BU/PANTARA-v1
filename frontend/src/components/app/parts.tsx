@@ -24,7 +24,7 @@ export function MetricCard({ icon, label, value, unit, note, tone, href }: { ico
     <div className="metric-bottom"><div className="metric-value">{value}{unit && <span>{unit}</span>}</div></div>
     <div className={`metric-delta ${tone ? `${tone}-text` : ""}`}>{note}</div>
   </>;
-  return href ? <Link href={href} className="card metric-card">{body}</Link> : <section className="card metric-card">{body}</section>;
+  return href ? <Link href={href} className="card metric-card mesh">{body}</Link> : <section className="card metric-card mesh">{body}</section>;
 }
 
 function Avatar({ member, large = false }: { member: Pick<Member, "initials" | "availableHours">; large?: boolean }) {

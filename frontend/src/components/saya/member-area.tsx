@@ -1,5 +1,6 @@
 "use client";
 
+import { DatePicker } from "@/components/ui/date-picker";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
@@ -78,7 +79,7 @@ export function MyAvailability() {
         <label className="field"><span className="field-label">Jam tersedia periode ini</span><input className="input" type="number" value={available} onChange={e => { setAvailable(e.target.value); setSaved(false); setError(""); }} /><span className="field-hint">Jam yang bisa dipakai untuk tugas proyek.</span></label>
         <label className="field"><span className="field-label">Batas kerja mingguan</span><input className="input" type="number" value={limit} onChange={e => { setLimit(e.target.value); setSaved(false); setError(""); }} /><span className="field-hint">Rekomendasi tidak akan melewati batas ini.</span></label>
         <div className="field full"><span className="field-label">Tanggal cuti</span>
-          <div className="toolbar"><input className="input" type="date" min={PERIOD.start} value={newLeave} onChange={e => setNewLeave(e.target.value)} aria-label="Tambah tanggal cuti" /><button type="button" className="button secondary" disabled={!newLeave} onClick={() => { setLeave(l => [...new Set([...l, newLeave])].sort()); setNewLeave(""); setSaved(false); }}>Tambah cuti</button></div>
+          <div className="toolbar"><DatePicker min={PERIOD.start} value={newLeave} onChange={setNewLeave} aria-label="Tambah tanggal cuti" /><button type="button" className="button secondary" disabled={!newLeave} onClick={() => { setLeave(l => [...new Set([...l, newLeave])].sort()); setNewLeave(""); setSaved(false); }}>Tambah cuti</button></div>
           <div className="chips">{leave.length ? leave.map(d => <button key={d} type="button" className="chip" onClick={() => setLeave(l => l.filter(x => x !== d))} aria-label={`Hapus cuti ${shortDate(d)}`}>{shortDate(d)} <Icon icon={X} size={12} /></button>) : <span className="chip">Tidak ada cuti</span>}</div>
         </div>
       </div>

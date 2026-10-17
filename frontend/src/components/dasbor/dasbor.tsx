@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ClipboardList, Hourglass, Inbox, Plus, UserCheck } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ChevronLeft, ChevronRight, ClipboardList, Hourglass, Inbox, Plus, UserCheck } from "lucide-react";
 import { CapacityBar, DataBadge, MetricCard, PageHeading, Person, PriorityBadge, SectionTitle } from "@/components/app/parts";
 import { Icon } from "@/components/ui";
 import { FluidArt } from "@/components/ui/fluid-art";
@@ -9,9 +10,42 @@ import { PERIOD, NOW } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
 import { allocatedHours, nearbyDeadlines } from "@/lib/engine/score";
 import { dayDate, hours, number, percent, shortDate } from "@/lib/format";
+import { fitRows, paginate } from "@/lib/paginate";
+
+const FALLBACK_ROWS = 4;
+
+/**
+ * Jumlah baris yang muat di area tabel (kartu setinggi kolom kanan, ukuran baris tetap). Layar sempit: FALLBACK_ROWS.
+ * Bila semua baris muat tanpa pager, hasilnya `total` supaya pager tidak muncul.
+ */
+function useFitRows(total: number) {
+  const area = useRef<HTMLDivElement>(null);
+  const pagerH = useRef(72);
+  const [rows, setRows] = useState(FALLBACK_ROWS);
+  useEffect(() => {
+    const el = area.current;
+    if (!el) return;
+    const measure = () => {
+      const row = el.querySelector("tbody tr")?.getBoundingClientRect().height;
+      const head = el.querySelector("thead")?.getBoundingClientRect().height ?? 0;
+      const pager = el.parentElement?.querySelector(".pager")?.getBoundingClientRect().height;
+      if (pager) pagerH.current = pager;
+      if (!row || !matchMedia("(min-width: 1200px)").matches) return setRows(FALLBACK_ROWS);
+      setRows(fitRows(el.clientHeight + (pager ? pagerH.current : 0) - head, row, pagerH.current, total));
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    if (el.parentElement) ro.observe(el.parentElement);
+    return () => ro.disconnect();
+  }, [total]);
+  return [area, rows] as const;
+}
 
 export function Dasbor() {
   const { tasks, members, names } = useDemo();
+  const [page, setPage] = useState(0);
+  const [area, size] = useFitRows(members.length);
+  const view = paginate(members, page, size);
   const open = tasks.filter(t => t.status === "belum").sort((a, b) => (a.priority === "tinggi" ? -1 : 0) - (b.priority === "tinggi" ? -1 : 0) || a.dueDate.localeCompare(b.dueDate));
   const complete = members.filter(m => m.availableHours !== null);
   const notes = [
@@ -35,20 +69,28 @@ export function Dasbor() {
       <MetricCard icon={Inbox} label="Menunggu jawaban anggota" value={String(waiting)} unit="penugasan" note={rejected ? `${rejected} ditolak anggota, perlu ditugaskan ulang` : "Belum ada penugasan yang ditolak"} tone={rejected ? "warn" : undefined} href={rejected ? "/tugas?status=belum" : "/tugas?status=menunggu"} />
     </div>
     <div className="split-main">
-      <section className="card">
+      <section className="card capacity-card">
         <SectionTitle title="Kapasitas anggota" subtitle={`Alokasi waktu semua anggota di semua proyek, periode ${PERIOD.label}. Jam kerja, bukan ukuran produktivitas.`} action={<Link className="text-link" href="/kapasitas">Lihat semua<Icon icon={ArrowRight} size={14} /></Link>} />
         <div className="team-total" aria-label="Total kapasitas semua anggota">
           <div><span>Total semua anggota</span><strong>{percent(teamAllocated / teamCapacity, 1)}</strong><span>teralokasi, dari {number(complete.length)} anggota dengan data lengkap</span></div>
           <CapacityBar allocated={teamAllocated} available={teamCapacity} />
         </div>
-        <div className="table-scroll stack-table"><table>
+        <div ref={area} className="table-scroll stack-table"><table>
           <thead><tr><th>Anggota</th><th>Kapasitas teralokasi</th><th className="numeric">Data</th></tr></thead>
-          <tbody>{members.map(m => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
+          <tbody>{view.rows.map(m => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
             <td><Link href={`/tim/${m.id}`}><Person member={m} /></Link></td>
             <td data-label="Kapasitas"><CapacityBar allocated={allocatedHours(m.id, tasks)} available={m.availableHours} /></td>
             <td data-label="Data" className="numeric"><DataBadge complete={m.availableHours !== null} /></td>
           </tr>)}</tbody>
         </table></div>
+        {view.pages > 1 && <div className="pager">
+          <span aria-live="polite">Menampilkan {view.from}-{view.to} dari {view.total} anggota</span>
+          <div className="pager-actions" role="group" aria-label="Halaman tabel anggota">
+            <button type="button" className="button secondary" disabled={!view.hasPrev} onClick={() => setPage(view.page - 1)}><Icon icon={ChevronLeft} size={16} />Sebelumnya</button>
+            <span className="small muted">{view.page + 1} / {view.pages}</span>
+            <button type="button" className="button secondary" disabled={!view.hasNext} onClick={() => setPage(view.page + 1)}>Berikutnya<Icon icon={ChevronRight} size={16} /></button>
+          </div>
+        </div>}
       </section>
       <div className="stack">
         {next ? <section className="highlight-card" aria-label="Penugasan berikutnya"><FluidArt className="highlight-art" style="streak" seed={3} w={720} h={360} />
@@ -61,14 +103,14 @@ export function Dasbor() {
           <p>Kebutuhan: {(next.dna?.requirements ?? []).map(r => names[r.competencyId]).join(", ") || "belum dianalisis"}.</p>
           <Link className="button inverse" href={next.dna?.confirmed ? `/tugas/${next.id}/kandidat` : `/tugas/${next.id}/dna`}>Tinjau kandidat<span className="button-circle"><Icon icon={ArrowUpRight} size={16} /></span></Link>
         </section> : <section className="card"><SectionTitle title="Semua tugas sudah ditugaskan" subtitle="Tidak ada keputusan yang menunggu." /></section>}
-        {open.length > 1 && <section className="card">
+        {open.length > 1 && <section className="card mesh mesh-1">
           <SectionTitle title="Antrean berikutnya" />
           {open.slice(1).map(t => <div key={t.id} className="dna-row">
             <div><h4>{t.title}</h4><p className="with-icon"><Icon icon={Hourglass} size={12} />{shortDate(t.dueDate)} · {hours(t.dna?.effortHours ?? t.remainingHours)}</p></div>
             <Link className="row-link" href={`/tugas/${t.id}/kandidat`}>Tinjau kandidat</Link>
           </div>)}
         </section>}
-        <section className="card" id="catatan">
+        <section className="card mesh mesh-2" id="catatan">
           <SectionTitle title="Catatan untuk ditinjau" />
           {notes.length ? notes.map(n => <div key={n.id} className="dna-row">
             <div><h4>{n.name}</h4><p>{n.text}</p></div>

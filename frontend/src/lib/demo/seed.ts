@@ -80,6 +80,30 @@ export const MEMBERS: Member[] = [
     ],
     prefers: ["qa", "e2e"], avoids: [],
   },
+  {
+    id: "fajar", name: "Fajar Hidayat", initials: "FH", role: "Insinyur DevOps", email: "fajar@positifprofesional.id",
+    availableHours: 32, leaveDates: [], weeklyLimit: 36, access: "anggota",
+    competencies: [{ id: "devops", level: 3, source: "verifikasi" }, { id: "sql", level: 1, source: "klaim" }],
+    prefers: ["devops"], avoids: ["uiux"],
+  },
+  {
+    id: "gita", name: "Gita Larasati", initials: "GL", role: "Penulis teknis", email: "gita@positifprofesional.id",
+    availableHours: 32, leaveDates: [], weeklyLimit: 32, access: "anggota",
+    competencies: [{ id: "technical-writing", level: 3, source: "verifikasi" }, { id: "design-system", level: 1, source: "klaim" }],
+    prefers: ["technical-writing"], avoids: [],
+  },
+  {
+    id: "hana", name: "Hana Kurniawati", initials: "HK", role: "Desainer antarmuka", email: "hana@positifprofesional.id",
+    availableHours: 32, leaveDates: [], weeklyLimit: 32, access: "anggota",
+    competencies: [{ id: "uiux", level: 2, source: "riwayat" }, { id: "design-system", level: 2, source: "klaim" }],
+    prefers: ["uiux"], avoids: ["devops"],
+  },
+  {
+    id: "irfan", name: "Irfan Maulana", initials: "IM", role: "Analis sistem", email: "irfan@positifprofesional.id",
+    availableHours: 32, leaveDates: [], weeklyLimit: 36, access: "anggota",
+    competencies: [{ id: "technical-writing", level: 2, source: "verifikasi" }, { id: "arsitektur-data", level: 1, source: "klaim" }],
+    prefers: ["technical-writing"], avoids: [],
+  },
 ];
 
 export const PROJECTS: Project[] = [
@@ -134,7 +158,7 @@ export const TASKS: Task[] = [
       dependencies: [], model: "llm-kecil@2026-09", prompt: "taskdna-v1", confirmed: true,
     },
   },
-  // Berjalan & selesai di periode aktif (membentuk 110 jam teralokasi)
+  // Berjalan & selesai di periode aktif (membentuk 110 jam teralokasi enam anggota prototipe + 68 jam anggota tambahan)
   { id: "TGS-0131", projectId: "internal", title: "Refaktor modul kapasitas mingguan", description: "Pisahkan perhitungan kapasitas mingguan dari modul laporan dan pindahkan ke skema data tersendiri.", dueDate: "2026-09-30", priority: "tinggi", status: "berjalan", assignments: [{ memberId: "ayu", hours: 16 }], remainingHours: 12, createdAt: "2026-09-24T10:00:00+07:00", competencyIds: ["arsitektur-data", "sql"] },
   { id: "TGS-0137", projectId: "klinik", title: "Migrasi skema antrean ke PostgreSQL 16", description: "Pindahkan tabel antrean dan sesi pengguna ke PostgreSQL 16 dengan skrip migrasi yang bisa diulang.", dueDate: "2026-10-01", priority: "normal", status: "berjalan", assignments: [{ memberId: "ayu", hours: 12 }], remainingHours: 7, createdAt: "2026-09-25T09:30:00+07:00", competencyIds: ["sql", "backend-api"] },
   { id: "TGS-0135", projectId: "koperasi", title: "Integrasi webhook notifikasi WhatsApp", description: "Kirim notifikasi jatuh tempo angsuran lewat webhook penyedia WhatsApp Business.", dueDate: "2026-10-02", priority: "normal", status: "berjalan", assignments: [{ memberId: "bima", hours: 8 }], remainingHours: 5, createdAt: "2026-09-25T13:00:00+07:00", competencyIds: ["integrasi-api", "backend-api"] },
@@ -145,6 +169,11 @@ export const TASKS: Task[] = [
   { id: "TGS-0129", projectId: "koperasi", title: "Indeks pencarian riwayat transaksi", description: "Tambahkan indeks pencarian riwayat transaksi anggota koperasi.", dueDate: "2026-09-29", priority: "normal", status: "selesai", assignments: [{ memberId: "dimas", hours: 8 }], remainingHours: 0, createdAt: "2026-09-22T10:00:00+07:00", competencyIds: ["sql"] },
   { id: "TGS-0134", projectId: "koperasi", title: "Desain sistem komponen form adaptif", description: "Rancang komponen form yang menyesuaikan jenis pinjaman dan token desain koperasi.", dueDate: "2026-10-01", priority: "normal", status: "berjalan", assignments: [{ memberId: "nadia", hours: 16 }], remainingHours: 10, createdAt: "2026-09-24T09:00:00+07:00", competencyIds: ["design-system", "uiux"] },
   { id: "TGS-0130", projectId: "klinik", title: "Ilustrasi keadaan kosong antrean", description: "Buat ilustrasi dan teks untuk keadaan antrean kosong.", dueDate: "2026-09-29", priority: "rendah", status: "selesai", assignments: [{ memberId: "nadia", hours: 8 }], remainingHours: 0, createdAt: "2026-09-23T09:00:00+07:00", competencyIds: ["uiux"] },
+  { id: "TGS-0136", projectId: "internal", title: "Penyiapan pipeline CI/CD lingkungan staging", description: "Siapkan pipeline build, uji, dan deploy otomatis ke lingkungan staging.", dueDate: "2026-10-02", priority: "normal", status: "berjalan", assignments: [{ memberId: "fajar", hours: 20 }], remainingHours: 11, createdAt: "2026-09-24T11:00:00+07:00", competencyIds: ["devops"] },
+  { id: "TGS-0132", projectId: "klinik", title: "Panduan integrasi API untuk mitra klinik", description: "Tulis panduan langkah demi langkah integrasi API antrean untuk mitra klinik.", dueDate: "2026-10-01", priority: "normal", status: "berjalan", assignments: [{ memberId: "gita", hours: 12 }], remainingHours: 7, createdAt: "2026-09-24T13:00:00+07:00", competencyIds: ["technical-writing"] },
+  { id: "TGS-0127", projectId: "internal", title: "Glosarium istilah penugasan", description: "Susun glosarium istilah penugasan untuk dokumentasi internal.", dueDate: "2026-09-28", priority: "rendah", status: "selesai", assignments: [{ memberId: "gita", hours: 4 }], remainingHours: 0, createdAt: "2026-09-21T10:00:00+07:00", competencyIds: ["technical-writing"] },
+  { id: "TGS-0138", projectId: "klinik", title: "Revisi antarmuka halaman jadwal dokter", description: "Revisi tata letak dan hierarki visual halaman jadwal dokter berdasarkan masukan klinik.", dueDate: "2026-10-02", priority: "normal", status: "berjalan", assignments: [{ memberId: "hana", hours: 24 }], remainingHours: 13, createdAt: "2026-09-25T10:00:00+07:00", competencyIds: ["uiux", "design-system"] },
+  { id: "TGS-0140", projectId: "koperasi", title: "Analisis kebutuhan laporan simpan pinjam", description: "Petakan kebutuhan laporan bulanan simpan pinjam bersama pengurus koperasi.", dueDate: "2026-10-02", priority: "normal", status: "berjalan", assignments: [{ memberId: "irfan", hours: 8 }], remainingHours: 5, createdAt: "2026-09-28T09:30:00+07:00", competencyIds: ["technical-writing", "arsitektur-data"] },
   // Riwayat sebelum periode aktif (untuk faktor R), tidak memakan kapasitas minggu ini
   { id: "TGS-0118", projectId: "koperasi", title: "Login anggota koperasi dengan OTP", description: "Login OTP lewat SMS untuk anggota koperasi.", dueDate: "2026-09-18", priority: "tinggi", status: "selesai", assignments: [{ memberId: "bima", hours: 0 }], remainingHours: 0, createdAt: "2026-09-10T09:00:00+07:00", competencyIds: ["oauth2", "backend-api"] },
   { id: "TGS-0112", projectId: "internal", title: "API rekap kapasitas tim", description: "Endpoint rekap kapasitas per periode.", dueDate: "2026-09-11", priority: "normal", status: "selesai", assignments: [{ memberId: "ayu", hours: 0 }], remainingHours: 0, createdAt: "2026-09-04T09:00:00+07:00", competencyIds: ["backend-api", "sql"] },

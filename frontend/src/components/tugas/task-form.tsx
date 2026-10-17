@@ -1,5 +1,6 @@
 "use client";
 
+import { DatePicker } from "@/components/ui/date-picker";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Save, Sparkles } from "lucide-react";
@@ -65,7 +66,7 @@ export function TaskForm() {
           <select className="select" value={form.projectId} onChange={e => set("projectId", e.target.value)}>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
         </label>
         <label className="field"><span className="field-label">Tenggat</span>
-          <input className="input" type="date" min={TODAY} value={form.dueDate} onChange={e => set("dueDate", e.target.value)} {...field("dueDate")} />
+          <DatePicker min={TODAY} value={form.dueDate} onChange={v => set("dueDate", v)} {...field("dueDate")} />
           {errors.dueDate && <span id="dueDate-error" className="field-error">{errors.dueDate}</span>}
         </label>
         <fieldset className="field full"><legend className="field-label">Prioritas</legend>

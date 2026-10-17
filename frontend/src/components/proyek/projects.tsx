@@ -1,5 +1,6 @@
 "use client";
 
+import { DatePicker } from "@/components/ui/date-picker";
 import Link from "next/link";
 import { use, useState } from "react";
 import { ArrowRight, CircleAlert, FolderPlus } from "lucide-react";
@@ -39,7 +40,7 @@ function AddProject({ onClose, onSave }: { onClose: () => void; onSave: (name: s
       <div className="form-grid">
         <label className="field full"><span className="field-label">Nama proyek</span><input className="input" value={name} onChange={e => { setName(e.target.value); setError(""); }} placeholder="Aplikasi reservasi Homestay Ijen" /></label>
         <label className="field"><span className="field-label">Klien</span><input className="input" value={client} onChange={e => setClient(e.target.value)} placeholder="CV Kawah Biru Banyuwangi" /></label>
-        <label className="field"><span className="field-label">Tenggat</span><input className="input" type="date" value={due} onChange={e => { setDue(e.target.value); setError(""); }} /></label>
+        <label className="field"><span className="field-label">Tenggat</span><DatePicker value={due} onChange={v => { setDue(v); setError(""); }} /></label>
       </div>
       {error && <p className="field-error spaced" role="alert">{error}</p>}
       <div className="dialog-actions"><button type="button" className="button secondary" onClick={onClose}>Batal</button><button type="submit" className="button primary">Buat proyek</button></div>

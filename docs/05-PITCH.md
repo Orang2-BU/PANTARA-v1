@@ -59,7 +59,7 @@ Ide 3 kalimat, angka kunci, dan kamus istilah ada di 01-PRD §3b. Tambahan khusu
 | Angka | Nilai | Sumber | Cara menghitung (kalau ditanya) |
 |---|---|---|---|
 | Sektor infokom Indonesia 2024 | tumbuh 7,57%, kontribusi 4,34% PDB | BPS 2025 (proposal) | Dikutip dari proposal §1.1 |
-| Data demo | 6 anggota, kapasitas 160 jam, teralokasi 110 jam (68,7%) | seed demo | Σ jam teralokasi ÷ Σ jam tersedia anggota dengan data lengkap |
+| Data demo | 6 anggota prototipe: kapasitas 160 jam, teralokasi 110 jam (68,7%). Seed kini 10 anggota (4 tambahan dengan 68 jam teralokasi), sehingga total Dasbor 178 / 288 jam (61,8%) | seed demo | Σ jam teralokasi ÷ Σ jam tersedia anggota dengan data lengkap |
 
 | Istilah | Artinya |
 |---|---|

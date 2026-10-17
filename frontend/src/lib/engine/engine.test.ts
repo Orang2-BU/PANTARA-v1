@@ -10,8 +10,9 @@ const auth = TASKS.find(t => t.id === "TGS-0142") as Task;
 const authCorrected: Task = { ...auth, dna: { ...auth.dna!, effortHours: 8, confirmed: true } };
 
 describe("seed", () => {
-  it("jam teralokasi sama dengan prototipe proposal (110 dari 160 jam)", () => {
-    const perMember = MEMBERS.map(m => allocatedHours(m.id, TASKS));
+  it("jam teralokasi enam anggota prototipe sama dengan proposal (110 dari 160 jam); anggota tambahan punya alokasi sendiri", () => {
+    const perMember = MEMBERS.slice(0, 6).map(m => allocatedHours(m.id, TASKS));
+    expect(MEMBERS.slice(6).map(m => allocatedHours(m.id, TASKS))).toEqual([20, 16, 24, 8]);
     expect(perMember).toEqual([28, 16, 20, 22, 24, 0]);
     expect(perMember.reduce((a, b) => a + b)).toBe(110);
   });

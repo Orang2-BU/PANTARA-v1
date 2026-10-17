@@ -20,6 +20,7 @@ import {
   SlidersHorizontal,
   Library,
   Network,
+  Waypoints,
   UserCheck,
   ReceiptText,
   UserCog,
@@ -55,6 +56,7 @@ const PAGE_MAP = {
   "/tugas/alokasi-batch": { id: "P17", label: "Alokasi batch", group: "Perencanaan", icon: Layers, description: "Membagi banyak tugas yang belum ditugaskan sekaligus dengan OR-Tools." },
   "/tim": { id: "P18", label: "Tim", group: "Ruang kerja", icon: Users, description: "Mengelola profil kerja (Work Twin), kompetensi, dan kelengkapan data anggota." },
   "/tim/keahlian": { id: "P40", label: "Peta keahlian", group: "Tim", icon: Network, description: "Melihat siapa menguasai apa untuk semua anggota, termasuk kompetensi rawan." },
+  "/tim/graf": { id: "P41", label: "Graf relasi", group: "Tim", icon: Waypoints, description: "Melihat hubungan anggota, kompetensi, tugas, dan proyek dalam bentuk graf." },
   "/tim/kompetensi": { id: "P30", label: "Katalog kompetensi", group: "Tim", icon: Library, description: "Mengelola daftar kompetensi ruang kerja yang dipakai Task DNA dan Work Twin." },
   "/tim/[id]": { id: "P19", label: "Profil kerja anggota", group: "Tim", icon: UserRound, description: "Memahami kapasitas, ketersediaan, dan kompetensi satu anggota." },
   "/proyek": { id: "P20", label: "Proyek", group: "Perencanaan", icon: FolderKanban, description: "Mengelompokkan tugas per proyek atau klien." },
@@ -97,6 +99,7 @@ export const SUBNAV: Partial<Record<PageRoute, { href: PageRoute; label: string;
   "/tim": [
     { href: "/tim", label: "Anggota", icon: IdCard },
     { href: "/tim/keahlian", label: "Peta keahlian", icon: Network },
+    { href: "/tim/graf", label: "Graf relasi", icon: Waypoints },
     { href: "/tim/kompetensi", label: "Kompetensi", icon: Library },
   ],
   "/pengaturan": [

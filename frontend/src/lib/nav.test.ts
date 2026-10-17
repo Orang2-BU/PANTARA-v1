@@ -28,6 +28,7 @@ describe("matchPage", () => {
     expect(matchPage("/tugas/baru")?.id).toBe("P12");
     expect(matchPage("/tim/kompetensi")?.id).toBe("P30");
     expect(matchPage("/tim/keahlian")?.id).toBe("P40");
+    expect(matchPage("/tim/graf")?.id).toBe("P41");
   });
 
   it("mengembalikan undefined untuk rute yang tidak ada", () => {

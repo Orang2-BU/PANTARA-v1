@@ -18,10 +18,11 @@
   --color-status-ok: #146c34;
   --color-status-ok-soft: #e8f5ec;
   --color-status-warn: #94580a;
+  --color-status-warn-fill: #eab308;
   --color-status-warn-soft: #fdf4dc;
   --color-status-crit: #b91c1c;
   --color-status-crit-soft: #fce9e9;
-  --color-focus: #1d4ed8;
+  --color-focus: #0b5f58;
   --font-display: "Onest";
   --font-title: "Onest";
   --font-metric: "Onest";

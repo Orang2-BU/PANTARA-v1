@@ -158,3 +158,7 @@
 | 2026-10-17 | Sidebar ciut: sub-halaman tampil sebagai rel mini dengan bulatan ikon (aktif bercincin teal) |
 | 2026-10-17 | Ikon sub-menu disesuaikan isi: Anggota IdCard, Peta keahlian Network, Kompetensi Library (bukan label harga), Umum Building2 |
 | 2026-10-17 | Checkbox di seluruh aplikasi jadi bulat (tercentang teal + centang putih) |
+| 2026-10-17 | P41 Graf relasi di Tim (node-link gaya Obsidian, fisika sendiri, 11 test engine); galat hidrasi karena cos/sin diperbaiki dengan pembulatan |
+| 2026-10-17 | Dasbor: tabel Kapasitas anggota: jumlah baris dihitung dari sisa tinggi kartu (`useFitRows`, `fitRows` di `lib/paginate.ts`, 8 test), ukuran baris tetap; pager hanya muncul bila data lebih dari satu halaman |
+| 2026-10-17 | Seed: +4 anggota (Fajar, Gita, Hana, Irfan; keahlian di luar tugas demo) dengan 5 tugas berjalan/selesai (68 jam) agar tabel Dasbor terisi dan bar kapasitas nyata; Top 3 dan skenario alur inti tidak berubah, total Dasbor jadi 178 / 288 jam (61,8%); test seed dipersempit ke 6 anggota prototipe |
+| 2026-10-17 | Kaca di seluruh aplikasi: latar bergradasi, card/kontrol/toggle/dropdown (base-select, Chromium) kaca, topbar full-bleed, sidebar menyatu, card mesh (kandidat, ringkasan Dasbor), bar kapasitas kuning (`status-warn-fill`), fokus teal, DatePicker kalender kaca (`lib/calendar.ts` + 5 test) menggantikan input tanggal bawaan |

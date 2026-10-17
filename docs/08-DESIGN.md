@@ -22,10 +22,11 @@ colors:
   status-ok: "#146C34"
   status-ok-soft: "#E8F5EC"
   status-warn: "#94580A"
+  status-warn-fill: "#EAB308"
   status-warn-soft: "#FDF4DC"
   status-crit: "#B91C1C"
   status-crit-soft: "#FCE9E9"
-  focus: "#1D4ED8"
+  focus: "#0B5F58"
 typography:
   display:
     fontFamily: "Onest"
@@ -154,6 +155,9 @@ components:
     textColor: "{colors.status-warn}"
     typography: "{typography.label}"
     rounded: "{rounded.full}"
+  capacity-bar-warn:
+    backgroundColor: "{colors.status-warn-fill}"
+    rounded: "{rounded.full}"
   badge-crit:
     backgroundColor: "{colors.status-crit-soft}"
     textColor: "{colors.status-crit}"
@@ -239,9 +243,9 @@ Satu hue merek (teal 175°) di atas netral hangat; status memakai hijau/kuning/m
 | `on-surface` / `on-surface-muted` | #141414 / #6B6B68 | Teks utama / pendukung | muted 4,52:1 di panel |
 | `border` | #E2E2DF | Garis baris, divider | - |
 | `status-ok/warn/crit` (+ `-soft`) | #146C34 / #94580A / #B91C1C | Aman / perhatian / konflik. Selalu teks + warna | ≥ 5,2:1 di latar soft |
-| `focus` | #1D4ED8 | Ring fokus 2px offset 2px | - |
+| `focus` | #0B5F58 | Ring fokus 2px offset 2px | - |
 
-- Warna masuk lewat data: utilisasi (aman < 85% `status-ok`, 85-99% `status-warn`, ≥ 100% `status-crit`), skor kandidat, konflik. Tombol sekunder dan ikon dekoratif tetap netral.
+- Warna masuk lewat data: utilisasi (aman < 85% `accent-fill`, 85-99% `status-warn-fill`, ≥ 100% `status-crit`), skor kandidat, konflik. Tombol sekunder dan ikon dekoratif tetap netral.
 - Teal tidak pernah berarti "berhasil" atau "aman"; itu tugas `status-ok`.
 
 ### Area Aplikasi
@@ -344,9 +348,10 @@ Tanpa bayangan untuk kartu; kedalaman dari lapisan `canvas` → `surface-muted` 
 ### Area Aplikasi
 - **Kartu metrik:** ikon dalam lingkaran 36px + label; angka `metric`; keterangan satu baris. Tanpa sparkline di M0 (belum ada data tren).
 - **Folder proyek (P20):** grid kartu folder kaca (`GlassFolder`, lebar 320px, `auto-fill minmax(320px)`). Panel belakang motif cair dari palet token (`surface` → `accent-soft` → `accent-fill` → `primary` → `surface-inverse`), panel depan kaca buram `surface`; label = nama proyek + "n tugas terbuka · tenggat". Hover/fokus: kaca condong; klik/Enter: lembar tugas terbuka mengipas (maks 4, tiap lembar tautan ke tugas). Tombol ⋯ membuka menu kaca (keyboard: panah, Home/End, Escape). Di bawah folder: klien + "Detail proyek". Animasi mati saat reduced-motion. Motif adalah identitas proyek, bukan hiasan foto (A-standar).
+- **Graf relasi (P41):** graf node-link gaya Obsidian di kartu: SVG responsif, latar `canvas`. Bentuk node per jenis (bukan hanya warna): anggota lingkaran `primary` 13px, kompetensi belah ketupat `accent-fill`, tugas lingkaran kecil `on-surface-muted`, proyek kotak `surface-inverse`; garis `border`, garis anggota-kompetensi lebih tebal menurut level, garis ke node terfokus `primary`. Fisika hidup (tolak, pegas, redam) yang bisa diseret; hover/fokus meredupkan node non-tetangga; klik/Enter memilih node dan panel kanan 300px mendaftar hubungannya (tombol yang bisa dipilih, setara teks untuk pembaca layar). Filter jenis node = tombol `aria-pressed`. Mobile: graf 640px dalam wadah geser, label 14px, node `touch-action: none`. Reduced-motion: layout statis hasil `settle`.
 - **Peta keahlian (P40):** kartu "Kompetensi rawan" (grid item `canvas`, badge `warn` "Hanya {nama} ({level})" atau `crit` "Belum ada yang Mandiri") di atas matriks. Matriks dalam wadah geser horizontal (`position: relative` supaya teks `sr-only` ikut terpotong), kolom anggota menempel di kiri, header dua baris (kategori lalu kompetensi, ikon peringatan di depan nama kompetensi yang rawan, satu baris flex supaya tidak terpisah saat nama terbungkus). Sel level berurutan terang ke gelap dan selalu bertulisan: Dasar (`canvas` bergaris), Mandiri (`accent-soft`), Mahir (`primary`), kosong "-".
 - **Ringkasan total semua anggota (P10):** blok `canvas` di atas tabel per anggota: label "Total semua anggota", persen besar, keterangan jumlah anggota yang dihitung, lalu batang kapasitas total. Anggota tanpa data ketersediaan tidak ikut dihitung dan disebut di keterangan.
-- **Batang kapasitas:** track `surface-muted` 8px, isi `accent-fill`; ≥ 85% isi `status-warn`, ≥ 100% `status-crit` dan melewati track dengan penanda; teks "28 / 32 jam" tabular + "Sisa 4 jam". Selalu ada teks, bukan warna saja.
+- **Batang kapasitas:** track `surface-muted` 8px, isi `accent-fill`; ≥ 85% isi `status-warn-fill` (kuning; teksnya tetap `status-warn` agar kontras), ≥ 100% `status-crit` dan melewati track dengan penanda; teks "28 / 32 jam" tabular + "Sisa 4 jam". Selalu ada teks, bukan warna saja.
 - **Kartu kandidat (P14):** inisial + nama + peran; skor `metric` (0,00-1,00, dua desimal koma); 5 baris faktor (Kompetensi, Kapasitas setelah, Ketersediaan, Riwayat relevan, Risiko konflik) dengan batang kontribusi kecil (risiko ditampilkan sebagai pengurang); 2-3 kalimat alasan dari engine; aksi "Simulasikan". Kandidat #1 sebagai kartu sorotan gelap.
 - **Isian Task DNA (P13):** baris per isian; badge "Yakin" (`badge-ok`) atau "Perlu dicek" (`badge-warn`, baris berlatar `status-warn-soft`); kutipan kalimat sumber disorot di kolom kiri (diambil dari deskripsi, judul hanya cadangan); setiap isian ragu (kompetensi, estimasi, dependensi) punya aksi "Sudah benar" atau ditandai dicek saat nilainya diubah; konfirmasi ditolak dengan pesan bila masih ada yang belum dicek. Tombol hapus kompetensi: ikon 36px transparan, merah saat hover.
 - **Perbandingan sebelum → sesudah (P15):** dua batang bertumpuk per anggota (`bar-compare` sebelum, `bar-fill` sesudah) + angka "50% → 75%"; konflik sebagai daftar badge dengan penjelasan satu kalimat.

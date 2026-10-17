@@ -81,7 +81,7 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
         <Link className="button inverse" href={simHref(best.member.id)}>Lihat akibatnya sebelum menetapkan<span className="button-circle"><Icon icon={ArrowUpRight} size={16} /></span></Link>
       </section>
       <SectionTitle title={top.length === 1 ? "Satu kandidat lolos syarat" : `${top.length} kandidat teratas`} subtitle={candidates.length > top.length ? `Dari ${candidates.length} anggota yang lolos syarat wajib` : `Semua anggota yang lolos syarat wajib (${filtered.length} tersaring)`} />
-      <div className="candidate-grid">{top.map((c, i) => <section key={c.member.id} className="card candidate-card">
+      <div className="candidate-grid">{top.map((c, i) => <section key={c.member.id} className={`card candidate-card mesh mesh-${i}`}>
         <div className="score-row"><span className="rank-person"><span className="rank">{i + 1}</span><Person member={c.member} /></span><span className="score-value">{score(c.score)}</span></div>
         <div className="factor-bars">{FACTORS.map(f => <div key={f.key} className={`factor-bar ${f.minus ? "minus" : ""}`}><span>{f.label}</span><div><span style={{ width: `${c.factors[f.key] * 100}%` }} /></div><strong>{f.minus ? "−" : ""}{score(c.factors[f.key])}</strong></div>)}</div>
         <CapacityBar allocated={c.allocated} available={c.available} added={effort} />
