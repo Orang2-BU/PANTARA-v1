@@ -140,3 +140,36 @@ export function matchPage(pathname: string): PageInfo | undefined {
   matches.sort((a, b) => dynamicCount(a) - dynamicCount(b));
   return matches[0] ? PAGES[matches[0]] : undefined;
 }
+
+export type Crumb = { label: string; href?: string; entity?: { kind: "tugas" | "tim" | "proyek"; id: string } };
+
+/**
+ * Jejak breadcrumb dan induk halaman untuk URL nyata, mis. /tugas/baru → Ruang kerja / Tugas / Buat tugas (induk: Tugas).
+ * Halaman tingkat atas hanya "Ruang kerja / Halaman". Induk (`back`) kosong untuk halaman tingkat atas dan untuk tab sub-menu
+ * (Peta keahlian, Aturan rekomendasi, dan sejenisnya), karena sidebar sudah menunjukkan posisinya.
+ */
+export function trailOf(pathname: string): { trail: Crumb[]; back?: Crumb } {
+  const parts = pathname.split("/").filter(Boolean);
+  const page = matchPage(pathname);
+  const root: Crumb = { label: "Ruang kerja" };
+  const current: Crumb = { label: page?.label ?? "Halaman" };
+  const [first, second, third] = parts;
+  const parents: Crumb[] = [];
+  const section = (href: PageRoute) => ({ label: PAGES[href].label, href });
+  if (parts.length > 1) {
+    if (first === "tugas" && second !== "alokasi-batch") {
+      parents.push(section("/tugas"));
+      if (second !== "baru") {
+        parents.push({ label: second, href: `/tugas/${second}`, entity: { kind: "tugas", id: second } });
+        if (!third) current.label = "Detail tugas";
+      }
+    } else if (first === "tim") parents.push(section("/tim"));
+    else if (first === "proyek") parents.push(section("/proyek"));
+    else if (first === "saya") parents.push(section("/saya"));
+    else if (first === "pengaturan") parents.push(section("/pengaturan"));
+    if (first === "tim" && !["keahlian", "graf", "kompetensi"].includes(second)) current.entity = { kind: "tim", id: second };
+    if (first === "proyek") current.entity = { kind: "proyek", id: second };
+  }
+  const isTab = Object.values(SUBNAV).some(items => items.some(i => i.href === pathname));
+  return { trail: [root, ...parents, current], back: isTab ? undefined : parents[parents.length - 1] };
+}

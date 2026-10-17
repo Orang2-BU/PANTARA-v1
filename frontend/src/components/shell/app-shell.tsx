@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowUpRight, Bell, CalendarDays, ChevronDown, ChevronsLeft, ChevronsRight, CircleHelp, Menu, X } from "lucide-react";
-import { NAVIGATION, PAGES, SUBNAV, activeNav, activeSub, matchPage, type PageRoute } from "@/lib/nav";
+import { ArrowUpRight, Bell, CalendarDays, ChevronDown, ChevronLeft, ChevronsLeft, ChevronsRight, CircleHelp, Menu, X } from "lucide-react";
+import { NAVIGATION, PAGES, SUBNAV, activeNav, activeSub, trailOf, type PageRoute } from "@/lib/nav";
 import { Badge, Icon, Modal } from "@/components/ui";
 import { managerNotices } from "@/lib/demo/notifications";
 import { useDemo } from "@/lib/demo/store";
@@ -93,7 +93,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button className="avatar top-avatar" aria-label="Lihat profil" onClick={() => setPanel("profile")}>{DEMO_USER.initials}</button>
         </div>
       </header>
-      <main id="main-content" tabIndex={-1}>{children}</main>
+      <main id="main-content" tabIndex={-1}>
+        <Suspense fallback={null}><BackLink /></Suspense>
+        {children}
+      </main>
       <footer className="workspace-footer">
         <span>Pantara <span className="footer-divider">/</span> Orkestrasi kerja adaptif</span>
         <span>Diperbarui 09.15 WIB <span className="status-dot" /></span>
@@ -186,6 +189,22 @@ function NavBranch({ items, open, current, onNavigate }: { items: NonNullable<(t
 }
 
 function Breadcrumb() {
-  const page = matchPage(usePathname());
-  return <span className="breadcrumb">Ruang kerja<span>/</span><strong>{page?.label ?? "Halaman"}</strong></span>;
+  const { trail } = trailOf(usePathname());
+  const { memberById, projectById } = useDemo();
+  const label = (c: (typeof trail)[number]) => {
+    if (c.entity?.kind === "tim") return memberById(c.entity.id)?.name ?? c.label;
+    if (c.entity?.kind === "proyek") return projectById(c.entity.id)?.name ?? c.label;
+    return c.label;
+  };
+  return <nav className="breadcrumb" aria-label="Posisi halaman"><ol>{trail.map((c, i) => <li key={i}>
+    {i > 0 && <span aria-hidden="true">/</span>}
+    {i === trail.length - 1 ? <strong aria-current="page">{label(c)}</strong> : c.href ? <Link href={c.href}>{c.entity ? c.label : label(c)}</Link> : <span>{c.label}</span>}
+  </li>)}</ol></nav>;
+}
+
+/** Tombol kembali ke halaman induk (tidak tampil di halaman tingkat atas dan tab sub-menu). */
+function BackLink() {
+  const { back } = trailOf(usePathname());
+  if (!back?.href) return null;
+  return <Link href={back.href} className="back-link"><Icon icon={ChevronLeft} size={16} />Kembali ke {back.label}</Link>;
 }

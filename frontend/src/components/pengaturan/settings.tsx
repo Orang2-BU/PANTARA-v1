@@ -47,7 +47,7 @@ export function RecommendationSettings() {
     <div className="split-detail">
       <section className="card">
         <SectionTitle title="Preset bobot default" subtitle="S = w1·K + w2·C + w3·A + w4·R − w5·F" />
-        <div className="table-scroll stack-table"><table>
+        <div className="table-scroll stack-table preset-table"><table>
           <thead><tr><th>Preset</th><th>Kapan dipakai</th><th className="numeric">K</th><th className="numeric">C</th><th className="numeric">A</th><th className="numeric">R</th><th className="numeric">F</th></tr></thead>
           <tbody>{(Object.keys(PRESETS) as PresetId[]).map(p => <tr key={p} className={draft.preset === p ? "row-highlight" : ""}>
             <td><label className="with-icon"><input type="radio" name="preset" checked={draft.preset === p} onChange={() => { setDraft(d => ({ ...d, preset: p })); setSaved(false); }} /><strong>{PRESETS[p].label}</strong></label></td>

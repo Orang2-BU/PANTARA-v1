@@ -38,7 +38,18 @@ export function GlassFolder({ label, meta, seed, art, files, menu, width = 320 }
   const [open, setOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [entered, setEntered] = React.useState(false);
-  const k = width / W;
+  const [k, setK] = React.useState(width / W);
+
+  // Skala mengikuti lebar kolom (maksimal `width`), jadi folder mengecil di layar sempit.
+  React.useLayoutEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const fit = () => setK(Math.min(width, el.offsetWidth || width) / W);
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [width]);
 
   // Folder menyusun diri saat pertama kali terlihat.
   React.useEffect(() => {
@@ -106,12 +117,12 @@ export function GlassFolder({ label, meta, seed, art, files, menu, width = 320 }
   const start = Math.max(0, files.length - MAX_VISIBLE);
   const visible = files.slice(start);
 
-  return <div ref={rootRef} className="gf-root" data-open={open || undefined} data-entered={entered || undefined} style={{ width, height: (H + HEADROOM) * k }}>
+  return <div ref={rootRef} className="gf-root" data-open={open || undefined} data-entered={entered || undefined} style={{ width: "100%", maxWidth: width, height: (H + HEADROOM) * k }}>
     <div className="gf-stage" style={{ transform: `translateY(${HEADROOM * k}px) scale(${k})` }}>
       <div className="gf-tilt">
         <div className="gf-shadow" aria-hidden="true" />
         <div className="gf-back" style={{ clipPath: `path('${BACK_PATH}')` }} aria-hidden="true">
-          <FluidArt className="gf-art" style={art} seed={seed} w={W + 24} h={H + 24} scale={k} />
+          <FluidArt className="gf-art" style={art} seed={seed} w={W + 24} h={H + 24} scale={width / W} />
           <div className="gf-back-sheen" />
         </div>
         <svg className="gf-rim gf-back-rim" viewBox={`0 0 ${W} ${H}`} aria-hidden="true"><path d={BACK_PATH} /></svg>

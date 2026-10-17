@@ -20,9 +20,11 @@ export function Projects() {
       const own = tasks.filter(t => t.projectId === p.id && t.assignments.every(a => a.hours > 0));
       const open = own.filter(t => t.status !== "selesai").sort((a, b) => a.dueDate.localeCompare(b.dueDate));
       return <div key={p.id} className="project-folder">
-        <GlassFolder label={p.name} meta={`${open.length} tugas terbuka · tenggat ${shortDate(p.dueDate)}`} seed={i * 7 + 3} art={i % 2 ? "streak" : "marble"}
+        <div className="project-folder-art"><GlassFolder label={p.name} meta={`${open.length} tugas terbuka · tenggat ${shortDate(p.dueDate)}`} seed={i * 7 + 3} art={i % 2 ? "streak" : "marble"}
           files={open.map(t => ({ name: t.title, meta: shortDate(t.dueDate), href: `/tugas/${t.id}` }))}
           menu={[{ label: "Lihat detail proyek", href: `/proyek/${p.id}` }, { label: "Buat tugas", href: "/tugas/baru" }]} />
+          <Link className="project-folder-cover" href={`/proyek/${p.id}`} aria-hidden="true" tabIndex={-1} /></div>
+        <div className="project-folder-caption"><strong>{p.name}</strong><span>{open.length} tugas terbuka · tenggat {shortDate(p.dueDate)}</span></div>
         <div className="project-folder-info"><span>{p.client}</span><Link className="text-link" href={`/proyek/${p.id}`}>Detail proyek<Icon icon={ArrowRight} size={14} /></Link></div>
       </div>;
     })}</div>

@@ -44,7 +44,7 @@ export function Capacity() {
         </div>
         <span className="small muted">Periode {PERIOD.label} · mingguan</span>
       </div>
-      <div className="table-scroll stack-table"><table>
+      <div className="table-scroll stack-table capacity-table"><table>
         <thead><tr><th>Anggota</th><th className="numeric">Tersedia</th><th className="numeric">Teralokasi</th><th className="numeric">Sisa waktu</th><th>Visualisasi kapasitas</th><th className="numeric">Terisi</th><th>Status data</th><th className="numeric">Aksi</th></tr></thead>
         <tbody>{shown.map(({ m, allocated: a, util }) => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
           <td><Person member={m} /></td>
