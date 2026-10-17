@@ -17,7 +17,7 @@
 }
 :root { --ease: cubic-bezier(.22,1,.36,1); --spring: cubic-bezier(.34,1.36,.5,1); --sidebar-width: 264px; --shadow-overlay: 0 8px 24px rgb(20 20 20 / .08); }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scrollbar-color: var(--color-border) var(--color-canvas); scroll-padding-top: 109px; }
+html { scroll-behavior: smooth; scrollbar-color: color-mix(in oklab, var(--color-on-surface) 22%, transparent) transparent; scroll-padding-top: 109px; }
 body { margin: 0; color: var(--color-on-surface); background: var(--color-canvas); font-family: var(--font-onest), sans-serif; font-size: 14px; line-height: 1.5; }
 button, input, select, textarea { font: inherit; }
 button, a, select { -webkit-tap-highlight-color: transparent; }
@@ -50,11 +50,13 @@ svg { flex-shrink: 0; }
 /* Bingkai, sidebar, top bar */
 /* Bingkai penuh layar (tanpa margin & sudut membulat); sidebar menempel saat halaman di-scroll. */
 /* Latar aplikasi: wash teal tipis supaya card kaca punya sesuatu untuk ditembus */
-.app-frame { display: flex; align-items: flex-start; min-height: 100dvh; background: radial-gradient(ellipse 55% 50% at 92% 4%, color-mix(in oklab, var(--color-primary) 20%, transparent), transparent 70%), radial-gradient(ellipse 50% 45% at 70% 100%, color-mix(in oklab, var(--color-status-warn-soft) 95%, transparent), transparent 70%), radial-gradient(ellipse 55% 55% at 0% 95%, color-mix(in oklab, var(--color-accent-soft) 100%, transparent), transparent 72%), var(--color-canvas); background-attachment: fixed; }
+/* Latar aplikasi: wash teal tipis di akar halaman, jadi jalur scrollbar transparan ikut bergradasi */
+html:has(.app-frame) { background: radial-gradient(ellipse 55% 50% at 92% 4%, color-mix(in oklab, var(--color-primary) 20%, transparent), transparent 70%), radial-gradient(ellipse 50% 45% at 70% 100%, color-mix(in oklab, var(--color-status-warn-soft) 95%, transparent), transparent 70%), radial-gradient(ellipse 55% 55% at 0% 95%, color-mix(in oklab, var(--color-accent-soft) 100%, transparent), transparent 72%), var(--color-canvas); background-attachment: fixed; }
+.app-frame { display: flex; align-items: flex-start; min-height: 100dvh; }
 .sidebar { position: sticky; top: 0; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; flex: 0 0 var(--sidebar-width); width: var(--sidebar-width); padding: 28px 20px 20px; display: flex; flex-direction: column; transition: width 200ms var(--ease), flex-basis 200ms var(--ease); }
 .brand-row { display: flex; align-items: center; justify-content: space-between; margin: 0 0 32px 4px; }
 .brand { display: flex; gap: 12px; align-items: center; white-space: nowrap; }
-.brand-symbol { width: 28px; height: 38px; flex-shrink: 0; }
+.brand-symbol { width: 34px; height: 34px; flex-shrink: 0; }
 .brand-wordmark { display: block; height: 22px; width: auto; }
 .brand-caption { display: block; font-size: 10px; letter-spacing: .015em; color: var(--color-on-surface-muted); font-weight: 400; margin-top: 2px; }
 .nav-group { margin-bottom: 18px; }
@@ -236,6 +238,7 @@ a.metric-card:hover { background: color-mix(in oklab, var(--color-surface) 92%, 
 @media (min-width: 1200px) { .capacity-card .table-scroll { flex: 1 1 0; min-height: 0; overflow: hidden; } }
 .pager { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--color-border); font-size: 12px; color: var(--color-on-surface-muted); }
 .pager-actions { display: flex; align-items: center; gap: 10px; }
+.card:not(.capacity-card) > .pager { margin-top: 12px; }
 @media (min-width: 1200px) { .pager .button { min-height: 36px; padding: 0 14px; } }
 .split-main { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(0,1fr); gap: 16px; align-items: start; margin-bottom: 16px; }
 .split-even { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; align-items: start; margin-bottom: 16px; }
@@ -423,7 +426,7 @@ td .level-select { margin-top: 0; }
 textarea { resize: vertical; min-height: 120px; padding: 12px 14px; line-height: 1.6; border-radius: var(--radius-md); }
 .input:focus, .select:focus, textarea:focus { outline: 2px solid var(--color-focus); outline-offset: 1px; }
 /* Semua select: tanpa panah bawaan, chevron dari token, fokus memakai cincin token (bukan biru browser) */
-.select, .filter-select select { appearance: none; cursor: pointer; background-image: linear-gradient(45deg, transparent 50%, var(--color-on-surface-muted) 50%), linear-gradient(135deg, var(--color-on-surface-muted) 50%, transparent 50%); background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px; background-repeat: no-repeat; transition: border-color 150ms var(--ease); }
+.select, .filter-select select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B6B68' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); /* chevron-down Lucide; warna = token on-surface-muted (data URI tidak bisa var) */ background-position: calc(100% - 12px) 50%; background-size: 16px 16px; background-repeat: no-repeat; transition: border-color 150ms var(--ease); }
 .select { padding-right: 36px; }
 .select:hover, .filter-select select:hover { border-color: var(--color-on-surface-muted); }
 [aria-invalid="true"] { border-color: var(--color-status-crit); }
@@ -782,7 +785,7 @@ a.card:hover, a.card:focus-visible { transform: translateY(-3px); box-shadow: 0 
 @supports (appearance: base-select) {
   .filter-select select, select.select { appearance: base-select; background-image: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-right: 14px; }
   .filter-select select { display: inline-flex; }
-  .filter-select select::picker-icon, select.select::picker-icon { color: var(--color-on-surface-muted); transition: rotate 200ms var(--ease); }
+  .filter-select select::picker-icon, select.select::picker-icon { content: ""; flex: none; align-self: center; width: 16px; height: 16px; margin-left: 4px; background: var(--color-on-surface-muted); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat; transition: rotate 200ms var(--ease); }
   .filter-select select:open::picker-icon, select.select:open::picker-icon { rotate: 180deg; }
   .filter-select select::picker(select), select.select::picker(select) { appearance: base-select; border: 0; padding: 6px; margin-top: 8px; min-width: anchor-size(width); border-radius: var(--radius-md); background: color-mix(in oklab, var(--color-surface) 78%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-surface) 90%, transparent), 0 20px 48px -16px color-mix(in oklab, var(--color-on-surface) 30%, transparent); -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6); opacity: 0; transform: translateY(-6px) scale(.98); transition: opacity 180ms var(--ease), transform 220ms var(--spring), overlay 220ms allow-discrete, display 220ms allow-discrete; }
   .filter-select select:open::picker(select), select.select:open::picker(select) { opacity: 1; transform: none; }

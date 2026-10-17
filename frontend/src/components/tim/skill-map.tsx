@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, TriangleAlert } from "lucide-react";
 import { PageHeading, Person, SectionTitle } from "@/components/app/parts";
@@ -29,19 +30,19 @@ export function SkillMap() {
 
     <section className="card spaced">
       <SectionTitle title="Matriks keahlian" subtitle={`${members.length} anggota × ${competencies.length} kompetensi. Klik nama untuk membuka profil kerja.`} />
-      <div className="table-scroll skill-map"><table>
+      <Paged items={members} unit="anggota">{(paged) => <><div className="table-scroll skill-map"><table>
         <thead>
           <tr><th rowSpan={2}>Anggota</th>{categories.map(cat => <th key={cat} colSpan={competencies.filter(c => c.category === cat).length} className="skill-cat">{cat}</th>)}</tr>
           <tr>{ordered.map(c => <th key={c.id} scope="col"><span className="skill-head">{risky.some(r => r.competency.id === c.id) && <><Icon icon={TriangleAlert} size={12} className="warn-text" /><span className="sr-only">Rawan: </span></>}<span>{c.name}</span></span></th>)}</tr>
         </thead>
-        <tbody>{members.map(m => <tr key={m.id}>
+        <tbody>{paged.map(m => <tr key={m.id}>
           <th scope="row"><Link href={`/tim/${m.id}`}><Person member={m} /></Link></th>
           {ordered.map(c => {
             const level = memberLevel(m, c.id);
             return <td key={c.id}><span className={`skill-level l${level}`}>{level ? LEVEL_LABEL[level] : "-"}</span></td>;
           })}
         </tr>)}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
       <p className="legend spaced"><span><span className="skill-level l3">Mahir</span></span><span><span className="skill-level l2">Mandiri</span></span><span><span className="skill-level l1">Dasar</span></span><span><span className="skill-level l0">-</span> belum ada</span></p>
     </section>
   </div>;

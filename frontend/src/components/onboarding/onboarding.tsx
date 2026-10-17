@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, CircleCheck, FileUp, ShieldAlert } from "lucide-react";
@@ -59,15 +60,15 @@ export function Onboarding() {
     {step === 2 && <section className="card">
       <SectionTitle title="Hasil pemeriksaan" subtitle={`${valid.length} baris siap, ${rows.length - valid.length} perlu diperbaiki`} />
       {done ? <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>{valid.length} anggota ditambahkan</strong><span>Undangan dikirim (simulasi). Mereka mengisi ketersediaan sendiri sebelum ikut rekomendasi.</span></span><Link className="row-link" href="/tim">Lihat tim</Link></div> : null}
-      <div className="table-scroll stack-table"><table>
+      <Paged items={rows} unit="baris">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Baris</th><th>Anggota</th><th>Kompetensi</th><th>Status</th></tr></thead>
-        <tbody>{rows.map(r => <tr key={r.line} className={r.error ? "row-highlight" : ""}>
+        <tbody>{paged.map(r => <tr key={r.line} className={r.error ? "row-highlight" : ""}>
           <td className="mono">{r.line}</td>
           <td data-label="Anggota">{r.member ? <><strong>{r.member.name}</strong><span className="table-sub">{r.member.email} · {r.member.role}</span></> : <span className="muted">-</span>}</td>
           <td data-label="Kompetensi">{r.member?.competencies.map(c => c.id).join(", ") ?? "-"}</td>
           <td data-label="Status">{r.error ? <span className="warn-text small with-icon"><Icon icon={ShieldAlert} size={13} />{r.error}</span> : <Badge tone="ok">Siap</Badge>}</td>
         </tr>)}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
       <div className="form-actions"><button className="button secondary" onClick={() => setStep(1)}>Perbaiki CSV</button><button className="button primary" disabled={!valid.length || done} onClick={() => { valid.forEach(r => dispatch({ type: "upsertMember", member: r.member! })); setDone(true); }}>Tambah {valid.length} anggota & undang</button></div>
     </section>}
   </div>;

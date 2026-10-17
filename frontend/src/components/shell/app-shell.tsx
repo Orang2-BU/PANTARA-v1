@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, Bell, CalendarDays, ChevronDown, ChevronLeft, ChevronsLeft, ChevronsRight, CircleHelp, Menu, X } from "lucide-react";
+import { lockScroll } from "@/lib/scroll-lock";
 import { NAVIGATION, PAGES, SUBNAV, activeNav, activeSub, trailOf, type PageRoute } from "@/lib/nav";
 import { Badge, Icon, Modal } from "@/components/ui";
 import { managerNotices } from "@/lib/demo/notifications";
@@ -32,13 +33,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (!drawer) return;
     const node = drawerRef.current;
     const trigger = menuButton.current;
-    const overflow = document.body.style.overflow;
+    const unlock = lockScroll();
     node?.showModal();
-    document.body.style.overflow = "hidden";
     const media = window.matchMedia("(min-width: 768px)");
     const close = () => { if (media.matches) setDrawer(false); };
     media.addEventListener("change", close);
-    return () => { node?.close(); document.body.style.overflow = overflow; media.removeEventListener("change", close); trigger?.focus(); };
+    return () => { node?.close(); unlock(); media.removeEventListener("change", close); trigger?.focus(); };
   }, [drawer]);
 
   const closeDrawer = () => setDrawer(false);

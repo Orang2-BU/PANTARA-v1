@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { use, useState } from "react";
@@ -89,14 +90,14 @@ export function Simulation({ params }: { params: Promise<{ id: string }> }) {
     <div className="split-detail spaced">
       <section className="card">
         <SectionTitle title="Sebaran beban anggota" subtitle="Batang atas sebelum, batang bawah sesudah penugasan." />
-        <div className="table-scroll stack-table"><table>
+        <Paged items={sim.rows} unit="anggota">{(paged) => <><div className="table-scroll stack-table"><table>
           <thead><tr><th>Anggota</th><th>Sebelum → sesudah</th><th className="numeric">Perubahan</th></tr></thead>
-          <tbody>{sim.rows.map(r => <tr key={r.member.id} className={r.added ? "row-highlight" : ""}>
+          <tbody>{paged.map(r => <tr key={r.member.id} className={r.added ? "row-highlight" : ""}>
             <td><Person member={r.member} /></td>
             <td data-label="Beban"><div className="compare-bars"><div className="capacity-bar before"><span style={{ width: `${Math.min(r.before / r.available, 1) * 100}%` }} /></div><CapacityBar allocated={r.before} available={r.available} added={r.added} /></div></td>
             <td data-label="Perubahan" className="numeric">{r.added ? <strong>+{number(r.added)} jam</strong> : <span className="muted">Tetap</span>}</td>
           </tr>)}</tbody>
-        </table></div>
+        </table></div></>}</Paged>
         <div className="legend spaced"><span><span className="legend-square neutral" />Sebelum</span><span><span className="legend-square accent" />Teralokasi</span><span><span className="legend-square added" />Tambahan dari tugas ini</span></div>
       </section>
       <section className="card">

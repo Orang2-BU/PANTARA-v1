@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useState } from "react";
 import { CalendarRange, Clock3, Gauge, ShieldAlert } from "lucide-react";
@@ -44,9 +45,9 @@ export function Capacity() {
         </div>
         <span className="small muted">Periode {PERIOD.label} · mingguan</span>
       </div>
-      <div className="table-scroll stack-table capacity-table"><table>
+      <Paged items={shown} unit="anggota">{(paged) => <><div className="table-scroll stack-table capacity-table"><table>
         <thead><tr><th>Anggota</th><th className="numeric">Tersedia</th><th className="numeric">Teralokasi</th><th className="numeric">Sisa waktu</th><th>Visualisasi kapasitas</th><th className="numeric">Terisi</th><th>Status data</th><th className="numeric">Aksi</th></tr></thead>
-        <tbody>{shown.map(({ m, allocated: a, util }) => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
+        <tbody>{paged.map(({ m, allocated: a, util }) => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
           <td><Person member={m} /></td>
           <td data-label="Tersedia" className="numeric">{m.availableHours === null ? <span className="muted">Belum diisi</span> : hours(m.availableHours)}</td>
           <td data-label="Teralokasi" className="numeric"><strong>{hours(a)}</strong></td>
@@ -56,7 +57,7 @@ export function Capacity() {
           <td data-label="Status data"><DataBadge complete={m.availableHours !== null} /></td>
           <td className="numeric">{m.availableHours === null ? <button className="row-link accent" onClick={() => setEditing(m.id)}>Lengkapi data</button> : <Link className="row-link" href={`/tim/${m.id}`}>Rincian alokasi</Link>}</td>
         </tr>)}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
       <div className="table-footer"><span className="legend"><span><span className="legend-square accent" />Teralokasi pada tugas aktif</span><span><span className="legend-square neutral" />Tersedia</span></span><span>Jam kerja, bukan ukuran produktivitas pribadi</span></div>
     </section>
     {member && <AvailabilityModal member={member} onClose={() => setEditing(null)} onSave={m => { dispatch({ type: "upsertMember", member: m }); setEditing(null); }} />}

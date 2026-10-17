@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import { DatePicker } from "@/components/ui/date-picker";
 import Link from "next/link";
 import { use, useState } from "react";
@@ -60,9 +61,9 @@ export function ProjectDetail({ params }: { params: Promise<{ id: string }> }) {
     <PageHeading title={project.name} subtitle={`${project.client} · tenggat ${shortDate(project.dueDate)}`} actions={<Link className="button primary" href="/tugas/baru">Buat tugas</Link>} />
     <section className="card">
       <SectionTitle title="Tugas proyek" subtitle={`${own.length} tugas`} />
-      <div className="table-scroll stack-table"><table>
+      <Paged items={own} unit="tugas">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Tugas</th><th>Prioritas</th><th>Status</th><th>Penanggung jawab</th><th className="numeric">Estimasi</th><th>Tenggat</th></tr></thead>
-        <tbody>{own.map(t => <tr key={t.id}>
+        <tbody>{paged.map(t => <tr key={t.id}>
           <td><Link href={`/tugas/${t.id}`}><strong>{t.title}</strong></Link><span className="table-sub mono">{t.id}</span></td>
           <td data-label="Prioritas"><PriorityBadge priority={t.priority} /></td>
           <td data-label="Status"><StatusBadge status={t.status} /></td>
@@ -70,7 +71,7 @@ export function ProjectDetail({ params }: { params: Promise<{ id: string }> }) {
           <td data-label="Estimasi" className="numeric">{hours(t.dna?.effortHours ?? t.assignments.reduce((s, a) => s + a.hours, 0))}</td>
           <td data-label="Tenggat">{shortDate(t.dueDate)}</td>
         </tr>)}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
     </section>
   </div>;
 }

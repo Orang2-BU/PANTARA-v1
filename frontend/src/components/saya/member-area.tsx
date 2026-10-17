@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import { DatePicker } from "@/components/ui/date-picker";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -147,9 +148,9 @@ export function MyProfile() {
     <DemoNotice />
     {saved && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Profil tersimpan</strong><span>Klaim baru ditandai &ldquo;Klaim anggota&rdquo; sampai diverifikasi manajer.</span></span></div>}
     <section className="card">
-      <div className="table-scroll stack-table"><table>
+      <Paged items={competencies} unit="kompetensi">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Kompetensi</th><th>Level saya</th><th>Sumber</th><th className="numeric">Saya suka mengerjakan</th></tr></thead>
-        <tbody>{competencies.map(c => {
+        <tbody>{paged.map(c => {
           const mine = draft.competencies.find(x => x.id === c.id);
           return <tr key={c.id}>
             <td><strong>{names[c.id]}</strong><span className="table-sub">{c.category}</span></td>
@@ -158,7 +159,7 @@ export function MyProfile() {
             <td data-label="Suka mengerjakan" className="numeric"><input type="checkbox" checked={draft.prefers.includes(c.id)} onChange={() => togglePref(c.id)} aria-label={`Suka mengerjakan ${c.name}`} /></td>
           </tr>;
         })}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
     </section>
   </div>;
 }

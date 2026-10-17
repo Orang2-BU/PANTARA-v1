@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useState } from "react";
 import { ShieldAlert, UserPlus, Users, UserCheck, Search, SearchX } from "lucide-react";
@@ -40,9 +41,9 @@ export function Team() {
       <div className="toggle" role="group" aria-label="Filter kelengkapan">
         {([["semua", `Semua status (${members.length})`], ["lengkap", `Data lengkap (${complete.length})`], ["belum", `Perlu dilengkapi (${incomplete.length})`]] as const).map(([v, l]) => <button key={v} className={data === v ? "selected" : ""} aria-pressed={data === v} onClick={() => setData(v)}>{l}</button>)}
       </div>
-      {shown.length ? <div className="table-scroll stack-table spaced"><table>
+      {shown.length ? <Paged items={shown} unit="anggota">{(paged) => <><div className="table-scroll stack-table spaced"><table>
         <thead><tr><th>Anggota & keahlian</th><th>Peran</th><th>Alokasi kapasitas ({PERIOD.label})</th><th>Tugas aktif</th><th>Status data</th><th className="numeric">Aksi</th></tr></thead>
-        <tbody>{shown.map(m => {
+        <tbody>{paged.map(m => {
           const active = tasks.filter(t => (t.status === "berjalan" || t.status === "menunggu") && t.assignments.some(a => a.memberId === m.id));
           const near = m.availableHours !== null && nearbyDeadlines(m.id, "2026-10-02", tasks).length > 0;
           return <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
@@ -54,7 +55,7 @@ export function Team() {
             <td className="numeric">{m.availableHours === null ? <Link className="row-link accent" href={`/tim/${m.id}?lengkapi=1`}>Lengkapi data</Link> : <Link className="row-link" href={`/tim/${m.id}`}>Buka profil</Link>}</td>
           </tr>;
         })}</tbody>
-      </table></div> : <EmptyState icon={SearchX} title="Tidak ada anggota yang cocok" text="Ubah kata kunci atau filter." />}
+      </table></div></>}</Paged> : <EmptyState icon={SearchX} title="Tidak ada anggota yang cocok" text="Ubah kata kunci atau filter." />}
       <div className="table-footer"><span>Menampilkan {shown.length} dari {members.length} anggota tim</span><span>Jam kerja, bukan ukuran produktivitas</span></div>
     </section>
     {adding && <AddMember onClose={() => setAdding(false)} onSave={m => { dispatch({ type: "upsertMember", member: m }); setAdding(false); }} />}

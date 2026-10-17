@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
@@ -96,10 +97,10 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
     <section className="card">
       <details className="disclosure" open={!best}>
         <summary>Tidak lolos syarat wajib ({filtered.length})</summary>
-        <div className="table-scroll stack-table"><table>
+        <Paged items={filtered} unit="anggota">{(paged) => <><div className="table-scroll stack-table"><table>
           <thead><tr><th>Anggota</th><th>Syarat yang tidak terpenuhi</th></tr></thead>
-          <tbody>{filtered.map(f => <tr key={f.member.id}><td><Person member={f.member} /></td><td data-label="Alasan">{f.failures.join(" · ")}</td></tr>)}</tbody>
-        </table></div>
+          <tbody>{paged.map(f => <tr key={f.member.id}><td><Person member={f.member} /></td><td data-label="Alasan">{f.failures.join(" · ")}</td></tr>)}</tbody>
+        </table></div></>}</Paged>
         <p className="small muted spaced">Syarat wajib: ketersediaan terisi, sisa kapasitas ≥ separuh estimasi, level kompetensi ≥ level dibutuhkan − {settings.levelTolerance}, tidak melewati batas kerja mingguan, tidak cuti sebelum tenggat. Atur di <Link className="inline-link" href="/pengaturan/rekomendasi">Aturan rekomendasi</Link>.</p>
       </details>
     </section>

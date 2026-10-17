@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ChevronLeft, ChevronRight, ClipboardList, Hourglass, Inbox, Plus, UserCheck } from "lucide-react";
+import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ClipboardList, Hourglass, Inbox, Plus, UserCheck } from "lucide-react";
 import { CapacityBar, DataBadge, MetricCard, PageHeading, Person, PriorityBadge, SectionTitle } from "@/components/app/parts";
 import { Icon } from "@/components/ui";
 import { FluidArt } from "@/components/ui/fluid-art";
@@ -10,6 +10,7 @@ import { PERIOD, NOW } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
 import { allocatedHours, nearbyDeadlines } from "@/lib/engine/score";
 import { dayDate, hours, number, percent, shortDate } from "@/lib/format";
+import { Pager } from "@/components/ui/pager";
 import { fitRows, paginate } from "@/lib/paginate";
 
 const FALLBACK_ROWS = 4;
@@ -83,14 +84,7 @@ export function Dasbor() {
             <td data-label="Data" className="numeric"><DataBadge complete={m.availableHours !== null} /></td>
           </tr>)}</tbody>
         </table></div>
-        {view.pages > 1 && <div className="pager">
-          <span aria-live="polite">Menampilkan {view.from}-{view.to} dari {view.total} anggota</span>
-          <div className="pager-actions" role="group" aria-label="Halaman tabel anggota">
-            <button type="button" className="button secondary" disabled={!view.hasPrev} onClick={() => setPage(view.page - 1)}><Icon icon={ChevronLeft} size={16} />Sebelumnya</button>
-            <span className="small muted">{view.page + 1} / {view.pages}</span>
-            <button type="button" className="button secondary" disabled={!view.hasNext} onClick={() => setPage(view.page + 1)}>Berikutnya<Icon icon={ChevronRight} size={16} /></button>
-          </div>
-        </div>}
+        <Pager view={view} onPage={setPage} unit="anggota" />
       </section>
       <div className="stack">
         {next ? <section className="highlight-card" aria-label="Penugasan berikutnya"><FluidArt className="highlight-art" style="streak" seed={3} w={720} h={360} />

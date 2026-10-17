@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -50,9 +51,9 @@ export function TaskList() {
       <div className="toggle" role="group" aria-label="Filter status">
         {FILTERS.filter(f => f.value === "semua" || count(f.value)).map(f => <button key={f.value} className={status === f.value ? "selected" : ""} aria-pressed={status === f.value} onClick={() => router.replace(f.value === "semua" ? "/tugas" : `/tugas?status=${f.value}`, { scroll: false })}>{f.label} ({count(f.value)})</button>)}
       </div>
-      {shown.length ? <div className="table-scroll stack-table spaced"><table>
+      {shown.length ? <Paged items={shown} unit="tugas">{(paged) => <><div className="table-scroll stack-table spaced"><table>
         <thead><tr><th>Tugas & kebutuhan</th><th>Prioritas</th><th>Status</th><th>Penanggung jawab</th><th className="numeric">Sisa estimasi</th><th>Tenggat</th><th className="numeric">Aksi</th></tr></thead>
-        <tbody>{shown.map(t => {
+        <tbody>{paged.map(t => {
           const assignees = t.assignments.map(a => memberById(a.memberId)).filter(m => m !== undefined);
           const need = t.dna ? t.dna.requirements.map(r => names[r.competencyId]).join(", ") : t.competencyIds.map(c => names[c]).join(", ") || "Belum dianalisis";
           return <tr key={t.id}>
@@ -65,7 +66,7 @@ export function TaskList() {
             <td className="numeric">{t.status === "belum" ? <Link className="row-link accent" href={t.dna?.confirmed ? `/tugas/${t.id}/kandidat` : `/tugas/${t.id}/dna`}>Cari kandidat</Link> : t.status === "draf" ? <Link className="row-link" href={`/tugas/${t.id}/dna`}>Lanjutkan</Link> : <Link className="row-link" href={`/tugas/${t.id}`}>Buka tugas</Link>}</td>
           </tr>;
         })}</tbody>
-      </table></div> : <EmptyState icon={SearchX} title="Tidak ada tugas yang cocok" text="Ubah kata kunci atau filter status dan prioritas." action={<button className="button secondary" onClick={() => { setQuery(""); setPriority("semua"); router.replace("/tugas"); }}>Hapus filter</button>} />}
+      </table></div></>}</Paged> : <EmptyState icon={SearchX} title="Tidak ada tugas yang cocok" text="Ubah kata kunci atau filter status dan prioritas." action={<button className="button secondary" onClick={() => { setQuery(""); setPriority("semua"); router.replace("/tugas"); }}>Hapus filter</button>} />}
       <div className="table-footer"><span>Menampilkan {shown.length} dari {current.length} tugas periode ini</span><span>Diperbarui 09.15 WIB</span></div>
     </section>
   </div>;

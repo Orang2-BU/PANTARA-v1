@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { use, useState } from "react";
@@ -37,15 +38,15 @@ export function MemberProfile({ params }: { params: Promise<{ id: string }> }) {
       <div className="stack">
         <section className="card">
           <SectionTitle title="Kompetensi" subtitle="Level 1 Dasar, 2 Mandiri, 3 Mahir. Sumber ditampilkan supaya klaim bisa diverifikasi." />
-          <div className="table-scroll stack-table"><table>
+          <Paged items={member.competencies} unit="kompetensi">{(paged) => <><div className="table-scroll stack-table"><table>
             <thead><tr><th>Kompetensi</th><th>Level</th><th>Sumber</th><th className="numeric">Aksi</th></tr></thead>
-            <tbody>{member.competencies.map(c => <tr key={c.id}>
+            <tbody>{paged.map(c => <tr key={c.id}>
               <td><strong>{names[c.id]}</strong></td>
               <td data-label="Level">{LEVEL_LABEL[c.level]}</td>
               <td data-label="Sumber">{c.source === "verifikasi" ? <Badge tone="ok">{SOURCE[c.source]}</Badge> : <Badge>{SOURCE[c.source]}</Badge>}</td>
               <td className="numeric">{c.source !== "verifikasi" && <button className="row-link" onClick={() => verify(c.id)}><Icon icon={BadgeCheck} size={14} />Verifikasi</button>}</td>
             </tr>)}</tbody>
-          </table></div>
+          </table></div></>}</Paged>
           {!member.competencies.length && <p className="small muted">Belum ada kompetensi. Anggota mengisinya di Profil kerja saya.</p>}
         </section>
         <section className="card">

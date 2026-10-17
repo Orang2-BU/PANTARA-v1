@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useState } from "react";
 import { CircleCheck, ReceiptText, RotateCcw, UserPlus } from "lucide-react";
@@ -88,19 +89,19 @@ export function MemberSettings() {
   return <div className="page-enter">
     <PageHeading title="Anggota & peran" subtitle="Atur siapa yang bisa menugaskan dan siapa yang hanya menerima penugasan." actions={<button className="button primary" onClick={() => setInviting(true)}><Icon icon={UserPlus} />Undang anggota</button>} />
     <section className="card">
-      <div className="table-scroll stack-table"><table>
+      <Paged items={members} unit="anggota">{(paged, pageIndex) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Nama</th><th>Email</th><th>Peran akses</th><th>Status</th></tr></thead>
         <tbody>
-          <tr><td><strong>Krisna Panca</strong></td><td data-label="Email">krisna@positifprofesional.id</td><td data-label="Peran"><Badge tone="ok">Admin</Badge></td><td data-label="Status">Aktif</td></tr>
-          {members.map(m => <tr key={m.id}>
+          {pageIndex === 0 && <tr><td><strong>Krisna Panca</strong></td><td data-label="Email">krisna@positifprofesional.id</td><td data-label="Peran"><Badge tone="ok">Admin</Badge></td><td data-label="Status">Aktif</td></tr>}
+          {paged.map(m => <tr key={m.id}>
             <td><strong>{m.name}</strong></td>
             <td data-label="Email">{m.email}</td>
             <td data-label="Peran"><div className="level-select" role="group" aria-label={`Peran akses ${m.name}`}>{(Object.keys(ACCESS) as Member["access"][]).map(a => <button key={a} type="button" className={m.access === a ? "selected" : ""} aria-pressed={m.access === a} onClick={() => dispatch({ type: "upsertMember", member: { ...m, access: a } })}>{ACCESS[a]}</button>)}</div></td>
             <td data-label="Status">{m.availableHours === null ? <Badge tone="warn">Undangan belum diselesaikan</Badge> : "Aktif"}</td>
           </tr>)}
-          {sent.map(s => <tr key={s}><td><span className="muted">Menunggu</span></td><td data-label="Email">{s}</td><td data-label="Peran">Anggota</td><td data-label="Status"><Badge>Undangan terkirim</Badge></td></tr>)}
+          {pageIndex === 0 && sent.map(s => <tr key={s}><td><span className="muted">Menunggu</span></td><td data-label="Email">{s}</td><td data-label="Peran">Anggota</td><td data-label="Status"><Badge>Undangan terkirim</Badge></td></tr>)}
         </tbody>
-      </table></div>
+      </table></div></>}</Paged>
     </section>
     {inviting && <Modal title="Undang anggota" onClose={() => setInviting(false)}>
       <form noValidate onSubmit={e => { e.preventDefault(); if (!/^\S+@\S+\.\S+$/.test(email)) return setError("Email belum valid."); setSent(s => [...s, email]); setEmail(""); setInviting(false); }}>

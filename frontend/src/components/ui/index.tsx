@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll } from "@/lib/scroll-lock";
 import { useEffect, useRef, type ComponentProps, type ReactNode } from "react";
 import { X, type LucideIcon } from "lucide-react";
 
@@ -21,10 +22,9 @@ export function Modal({ title, onClose, children, className = "" }: { title: str
   useEffect(() => {
     const element = dialog.current;
     const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const overflow = document.body.style.overflow;
+    const unlock = lockScroll();
     element?.showModal();
-    document.body.style.overflow = "hidden";
-    return () => { element?.close(); document.body.style.overflow = overflow; active?.focus(); };
+    return () => { element?.close(); unlock(); active?.focus(); };
   }, []);
   return (
     <dialog ref={dialog} className={`modal ${className}`} aria-label={title} onCancel={onClose} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>

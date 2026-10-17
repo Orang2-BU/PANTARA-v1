@@ -328,7 +328,7 @@ Tanpa bayangan untuk kartu; kedalaman dari lapisan `canvas` → `surface-muted` 
 - **Radius:** `sm` 10px (input, badge kotak, blok kecil), `md` 16px (kartu), `lg` 24px (panel, kartu sorotan), `xl` 32px (dialog), `full` (tombol pill, chip, batang).
 - **Ikon:** lucide-react, outline, stroke 1.75, ukuran 16px (inline) / 20px (navigasi) / ikon dalam lingkaran 36px (kartu metrik). Tanpa emoji.
 - **Avatar:** inisial dalam lingkaran `surface-muted` teks `on-surface`; tanpa gradien.
-- **Logo:** konsep "Tepat" (P cincin + tangkai bulat + titik), file di `docs/brand/`, aturan di `docs/brand/GUIDELINES.md`. Sidebar terbuka: `pantara-horizontal.svg` tinggi 28px; sidebar ciut & mobile: `pantara-symbol.svg` 32px; favicon & ikon: `docs/brand/export/symbol/`. Titik aqua `on-inverse-accent` hanya di versi reversed (kartu gelap, latar teal).
+- **Logo:** konsep "Cincin Tepat" (cincin kapasitas terbuka + satu titik penugasan pas di celahnya; versi lama "Tepat" diarsipkan di `docs/brand/v1-tepat/`), file di `docs/brand/`, aturan di `docs/brand/GUIDELINES.md`. Sidebar terbuka: simbol 34px + wordmark; sidebar ciut & mobile: simbol; favicon & ikon: `docs/brand/export/web/` (ubin kaca teal). Titik aqua `on-inverse-accent` hanya di versi reversed dan ubin kaca (kartu gelap, latar teal).
 
 ## Components
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { Download, GitCompareArrows, History, Timer, UserCheck } from "lucide-react";
 import { MetricCard, PageHeading } from "@/components/app/parts";
@@ -30,9 +31,9 @@ export function Decisions() {
       <MetricCard icon={Timer} label="Rata-rata lama keputusan" value={minutes(s.avgMs)} note="Tp: dari tugas dibuka sampai ditetapkan" />
     </div>
     <section className="card">
-      <div className="table-scroll stack-table"><table>
+      <Paged items={decisions} unit="keputusan">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Tugas</th><th>Dipilih</th><th>Peringkat</th><th>Preset</th><th>Alasan</th><th className="numeric">Lama</th><th className="numeric">Konflik</th><th>Waktu</th></tr></thead>
-        <tbody>{decisions.map(d => <tr key={d.id}>
+        <tbody>{paged.map(d => <tr key={d.id}>
           <td><Link href={`/tugas/${d.taskId}`}><strong>{taskById(d.taskId)?.title ?? d.taskId}</strong></Link><span className="table-sub mono">{d.id}</span></td>
           <td data-label="Dipilih">{d.rejected ? <span className="muted">Belum ada</span> : d.memberIds.map(m => memberById(m)?.name).join(" & ")}</td>
           <td data-label="Peringkat">{d.rejected ? <Badge tone="crit">Ditolak</Badge> : d.rank ? <Badge tone="ok">#{d.rank}</Badge> : <Badge tone="warn">Override</Badge>}</td>
@@ -42,7 +43,7 @@ export function Decisions() {
           <td data-label="Konflik" className="numeric">{d.conflictsSeen}</td>
           <td data-label="Waktu">{date(d.decidedAt)} {time(d.decidedAt)}</td>
         </tr>)}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
       <div className="table-footer"><span>Log keputusan tidak bisa diubah (audit)</span></div>
     </section>
   </div>;

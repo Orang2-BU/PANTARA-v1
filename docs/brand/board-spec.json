@@ -2,30 +2,46 @@
   "brand": "PANTARA",
   "tagline": "Tahu siapa yang paling pas, sebelum tugas diberikan",
   "brief": "Sistem pendukung keputusan penugasan untuk PM di software house dan agensi digital kecil. Harus terasa tenang, presisi, dan bisa dipercaya, dengan keputusan tetap di tangan manusia.",
-  "adjectives": ["tenang", "presisi", "selaras", "terpercaya"],
-  "criteria": "Berhasil bila: terbaca di 16 px, bekerja satu warna, tidak mirip rambu parkir atau logo PM bergaya kanban, dan cocok dengan UI teal Soft Op.",
+  "adjectives": [
+    "tenang",
+    "presisi",
+    "selaras",
+    "elegan"
+  ],
+  "criteria": "Berhasil bila: terbaca di 16 px, bekerja satu warna, bermakna tanpa dipaksakan, serasi dengan UI kaca teal Soft Op, dan tidak terbaca sebagai ikon AI sparkle.",
   "industry": "saas",
-  "nav": ["Cara kerja", "Harga", "Masuk"],
+  "nav": [
+    "Cara kerja",
+    "Harga",
+    "Masuk"
+  ],
   "brand_color": "#0F766E",
   "tile_color": "#0F766E",
   "greyscale": false,
+  "final": true,
+  "round": 4,
   "designer": "Tim Positif dan Profesional",
-  "round": 3,
   "concepts": [
     {
-      "name": "Tepat",
+      "name": "Cincin Tepat",
       "symbol": "pantara-symbol.svg",
       "lockup": "pantara-horizontal.svg",
+      "stacked": "pantara-stacked.svg",
+      "avatar": "pantara-avatar.svg",
       "symbol_on_tile": "pantara-symbol-reversed.svg",
       "lockup_on_dark": "pantara-horizontal-reversed.svg",
-      "idea": "P dari cincin tebal dan tangkai berujung bulat; titik di lubang adalah penugasan yang jatuh tepat di tempatnya.",
+      "idea": "Cincin kapasitas yang terbuka, dan satu titik penugasan duduk pas di celahnya dengan jarak sama di kedua sisi.",
       "rationale": [
-        "Satu ide yang terbaca sekilas: tepat sasaran",
-        "Bentuk bulat sederhana, kuat di 16 px dan satu warna",
-        "Titik aqua jadi elemen sistem: indikator kandidat, loader, bullet"
+        "Satu ide yang terbaca sekilas: penugasan yang tepat masuk ke kapasitas yang tersedia",
+        "Cincin tebal membulat selaras dengan ubin kaca dan UI Soft Op",
+        "Titik aqua jadi elemen sistem: indikator kandidat, pemuat, bullet"
       ]
     }
   ],
-  "recommendation": "Tepat: paling jelas di ukuran kecil, ramah, dan titiknya bisa dipakai ulang di seluruh UI.",
-  "next_steps": ["Pakai favicon & ikon di frontend (T1)", "Cek merek dagang sebelum rilis publik", "Terapkan pola titik di loader & indikator kandidat"]
+  "recommendation": "Cincin Tepat: paling bersih dan tenang, jelas di 16 px, dan melanjutkan makna 'Tepat' dari logo sebelumnya.",
+  "next_steps": [
+    "Pakai ikon di frontend",
+    "Cek merek dagang sebelum rilis publik",
+    "Terapkan titik aqua sebagai indikator di UI"
+  ]
 }

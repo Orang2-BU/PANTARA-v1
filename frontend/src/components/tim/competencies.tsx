@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { PageHeading } from "@/components/app/parts";
@@ -16,14 +17,14 @@ export function Competencies() {
   return <div className="page-enter">
     <PageHeading title="Katalog kompetensi" subtitle="Daftar kompetensi ruang kerja yang dipakai Task DNA dan Work Twin. AI hanya memilih dari katalog ini." actions={<button className="button primary" onClick={() => setAdding(true)}><Icon icon={Plus} />Tambah kompetensi</button>} />
     <section className="card">
-      <div className="table-scroll stack-table"><table>
+      <Paged items={competencies} unit="kompetensi">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Kompetensi</th><th>Kategori</th><th className="numeric">Anggota</th><th className="numeric">Dipakai tugas aktif</th></tr></thead>
-        <tbody>{competencies.map(c => {
+        <tbody>{paged.map(c => {
           const usedBy = members.filter(m => m.competencies.some(x => x.id === c.id)).length;
           const inTasks = tasks.filter(t => t.status !== "selesai" && t.dna?.requirements.some(r => r.competencyId === c.id)).length;
           return <tr key={c.id}><td><strong>{c.name}</strong><span className="table-sub mono">{c.id}</span></td><td data-label="Kategori">{c.category}</td><td data-label="Anggota" className="numeric">{usedBy}</td><td data-label="Tugas aktif" className="numeric">{inTasks ? <Badge tone="ok">{inTasks} tugas</Badge> : <span className="muted">-</span>}</td></tr>;
         })}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
     </section>
     {adding && <Modal title="Tambah kompetensi" onClose={() => setAdding(false)}>
       <form noValidate onSubmit={e => { e.preventDefault(); const id = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-"); if (name.trim().length < 2) return setError("Tulis nama kompetensi."); if (competencies.some(c => c.id === id)) return setError("Kompetensi ini sudah ada di katalog."); dispatch({ type: "addCompetency", competency: { id, name: name.trim(), category } }); setAdding(false); setName(""); }}>

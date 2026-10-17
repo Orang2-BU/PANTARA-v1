@@ -1,10 +1,10 @@
 import Image from "next/image";
 
-/** Simbol "Tepat" (docs/brand) dipotong rapat untuk baris brand. */
+/** Simbol "Cincin Tepat" (docs/brand): cincin kapasitas terbuka, titik penugasan pas di celahnya. */
 function BrandSymbol() {
-  return <svg className="brand-symbol" viewBox="66 42 124 170" aria-hidden="true">
-    <path fill="var(--color-primary)" fillRule="evenodd" d="M68 104A60 60 0 1 1 102 158V193A17 17 0 0 1 68 193Z M154 104A26 26 0 1 0 102 104A26 26 0 1 0 154 104Z" />
-    <circle fill="var(--color-primary)" cx="128" cy="104" r="11" />
+  return <svg className="brand-symbol" viewBox="28 28 200 200" aria-hidden="true">
+    <path fill="var(--color-primary)" d="M222.37 101.56A98 98 0 1 1 154.44 33.63A16 16 0 0 1 145.81 64.45A66 66 0 1 0 191.55 110.19A16 16 0 0 1 222.37 101.56Z" />
+    <circle fill="var(--color-primary)" cx="185.98" cy="70.02" r="17" />
   </svg>;
 }
 

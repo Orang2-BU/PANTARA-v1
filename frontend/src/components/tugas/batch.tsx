@@ -1,5 +1,6 @@
 "use client";
 
+import { Paged } from "@/components/ui/pager";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -39,9 +40,9 @@ export function BatchAllocation() {
     <PageHeading title="Alokasi batch" subtitle="Usulan pasangan untuk semua tugas yang belum ditugaskan, dengan kapasitas diperbarui setiap pasangan." actions={<button className="button primary" disabled={!picked.length} onClick={assignPicked}><Icon icon={CheckCheck} />Tetapkan {picked.length} terpilih</button>} />
     {unconfirmed.length > 0 && <p className="small muted">{unconfirmed.length} tugas belum ikut karena Task DNA-nya belum dikonfirmasi: {unconfirmed.map(t => <Link key={t.id} className="inline-link" href={`/tugas/${t.id}/dna`}>{t.title}</Link>)}</p>}
     {pairs.length ? <section className="card spaced">
-      <div className="table-scroll stack-table"><table>
+      <Paged items={pairs} unit="tugas">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Pilih</th><th>Tugas</th><th>Usulan penanggung jawab</th><th className="numeric">Skor</th><th>Beban setelah semua pasangan</th></tr></thead>
-        <tbody>{pairs.map(p => {
+        <tbody>{paged.map(p => {
           const m = p.memberId ? memberById(p.memberId) : undefined;
           return <tr key={p.task.id}>
             <td><input type="checkbox" aria-label={`Pilih ${p.task.title}`} disabled={!m} checked={picked.includes(p.task.id)} onChange={e => setPicked(x => e.target.checked ? [...x, p.task.id] : x.filter(i => i !== p.task.id))} /></td>
@@ -51,7 +52,7 @@ export function BatchAllocation() {
             <td data-label="Beban">{m ? <CapacityBar allocated={allocatedHours(m.id, tasks)} available={m.availableHours} added={added[m.id] ?? 0} /> : <Badge tone="warn">Tidak teralokasi</Badge>}</td>
           </tr>;
         })}</tbody>
-      </table></div>
+      </table></div></>}</Paged>
     </section> : <EmptyState icon={CheckCheck} title="Tidak ada tugas terbuka" text="Semua tugas yang dikonfirmasi sudah ditugaskan." action={<Link className="button secondary" href="/tugas">Kembali ke Tugas</Link>} />}
   </div>;
 }
