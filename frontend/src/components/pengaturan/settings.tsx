@@ -9,7 +9,7 @@ import { Badge, Icon, Modal } from "@/components/ui";
 import { WORKSPACE } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
 import type { Member, PresetId } from "@/lib/demo/types";
-import { DEFAULT_SETTINGS, PRESETS } from "@/lib/engine/score";
+import { DEFAULT_SETTINGS, PRESETS, SOURCE_CONFIDENCE } from "@/lib/engine/score";
 import { number } from "@/lib/format";
 
 function Saved({ show, text }: { show: boolean; text: string }) {
@@ -24,7 +24,7 @@ export function GeneralSettings() {
   return <div className="page-enter">
     <PageHeading title="Pengaturan" subtitle={`Ruang kerja ${WORKSPACE.name}`} />
     <form className="card form-card" onSubmit={e => { e.preventDefault(); setSaved(true); }}>
-      <Saved show={saved} text="Periode dan jam kerja default dipakai untuk anggota baru." />
+      <Saved show={saved} text="Periode dan jam kerja default dipakai untuk karyawan baru." />
       <div className="form-grid">
         <label className="field"><span className="field-label">Nama ruang kerja</span><input className="input" defaultValue={WORKSPACE.name} onChange={() => setSaved(false)} /></label>
         <label className="field"><span className="field-label">Zona waktu</span><select className="select" defaultValue="Asia/Jakarta"><option value="Asia/Jakarta">WIB (Asia/Jakarta)</option><option value="Asia/Makassar">WITA (Asia/Makassar)</option><option value="Asia/Jayapura">WIT (Asia/Jayapura)</option></select></label>
@@ -52,18 +52,18 @@ export function RecommendationSettings() {
           <thead><tr><th>Preset</th><th>Kapan dipakai</th><th className="numeric">K</th><th className="numeric">C</th><th className="numeric">A</th><th className="numeric">R</th><th className="numeric">F</th></tr></thead>
           <tbody>{(Object.keys(PRESETS) as PresetId[]).map(p => <tr key={p} className={draft.preset === p ? "row-highlight" : ""}>
             <td><label className="with-icon"><input type="radio" name="preset" checked={draft.preset === p} onChange={() => { setDraft(d => ({ ...d, preset: p })); setSaved(false); }} /><strong>{PRESETS[p].label}</strong></label></td>
-            <td data-label="Kapan">{PRESETS[p].when}{PRESETS[p].spreadBonus ? " · bonus 0,20 untuk anggota tanpa riwayat sejenis" : ""}</td>
+            <td data-label="Kapan">{PRESETS[p].when}{PRESETS[p].spreadBonus ? " · bonus 0,20 untuk karyawan tanpa riwayat sejenis" : ""}</td>
             {(["k", "c", "a", "r", "f"] as const).map(k => <td key={k} data-label={k.toUpperCase()} className="numeric">{number(PRESETS[p].weights[k], 2)}</td>)}
           </tr>)}</tbody>
         </table></div>
-        <p className="small muted spaced">K kompetensi · C kapasitas setelah penugasan · A ketersediaan sampai tenggat · R riwayat relevan (70%) & preferensi (30%) · F risiko konflik. Preset terpilih: K {number(w.k, 2)}, C {number(w.c, 2)}, A {number(w.a, 2)}, R {number(w.r, 2)}, F {number(w.f, 2)}.</p>
+        <p className="small muted spaced">K kompetensi (dirata-rata berbobot keyakinan kebutuhan dari Analisis kebutuhan; level dikali keyakinan sumbernya: terverifikasi {number(SOURCE_CONFIDENCE.verifikasi, 1)}, riwayat {number(SOURCE_CONFIDENCE.riwayat, 1)}, klaim {number(SOURCE_CONFIDENCE.klaim, 1)}) · C skor beban, turun tajam mendekati 100% · A jam kosong sampai tenggat · R riwayat relevan (70%) & preferensi (30%) · F risiko tenggat berdekatan. Tugas kompleks di preset Seimbang memberi bobot lebih ke K. Bobot di atas adalah titik awal heuristik, belum dikalibrasi; kalibrasi memakai data override setelah pilot. Preset terpilih: K {number(w.k, 2)}, C {number(w.c, 2)}, A {number(w.a, 2)}, R {number(w.r, 2)}, F {number(w.f, 2)}.</p>
       </section>
       <section className="card">
         <SectionTitle title="Syarat wajib & ambang" />
         <label className="field"><span className="field-label">Toleransi level kompetensi</span>
           <select className="select" value={draft.levelTolerance} onChange={e => { setDraft(d => ({ ...d, levelTolerance: Number(e.target.value) })); setSaved(false); }}>
             <option value={0}>Harus sama dengan level dibutuhkan</option><option value={1}>Boleh 1 level di bawah</option><option value={2}>Boleh 2 level di bawah</option>
-          </select><span className="field-hint">Anggota di bawah batas ini tidak ikut diperingkat.</span>
+          </select><span className="field-hint">Karyawan di bawah batas ini tidak ikut diperingkat.</span>
         </label>
         <label className="field spaced"><span className="field-label">Ambang risiko beban: {Math.round(draft.overloadAt * 100)}%</span>
           <input type="range" min={70} max={100} step={5} value={draft.overloadAt * 100} onChange={e => { setDraft(d => ({ ...d, overloadAt: Number(e.target.value) / 100 })); setSaved(false); }} aria-label="Ambang risiko beban" />
@@ -78,7 +78,7 @@ export function RecommendationSettings() {
   </div>;
 }
 
-const ACCESS: Record<Member["access"], string> = { admin: "Admin", manajer: "Manajer", anggota: "Anggota" };
+const ACCESS: Record<Member["access"], string> = { admin: "Admin", manajer: "Manajer", anggota: "Karyawan" };
 
 export function MemberSettings() {
   const { members, dispatch } = useDemo();
@@ -87,26 +87,26 @@ export function MemberSettings() {
   const [sent, setSent] = useState<string[]>([]);
   const [error, setError] = useState("");
   return <div className="page-enter">
-    <PageHeading title="Anggota & peran" subtitle="Atur siapa yang bisa menugaskan dan siapa yang hanya menerima penugasan." actions={<button className="button primary" onClick={() => setInviting(true)}><Icon icon={UserPlus} />Undang anggota</button>} />
+    <PageHeading title="Karyawan & peran" subtitle="Atur siapa yang bisa menugaskan dan siapa yang hanya menerima penugasan." actions={<button className="button primary" onClick={() => setInviting(true)}><Icon icon={UserPlus} />Undang karyawan</button>} />
     <section className="card">
-      <Paged items={members} unit="anggota">{(paged, pageIndex) => <><div className="table-scroll stack-table"><table>
+      <Paged items={members} unit="karyawan">{(paged, pageIndex) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Nama</th><th>Email</th><th>Peran akses</th><th>Status</th></tr></thead>
         <tbody>
-          {pageIndex === 0 && <tr><td><strong>Krisna Panca</strong></td><td data-label="Email">krisna@positifprofesional.id</td><td data-label="Peran"><Badge tone="ok">Admin</Badge></td><td data-label="Status">Aktif</td></tr>}
+          {pageIndex === 0 && <tr><td><strong>Krisna Panca</strong></td><td data-label="Email">krisna@arunika.id</td><td data-label="Peran"><Badge tone="ok">Admin</Badge></td><td data-label="Status">Aktif</td></tr>}
           {paged.map(m => <tr key={m.id}>
             <td><strong>{m.name}</strong></td>
             <td data-label="Email">{m.email}</td>
             <td data-label="Peran"><div className="level-select" role="group" aria-label={`Peran akses ${m.name}`}>{(Object.keys(ACCESS) as Member["access"][]).map(a => <button key={a} type="button" className={m.access === a ? "selected" : ""} aria-pressed={m.access === a} onClick={() => dispatch({ type: "upsertMember", member: { ...m, access: a } })}>{ACCESS[a]}</button>)}</div></td>
             <td data-label="Status">{m.availableHours === null ? <Badge tone="warn">Undangan belum diselesaikan</Badge> : "Aktif"}</td>
           </tr>)}
-          {pageIndex === 0 && sent.map(s => <tr key={s}><td><span className="muted">Menunggu</span></td><td data-label="Email">{s}</td><td data-label="Peran">Anggota</td><td data-label="Status"><Badge>Undangan terkirim</Badge></td></tr>)}
+          {pageIndex === 0 && sent.map(s => <tr key={s}><td><span className="muted">Menunggu</span></td><td data-label="Email">{s}</td><td data-label="Peran">Karyawan</td><td data-label="Status"><Badge>Undangan terkirim</Badge></td></tr>)}
         </tbody>
       </table></div></>}</Paged>
     </section>
-    {inviting && <Modal title="Undang anggota" onClose={() => setInviting(false)}>
+    {inviting && <Modal title="Undang karyawan" onClose={() => setInviting(false)}>
       <form noValidate onSubmit={e => { e.preventDefault(); if (!/^\S+@\S+\.\S+$/.test(email)) return setError("Email belum valid."); setSent(s => [...s, email]); setEmail(""); setInviting(false); }}>
         <p className="dialog-summary">Undangan berlaku 7 hari. Di mockup, email tidak benar-benar dikirim.</p>
-        <label className="field"><span className="field-label">Email</span><input className="input" type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }} placeholder="wulan@positifprofesional.id" /></label>
+        <label className="field"><span className="field-label">Email</span><input className="input" type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }} placeholder="wulan@arunika.id" /></label>
         {error && <p className="field-error spaced" role="alert">{error}</p>}
         <div className="dialog-actions"><button type="button" className="button secondary" onClick={() => setInviting(false)}>Batal</button><button type="submit" className="button primary">Kirim undangan</button></div>
       </form>
@@ -121,7 +121,7 @@ export function Billing() {
   return <div className="page-enter">
     <PageHeading title="Tagihan" subtitle="Paket, jumlah kursi, dan riwayat invoice ruang kerja." />
     <div className="metrics-grid three">
-      <MetricCard icon={UserPlus} label="Kursi terpakai" value={String(seats)} unit="pengguna" note={`Admin + ${members.length} anggota`} />
+      <MetricCard icon={UserPlus} label="Kursi terpakai" value={String(seats)} unit="pengguna" note={`Admin + ${members.length} karyawan`} />
       <MetricCard icon={ReceiptText} label="Paket" value="Belum dipilih" note="Pilihan paket menyusul rancangan bisnis" />
       <MetricCard icon={CircleCheck} label="Status langganan" value="Belum aktif" note="Belum ada tagihan berjalan" />
     </div>

@@ -1,59 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, ArrowRight, ArrowUpRight, CalendarClock, ClipboardList, Hourglass, Inbox, Plus, UserCheck } from "lucide-react";
 import { CapacityBar, DataBadge, MetricCard, PageHeading, Person, PriorityBadge, SectionTitle } from "@/components/app/parts";
 import { Icon } from "@/components/ui";
 import { FluidArt } from "@/components/ui/fluid-art";
 import { PERIOD, NOW } from "@/lib/demo/seed";
+import { replanMessage } from "@/lib/demo/notifications";
 import { useDemo } from "@/lib/demo/store";
-import { allocatedHours, nearbyDeadlines } from "@/lib/engine/score";
+import { replanRisks } from "@/lib/engine/capacity";
+import { allocatedHours, clashingDeadline } from "@/lib/engine/score";
 import { dayDate, hours, number, percent, shortDate } from "@/lib/format";
-import { Pager } from "@/components/ui/pager";
-import { fitRows, paginate } from "@/lib/paginate";
+import { Paged } from "@/components/ui/pager";
 
-const FALLBACK_ROWS = 4;
-
-/**
- * Jumlah baris yang muat di area tabel (kartu setinggi kolom kanan, ukuran baris tetap). Layar sempit: FALLBACK_ROWS.
- * Bila semua baris muat tanpa pager, hasilnya `total` supaya pager tidak muncul.
- */
-function useFitRows(total: number) {
-  const area = useRef<HTMLDivElement>(null);
-  const pagerH = useRef(72);
-  const [rows, setRows] = useState(FALLBACK_ROWS);
-  useEffect(() => {
-    const el = area.current;
-    if (!el) return;
-    const measure = () => {
-      const row = el.querySelector("tbody tr")?.getBoundingClientRect().height;
-      const head = el.querySelector("thead")?.getBoundingClientRect().height ?? 0;
-      const pager = el.parentElement?.querySelector(".pager")?.getBoundingClientRect().height;
-      if (pager) pagerH.current = pager;
-      if (!row || !matchMedia("(min-width: 1200px)").matches) return setRows(FALLBACK_ROWS);
-      setRows(fitRows(el.clientHeight + (pager ? pagerH.current : 0) - head, row, pagerH.current, total));
-    };
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    if (el.parentElement) ro.observe(el.parentElement);
-    return () => ro.disconnect();
-  }, [total]);
-  return [area, rows] as const;
-}
+/** Daftar di kolom kanan dipotong supaya tinggi kolom kanan sejajar 10 baris tabel kapasitas. */
+const QUEUE_SIZE = 2;
+const NOTES_SIZE = 2;
 
 export function Dasbor() {
   const { tasks, members, names } = useDemo();
-  const [page, setPage] = useState(0);
-  const [area, size] = useFitRows(members.length);
-  const view = paginate(members, page, size);
   const open = tasks.filter(t => t.status === "belum").sort((a, b) => (a.priority === "tinggi" ? -1 : 0) - (b.priority === "tinggi" ? -1 : 0) || a.dueDate.localeCompare(b.dueDate));
   const complete = members.filter(m => m.availableHours !== null);
   const notes = [
+    ...replanRisks(tasks, members, NOW.slice(0, 10)).map(r => ({ id: `ulang-${r.task.id}-${r.member.id}`, name: `Perlu jadwal ulang: ${r.task.title}`, text: replanMessage(r), href: `/tugas/${r.task.id}` })),
     ...members.filter(m => m.availableHours === null).map(m => ({ id: m.id, name: m.name, text: "Ketersediaan belum diisi untuk periode ini.", href: `/tim/${m.id}` })),
     ...members.filter(m => m.availableHours !== null).flatMap(m => {
-      const near = nearbyDeadlines(m.id, "2026-10-02", tasks);
-      return near.length && m.id === "citra" ? [{ id: m.id, name: m.name, text: `Tenggat pekerjaan lain berdekatan pada ${shortDate(near[0].dueDate)}.`, href: `/tim/${m.id}` }] : [];
+      const near = clashingDeadline(m.id, tasks);
+      return near ? [{ id: m.id, name: m.name, text: `Dua tugas aktif bertenggat berdekatan sekitar ${shortDate(near)}.`, href: `/tim/${m.id}` }] : [];
     }),
   ];
   const waiting = tasks.filter(t => t.status === "menunggu").length;
@@ -62,29 +35,28 @@ export function Dasbor() {
   const teamAllocated = complete.reduce((s, m) => s + allocatedHours(m.id, tasks), 0);
   const next = open[0];
   return <div className="page-enter">
-    <PageHeading title="Dasbor" subtitle={`${dayDate(NOW)} · Gambaran kerja semua anggota, sebelum keputusan berikutnya.`} actions={<Link className="button primary" href="/tugas/baru"><Icon icon={Plus} />Buat tugas</Link>} />
+    <PageHeading title="Dashboard" subtitle={`${dayDate(NOW)} · Gambaran kerja semua karyawan, sebelum keputusan berikutnya.`} actions={<Link className="button primary" href="/tugas/baru"><Icon icon={Plus} />Buat tugas</Link>} />
     <div className="metrics-grid">
       <MetricCard icon={ClipboardList} label="Tugas belum ditugaskan" value={String(open.length)} unit="tugas" note="Menunggu keputusan penugasan" tone={open.length ? "warn" : undefined} href="/tugas?status=belum" />
-      <MetricCard icon={UserCheck} label="Data kapasitas lengkap" value={String(complete.length)} unit={`dari ${members.length} anggota`} note="Kompetensi dan ketersediaan tercatat" tone="brand" href="/tim" />
+      <MetricCard icon={UserCheck} label="Data kapasitas lengkap" value={String(complete.length)} unit={`dari ${members.length} karyawan`} note="Kompetensi dan ketersediaan tercatat" tone="brand" href="/tim" />
       <MetricCard icon={AlertTriangle} label="Perlu ditinjau" value={String(notes.length)} unit="konteks kerja" note="Kelengkapan data dan potensi konflik" tone={notes.length ? "warn" : undefined} href="#catatan" />
-      <MetricCard icon={Inbox} label="Menunggu jawaban anggota" value={String(waiting)} unit="penugasan" note={rejected ? `${rejected} ditolak anggota, perlu ditugaskan ulang` : "Belum ada penugasan yang ditolak"} tone={rejected ? "warn" : undefined} href={rejected ? "/tugas?status=belum" : "/tugas?status=menunggu"} />
+      <MetricCard icon={Inbox} label="Menunggu jawaban karyawan" value={String(waiting)} unit="penugasan" note={rejected ? `${rejected} ditolak karyawan, perlu ditugaskan ulang` : "Belum ada penugasan yang ditolak"} tone={rejected ? "warn" : undefined} href={rejected ? "/tugas?status=belum" : "/tugas?status=menunggu"} />
     </div>
     <div className="split-main">
       <section className="card capacity-card">
-        <SectionTitle title="Kapasitas anggota" subtitle={`Alokasi waktu semua anggota di semua proyek, periode ${PERIOD.label}. Jam kerja, bukan ukuran produktivitas.`} action={<Link className="text-link" href="/kapasitas">Lihat semua<Icon icon={ArrowRight} size={14} /></Link>} />
-        <div className="team-total" aria-label="Total kapasitas semua anggota">
-          <div><span>Total semua anggota</span><strong>{percent(teamAllocated / teamCapacity, 1)}</strong><span>teralokasi, dari {number(complete.length)} anggota dengan data lengkap</span></div>
+        <SectionTitle title="Kapasitas karyawan" subtitle={`Alokasi waktu semua karyawan di semua proyek, periode ${PERIOD.label}. Jam kerja, bukan ukuran produktivitas.`} action={<Link className="text-link" href="/kapasitas">Lihat semua<Icon icon={ArrowRight} size={14} /></Link>} />
+        <div className="team-total" aria-label="Total kapasitas semua karyawan">
+          <div><span>Total semua karyawan</span><strong>{percent(teamAllocated / teamCapacity, 1)}</strong><span>teralokasi, dari {number(complete.length)} karyawan dengan data lengkap</span></div>
           <CapacityBar allocated={teamAllocated} available={teamCapacity} />
         </div>
-        <div ref={area} className="table-scroll stack-table"><table>
-          <thead><tr><th>Anggota</th><th>Kapasitas teralokasi</th><th className="numeric">Data</th></tr></thead>
-          <tbody>{view.rows.map(m => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
+        <Paged items={members} unit="karyawan">{(paged) => <div className="table-scroll stack-table"><table>
+          <thead><tr><th>Karyawan</th><th>Kapasitas teralokasi</th><th className="numeric">Data</th></tr></thead>
+          <tbody>{paged.map(m => <tr key={m.id} className={m.availableHours === null ? "row-highlight" : ""}>
             <td><Link href={`/tim/${m.id}`}><Person member={m} /></Link></td>
             <td data-label="Kapasitas"><CapacityBar allocated={allocatedHours(m.id, tasks)} available={m.availableHours} /></td>
             <td data-label="Data" className="numeric"><DataBadge complete={m.availableHours !== null} /></td>
           </tr>)}</tbody>
-        </table></div>
-        <Pager view={view} onPage={setPage} unit="anggota" />
+        </table></div>}</Paged>
       </section>
       <div className="stack">
         {next ? <section className="highlight-card" aria-label="Penugasan berikutnya"><FluidArt className="highlight-art" style="streak" seed={3} w={720} h={360} />
@@ -95,21 +67,21 @@ export function Dasbor() {
             <PriorityBadge priority={next.priority} />
           </div>
           <p>Kebutuhan: {(next.dna?.requirements ?? []).map(r => names[r.competencyId]).join(", ") || "belum dianalisis"}.</p>
-          <Link className="button inverse" href={next.dna?.confirmed ? `/tugas/${next.id}/kandidat` : `/tugas/${next.id}/dna`}>Tinjau kandidat<span className="button-circle"><Icon icon={ArrowUpRight} size={16} /></span></Link>
+          <Link className="button inverse" href={next.dna?.confirmed ? `/tugas/${next.id}/kandidat` : `/tugas/${next.id}/kebutuhan`}>Tinjau kandidat<span className="button-circle"><Icon icon={ArrowUpRight} size={16} /></span></Link>
         </section> : <section className="card"><SectionTitle title="Semua tugas sudah ditugaskan" subtitle="Tidak ada keputusan yang menunggu." /></section>}
         {open.length > 1 && <section className="card mesh mesh-1">
           <SectionTitle title="Antrean berikutnya" />
-          {open.slice(1).map(t => <div key={t.id} className="dna-row">
+          <Paged items={open.slice(1)} unit="tugas" size={QUEUE_SIZE} compact>{(paged) => <div className="side-list">{paged.map(t => <div key={t.id} className="dna-row">
             <div><h4>{t.title}</h4><p className="with-icon"><Icon icon={Hourglass} size={12} />{shortDate(t.dueDate)} · {hours(t.dna?.effortHours ?? t.remainingHours)}</p></div>
             <Link className="row-link" href={`/tugas/${t.id}/kandidat`}>Tinjau kandidat</Link>
-          </div>)}
+          </div>)}</div>}</Paged>
         </section>}
         <section className="card mesh mesh-2" id="catatan">
           <SectionTitle title="Catatan untuk ditinjau" />
-          {notes.length ? notes.map(n => <div key={n.id} className="dna-row">
+          {notes.length ? <Paged items={notes} unit="catatan" size={NOTES_SIZE} compact>{(paged) => <div className="side-list">{paged.map(n => <div key={n.id} className="dna-row">
             <div><h4>{n.name}</h4><p>{n.text}</p></div>
             <Link className="row-link" href={n.href}>Lihat konteks</Link>
-          </div>) : <p className="muted small">Tidak ada catatan.</p>}
+          </div>)}</div>}</Paged> : <p className="muted small">Tidak ada catatan.</p>}
         </section>
       </div>
     </div>

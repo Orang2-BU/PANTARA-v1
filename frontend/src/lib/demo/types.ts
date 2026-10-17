@@ -3,7 +3,7 @@
 export type Priority = "rendah" | "normal" | "tinggi";
 export type TaskStatus = "draf" | "belum" | "menunggu" | "berjalan" | "selesai";
 export type Level = 0 | 1 | 2 | 3;
-type CompetencySource = "klaim" | "verifikasi" | "riwayat";
+export type CompetencySource = "klaim" | "verifikasi" | "riwayat";
 export type EffortSize = "S" | "M" | "L" | "XL";
 export type PresetId = "seimbang" | "tenggat" | "ratakan" | "sebar";
 
@@ -25,15 +25,17 @@ export interface Member {
   initials: string;
   role: string;
   email: string;
-  /** Jam tersedia di periode aktif; null = belum diisi anggota. */
+  /** Jam tersedia di periode aktif; null = belum diisi karyawan. */
   availableHours: number | null;
   leaveDates: string[];
-  /** Batas kerja mingguan yang ditentukan anggota (syarat wajib). */
+  /** Batas kerja mingguan yang ditentukan karyawan (syarat wajib). */
   weeklyLimit: number;
   competencies: MemberCompetency[];
   /** Kompetensi yang disukai / dihindari (faktor preferensi di R). */
   prefers: string[];
   avoids: string[];
+  /** URL foto profil; kosong = belum diunggah (tampil inisial). */
+  photo?: string;
   /** Peran akses ruang kerja. */
   access: "admin" | "manajer" | "anggota";
 }
@@ -89,6 +91,8 @@ export interface Task {
   /** Kompetensi yang dipakai tugas selesai (riwayat relevan). */
   competencyIds: string[];
   responseReason?: string;
+  /** Jam aktual yang dicatat saat tugas ditandai selesai (satu angka, bukan time tracking); dasar kalibrasi estimasi. */
+  actualHours?: number;
 }
 
 export interface Decision {

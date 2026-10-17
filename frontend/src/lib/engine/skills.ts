@@ -5,7 +5,7 @@ import { memberLevel } from "./score";
 const MASTERY = 2;
 
 /**
- * Kompetensi rawan: dikuasai paling banyak satu anggota di level Mandiri ke atas
+ * Kompetensi rawan: dikuasai paling banyak satu karyawan di level Mandiri ke atas
  * (konsentrasi pengetahuan / truck factor, 01-PRD R4). Yang belum dikuasai siapa pun didahulukan.
  */
 export function atRiskCompetencies(competencies: Competency[], members: Member[]) {

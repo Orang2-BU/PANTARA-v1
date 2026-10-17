@@ -1,18 +1,24 @@
 "use client";
 
-import { GitCompareArrows, ShieldAlert, Timer, UserCheck, Users } from "lucide-react";
+import { Anchor, GitCompareArrows, Hourglass, Ruler, ShieldAlert, Timer, UserCheck, Users } from "lucide-react";
 import { MetricCard, PageHeading, SectionTitle } from "@/components/app/parts";
 import { Badge, Icon } from "@/components/ui";
 import { FluidArt } from "@/components/ui/fluid-art";
-import { BASELINE_MINUTES } from "@/lib/demo/seed";
+import { BASELINE_MINUTES, NOW } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
-import { decisionStats } from "@/lib/engine/metrics";
+import { overrunFactor } from "@/lib/engine/capacity";
+import { decisionStats, estimateAccuracy, stabilityRate } from "@/lib/engine/metrics";
 import { minutes, number, percent, shortDate } from "@/lib/format";
 
 /** Indikator dampak proposal §4.1, dihitung dari data (tanpa klaim persen sebelum diuji). */
 export function Report() {
-  const { decisions, members, taskById } = useDemo();
+  const { decisions, members, tasks, taskById } = useDemo();
   const s = decisionStats(decisions);
+  const stable = stabilityRate(decisions, NOW);
+  const judged = stable.stable + stable.moved;
+  const accuracy = estimateAccuracy(tasks);
+  const overrun = overrunFactor(tasks);
+  const times = (v: number) => `×${number(v, 2)}`;
   const tb = BASELINE_MINUTES * 60_000;
   const efficiency = s.assigned ? (tb - s.avgMs) / tb : 0;
   const complete = members.filter(m => m.availableHours !== null).length;
@@ -33,7 +39,12 @@ export function Report() {
       <MetricCard icon={ShieldAlert} label="Konflik terdeteksi sebelum penugasan" value={String(s.conflicts)} unit="peringatan" note="Kapasitas, tenggat berdekatan, dependensi" />
       <MetricCard icon={UserCheck} label="Tingkat penerimaan rekomendasi" value={s.n ? percent(s.accepted / s.n) : "-"} note={`Target pilot ≥ 50% (hipotesis H2)`} tone="brand" />
       <MetricCard icon={GitCompareArrows} label="Frekuensi override" value={s.n ? percent(s.override / s.n) : "-"} note={`${s.rejected} rekomendasi ditolak · alasan dipakai mengkalibrasi bobot`} />
-      <MetricCard icon={Users} label="Kelengkapan Work Twin" value={percent(complete / members.length)} unit={`${complete} dari ${members.length}`} note="Target ≥ 80% setelah minggu pertama (H1)" tone={complete / members.length >= 0.8 ? "brand" : "warn"} />
+      <MetricCard icon={Users} label="Kelengkapan Profil kerja" value={percent(complete / members.length)} unit={`${complete} dari ${members.length}`} note="Target ≥ 80% setelah minggu pertama (H1)" tone={complete / members.length >= 0.8 ? "brand" : "warn"} />
+    </div>
+    <div className="metrics-grid three">
+      <MetricCard icon={Anchor} label="Penugasan stabil 7 hari (North Star)" value={judged ? percent(stable.rate) : "-"} unit={judged ? `${stable.stable} dari ${judged}` : undefined} note={stable.pending ? `${stable.pending} keputusan belum genap 7 hari, belum dihitung` : "Tidak dipindah ke orang lain dalam 7 hari"} tone="brand" />
+      <MetricCard icon={Ruler} label="Akurasi estimasi" value={accuracy.n ? times(accuracy.ratio) : "-"} unit={accuracy.n ? `${accuracy.n} tugas` : undefined} note="Rata-rata jam aktual dibanding rencana, dicatat saat tugas selesai" tone={accuracy.ratio > 1.2 ? "warn" : undefined} />
+      <MetricCard icon={Hourglass} label="Faktor molor yang dipakai mesin" value={times(overrun.factor)} note={overrun.samples >= 5 ? `Persentil 80 dari ${overrun.samples} tugas selesai` : `Asumsi awal; data jam aktual baru ${overrun.samples} tugas (minimal 5)`} />
     </div>
     <section className="card">
       <SectionTitle title="Lama keputusan per penugasan" subtitle={`Tp tiap keputusan dibanding cara manual (${BASELINE_MINUTES} menit). Makin pendek makin cepat.`} />

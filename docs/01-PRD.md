@@ -56,6 +56,9 @@ Setiap keputusan desain di dokumen ini merujuk sumber berikut. Semua DOI dicek l
 | R13 | UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi | Data pribadi pekerja butuh dasar pemrosesan, tujuan jelas, dan hak subjek data | Privasi Work Twin |
 | R14 | van de Weerd, Mangula & Brinkkemper (2016), *Information & Management*, doi:10.1016/j.im.2016.05.008; Tju, Putra & Handayani (2020), ICIMTech, doi:10.1109/icimtech50083.2020.9211248 | Adopsi SaaS UKM dipengaruhi faktor organisasi dan lingkungan | GTM lewat pilot + jaringan |
 | R15 | Sahid dkk. (2026), *JTAS* 1(1), doi:10.64878/jtas.v1i1.87 `[dari user]` | Studi kasus PT Metanouva: banyak platform eksternal → fragmentasi data proyek dan sulit mengalokasikan sumber daya | Masalah (konteks Indonesia) |
+| R16 | Kingman (1961), *Mathematical Proceedings of the Cambridge Philosophical Society* 57(4); Armour (2015), "A Little Queue Theory", *Communications of the ACM* | Waktu tunggu antrean ≈ (ρ/(1−ρ)) × variabilitas × waktu layanan: naik tajam mendekati utilisasi 100% | Skor beban C cembung, ambang 85/90% |
+| R17 | Buehler, Griffin & Ross (1994), *JPSP* 67(3), doi:10.1037/0022-3514.67.3.366; Shmueli, Pliskin & Fink (2015), *Information Systems Journal*, doi:10.1111/isj.12091 | Orang cenderung meremehkan waktu penyelesaian (planning fallacy), juga di pengembangan perangkat lunak; informasi waktu aktual masa lalu mengurangi tapi tidak menghilangkan bias | Rentang estimasi dan faktor molor dari jam aktual |
+| R18 | Parasuraman & Manzey (2010), *Human Factors* 52(3):381-410, doi:10.1177/0018720810376055 | Automation bias terjadi pada pemula dan ahli, tidak hilang dengan pelatihan atau instruksi | Pita "praktis setara", alasan per faktor, override sebagai metrik |
 
 ## 3. Strategi — Startup Canvas
 > **Status bagian bisnis (§3, §3b): DITUNDA, menunggu rancangan dari tim bisnis (00-BRIEF P8).** Isi di bawah adalah bahan awal hasil riset AI, bukan keputusan. Segmen, harga, model pendapatan, ROI, GTM, dan hipotesis H5 akan diganti oleh rancangan tim. Bagian lain PRD tidak bergantung pada angka di sini.
@@ -187,14 +190,14 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 **Inti manajer (area aplikasi, mode Operate)**
 | # | Halaman | Rute | Peran | Tugas | Info utama (besar) | Info pendukung (kecil) | Aksi utama | Aksi sekunder (menu ⋯) | State khusus | Prioritas |
 |---|---|---|---|---|---|---|---|---|---|---|
-| P10 | Dasbor | `/dasbor` | manajer | Melihat apa yang perlu diputuskan sekarang | Tugas belum ditugaskan, kapasitas semua anggota periode ini (total + per anggota, semua proyek), catatan yang perlu ditinjau (data belum lengkap, tenggat berdekatan), penugasan yang menunggu jawaban atau ditolak anggota | Periode, waktu sinkron | Buat tugas | Ganti periode | kosong (ruang kerja baru → ke P9), data tidak lengkap | Must |
+| P10 | Dashboard | `/dashboard` | manajer | Melihat apa yang perlu diputuskan sekarang | Tugas belum ditugaskan, kapasitas semua anggota periode ini (total + per anggota, semua proyek), catatan yang perlu ditinjau (data belum lengkap, tenggat berdekatan), penugasan yang menunggu jawaban atau ditolak anggota | Periode, waktu sinkron | Buat tugas | Ganti periode | kosong (ruang kerja baru → ke P9), data tidak lengkap | Must |
 | P11 | Daftar tugas | `/tugas` | manajer | Mengelola semua tugas dan statusnya | Judul, kebutuhan, prioritas, status, penanggung jawab, sisa estimasi, tenggat | ID tugas, proyek | Buat tugas | Cari kandidat, Buka, Arsipkan | kosong, filter tanpa hasil, loading | Must |
 | P12 | Buat tugas | `/tugas/baru` | manajer | Memasukkan tugas baru | Judul, deskripsi, tenggat, prioritas | Proyek, lampiran tautan | Analisis kebutuhan | Simpan draf | validasi, tenggat lewat | Must |
-| P13 | Tinjau Task DNA | `/tugas/[id]/dna` | manajer | Memeriksa dan mengoreksi hasil uraian | Kompetensi + level, estimasi upaya (jam), kompleksitas, dependensi; tiap isian dengan tanda yakin/ragu | Versi model & prompt, kutipan kalimat sumber | Konfirmasi & cari kandidat | Analisis ulang | analisis gagal (isi manual), isian ragu, kompetensi di luar katalog | Must |
+| P13 | Tinjau kebutuhan | `/tugas/[id]/kebutuhan` | manajer | Memeriksa dan mengoreksi hasil uraian | Kompetensi + level, estimasi upaya (jam), kompleksitas, dependensi; tiap isian dengan tanda yakin/ragu | Versi model & prompt, kutipan kalimat sumber | Konfirmasi & cari kandidat | Analisis ulang | analisis gagal (isi manual), isian ragu, kompetensi di luar katalog | Must |
 | P14 | Rekomendasi kandidat | `/tugas/[id]/kandidat` | manajer | Membandingkan Top 3 kandidat | Kartu sorotan kandidat #1; tiga kartu dengan skor, kontribusi 5 faktor, sisa kapasitas | Kandidat yang tersaring + alasannya (dilipat), preset bobot | Simulasikan | Ganti preset bobot, Pilih orang lain, Tolak rekomendasi (alasan wajib) | tidak ada kandidat lolos (tampilkan syarat yang gagal + saran: pecah tugas, geser tenggat) | Must |
 | P15 | Simulasi what-if | `/tugas/[id]/simulasi` | manajer | Melihat konsekuensi sebelum menetapkan | Sebelum → sesudah per skenario: utilisasi kandidat, konflik tenggat/dependensi, sebaran beban tim | Asumsi simulasi (jam/hari, periode) | Tetapkan penugasan (dialog) | Simpan draf, Bagi ke 2 orang | konflik kritis (butuh konfirmasi), skenario > 3 | Must |
 | P16 | Detail tugas | `/tugas/[id]` | manajer, anggota yang ditugaskan | Melihat status, penanggung jawab, riwayat keputusan | Status, penanggung jawab, sisa estimasi, tenggat | Task DNA final, log keputusan (siapa, kapan, alasan) | Ubah status | Tugaskan ulang, Arsipkan | ditolak anggota (tampilkan alasan + tombol cari kandidat lagi) | Must |
-| P17 | Alokasi batch | `/tugas/alokasi-batch` | manajer | Membagi banyak tugas belum ditugaskan sekaligus (OR-Tools) | Usulan pasangan tugas → anggota, total skor, utilisasi akhir per anggota | Tugas yang tidak bisa dialokasikan + sebab | Tinjau & tetapkan terpilih | Ubah pasangan | tidak feasible | Should |
+| P17 | Penugasan massal | `/tugas/massal` | manajer | Membagi banyak tugas belum ditugaskan sekaligus (OR-Tools) | Usulan pasangan tugas → anggota, total skor, utilisasi akhir per anggota | Tugas yang tidak bisa dialokasikan + sebab | Tinjau & tetapkan terpilih | Ubah pasangan | tidak feasible | Should |
 | P18 | Tim | `/tim` | manajer | Melihat Work Twin semua anggota | Nama, keahlian, peran, alokasi kapasitas, tugas aktif, status kelengkapan data | Waktu sinkron | Tambah anggota (modal) | Impor CSV, Ingatkan lengkapi data | data belum lengkap, kosong | Must |
 | P19 | Profil kerja (Work Twin) anggota | `/tim/[id]` | manajer | Memahami kondisi satu anggota | Kapasitas & ketersediaan periode, kompetensi + level + sumber (klaim/verifikasi/riwayat), tugas aktif | Preferensi, batas kerja, riwayat tugas relevan | Verifikasi kompetensi | Ubah data, Nonaktifkan | data belum lengkap | Must |
 | P40 | Peta keahlian | `/tim/keahlian` | manajer | Melihat siapa menguasai apa untuk semua anggota | Kompetensi rawan (dikuasai ≤ 1 anggota di level Mandiri ke atas), matriks anggota × kompetensi per kategori | Tautan ke profil anggota dan preset Sebar pengetahuan | Buka profil | Atur preset | semua aman (tidak ada kompetensi rawan) | Should |
@@ -292,14 +295,17 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 **Bagian yang memakai LLM generatif (teks bebas):** tidak ada di MVP. Alasan rekomendasi disusun oleh kode dari kontribusi faktor (template kalimat), sehingga selalu sesuai angka sebenarnya `[riset: R11]`.
 
 **Mesin keputusan (deterministik, bukan AI):**
-1. **Syarat wajib (hard constraint):** tersedia di periode tugas (tidak cuti pada rentang kerja), sisa kapasitas sebelum tenggat ≥ 50% estimasi (bisa dibagi), memenuhi level minimum kompetensi wajib, tidak melewati batas kerja mingguan yang ditentukan anggota.
+1. **Syarat wajib (hard constraint):** ketersediaan periode sudah diisi; masih ada hari kerja yang bukan cuti sampai tenggat (cuti di sebagian hari hanya mengurangi jam, tidak menyingkirkan); jam kosong sampai tenggat ≥ 50% estimasi (bisa dibagi); memenuhi level minimum kompetensi wajib; tidak melewati batas kerja mingguan yang ditentukan anggota.
 2. **Skor:** `S = w1·K + w2·C + w3·A + w4·R − w5·F`, semua faktor dinormalisasi 0-1:
-   - K kesesuaian kompetensi (rata-rata min(level anggota / level dibutuhkan, 1) berbobot kompleksitas),
-   - C kapasitas setelah penugasan (1 − utilisasi sesudah),
-   - A ketersediaan sampai tenggat (jam tersedia / estimasi, dibatasi 1),
+   - K kesesuaian kompetensi: rata-rata min(level anggota / level dibutuhkan, 1) × keyakinan sumber level (terverifikasi 1,0 · riwayat 0,9 · klaim 0,7, asumsi awal), dibobot keyakinan p tiap kebutuhan dari Task DNA. Level dari klaim saja memunculkan peringatan "belum terverifikasi",
+   - C skor beban setelah penugasan: (1+k)·h/(h+k) dengan h = 1 − utilisasi sesudah dan k = 0,15. Turun pelan di beban rendah dan tajam mendekati 100%, meniru waktu tunggu antrean ∝ ρ/(1−ρ) `[riset: R16]` (penerapan ke satu orang adalah analogi),
+   - A ketersediaan sampai tenggat: jam kosong sampai tenggat / estimasi, dibatasi 1. Jam kosong = jam per hari kerja × hari kerja tersisa yang bukan cuti − sisa jam tugas aktif lain yang jatuh tempo lebih dulu,
    - R relevansi riwayat & preferensi: 0,7 × riwayat (tugas sejenis yang pernah selesai, maks 3 = 1) + 0,3 × preferensi (jenis tugas disukai = 1, netral = 0,5, dihindari = 0). Preferensi disebut di fitur Adaptive Assignment proposal §2.2,
-   - F risiko konflik (tenggat berdekatan ≤ 1 hari, utilisasi sesudah ≥ 90%, dependensi belum selesai).
-3. **Preset bobot** (dikalibrasi dari data override, R6):
+   - F risiko konflik: 0,5 per tugas lain dengan tenggat berdekatan (≤ 1 hari), dibatasi 1. Beban tidak lagi masuk F agar tidak terhitung dua kali dengan C. Dependensi yang belum selesai berlaku sama untuk semua kandidat sehingga tidak mengubah peringkat: ditampilkan sebagai peringatan tugas di simulasi.
+   - Bobot efektif: tugas dengan kompleksitas ≥ 2 di preset Seimbang memindahkan 0,10 ke K (dari C 0,05 dan R 0,05).
+   - Estimasi punya rentang: batas atas = estimasi × faktor molor. Faktor = persentil ke-80 rasio jam aktual / rencana dari tugas selesai (outside view); bila jam aktual < 5 tugas pakai asumsi 1,5 `[riset: R17]`. Bila beban dengan batas atas melewati 100%, kandidat diberi peringatan.
+   - Selisih skor < 0,03 ditampilkan "praktis setara", bukan peringkat tegas, untuk menekan automation bias `[riset: R18]`.
+3. **Preset bobot** (titik awal heuristik, belum dikalibrasi; setelah pilot dikalibrasi dari log override sebagai preferensi berpasangan. R6 mendasari kemampuan manajer mengubah hasil, bukan angka bobot):
 
 | Preset | w1 K | w2 C | w3 A | w4 R | w5 F | Kapan |
 |---|---|---|---|---|---|---|
@@ -334,6 +340,9 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | F19 | Ekspor CSV riwayat keputusan | Could (A12) | P22 | Kolom sesuai tabel |
 | F20 | Pintasan keyboard alur inti | Could (A12) | P13-P15 | `1/2/3` pilih kandidat, `Enter` simulasikan |
 | F21 | Tagihan | Could | P32 | Setelah pilot berbayar |
+| F22 | Jam aktual saat selesai | Should | P16 | Saat ditandai selesai, manajer mengisi satu angka jam aktual (bukan time tracking); dipakai untuk faktor molor estimasi dan akurasi estimasi di Laporan |
+| F23 | Tanda perlu jadwal ulang | Should | P10, P34 | Tugas aktif yang penanggung jawabnya cuti sampai tenggat atau kekurangan jam muncul di Dasbor dan Notifikasi dengan tautan ke tugas |
+| F24 | Proyeksi 4 minggu | Could | P21 | Sisa jam tugas aktif per anggota disebar rata ke hari kerja sampai tenggat, per minggu, dibanding kapasitas minggu itu |
 
 ## 8. Di Luar Scope
 - Time tracking, timesheet, penggajian, penilaian kinerja individu (bertentangan dengan R7 dan prinsip produk).
@@ -362,3 +371,5 @@ Prasyarat agar alur jalan: Work Twin anggota terisi (P18, P19) dan manajer bisa 
 | 2026-10-17 | Sub-halaman Pengaturan pindah dari tab di halaman ke sub-menu bercabang di sidebar |
 | 2026-10-17 | P41 Graf relasi (sub-halaman Tim): graf node-link gaya Obsidian, atas permintaan user |
 | 2026-10-17 | P10 Dasbor: tabel Kapasitas anggota menampilkan sebanyak mungkin baris yang muat (ukuran baris tetap) sampai dasar kartu; pager Sebelumnya/Berikutnya hanya muncul bila data tidak muat |
+| 2026-10-18 | Mesin skor diperkuat: cuti mengurangi jam (tidak menyingkirkan), keyakinan sumber kompetensi, K berbobot p, bobot kompetensi naik untuk tugas kompleks, A = jam kosong sampai tenggat, C cembung, F tanpa hitung ganda, rentang estimasi, pita praktis setara; F22-F24 ditambahkan; riset R16-R18 |
+| 2026-10-18 | Simulasi pemakaian nyata: rute P10 `/dashboard`, P13 `/tugas/[id]/kebutuhan`, P17 `/tugas/massal`; label UI "Anggota" → "Karyawan", "Dasbor" → "Dashboard", "Task DNA" → "Analisis kebutuhan", "Work Twin" → "Profil kerja", "Alokasi batch" → "Penugasan massal" (nama di dokumen ini tetap sebagai istilah konsep) |

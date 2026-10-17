@@ -1,31 +1,31 @@
 import type { Competency, Level, Member, Project, Task } from "@/lib/demo/types";
 
-export type NodeKind = "anggota" | "kompetensi" | "tugas" | "proyek";
+export type NodeKind = "karyawan" | "kompetensi" | "tugas" | "proyek";
 export type EdgeKind = "menguasai" | "membutuhkan" | "dikerjakan" | "milik";
 
-export interface GraphNode { id: string; kind: NodeKind; ref: string; label: string; r: number; x: number; y: number; vx: number; vy: number; pinned?: boolean }
+export interface GraphNode { id: string; kind: NodeKind; ref: string; label: string; photo?: string; r: number; x: number; y: number; vx: number; vy: number; pinned?: boolean }
 export interface GraphEdge { source: string; target: string; kind: EdgeKind; level?: Level }
 export interface Graph { nodes: GraphNode[]; edges: GraphEdge[] }
 
-const RADIUS: Record<NodeKind, number> = { anggota: 13, kompetensi: 9, tugas: 7, proyek: 15 };
+const RADIUS: Record<NodeKind, number> = { karyawan: 16, kompetensi: 9, tugas: 7, proyek: 15 };
 /** Cincin awal per jenis (pecahan dari bingkai) supaya hasil layout deterministik dan cepat mapan. */
-const RING: Record<NodeKind, number> = { proyek: 0.12, tugas: 0.3, anggota: 0.28, kompetensi: 0.44 };
+const RING: Record<NodeKind, number> = { proyek: 0.12, tugas: 0.3, karyawan: 0.28, kompetensi: 0.44 };
 
 /**
- * Graf relasi ruang kerja (gaya Obsidian): anggota ─ kompetensi (level), tugas ─ kompetensi (kebutuhan),
- * tugas ─ anggota (penanggung jawab), tugas ─ proyek. Tugas selesai tidak ikut supaya graf tetap terbaca.
+ * Graf relasi ruang kerja (gaya Obsidian): karyawan ─ kompetensi (level), tugas ─ kompetensi (kebutuhan),
+ * tugas ─ karyawan (penanggung jawab), tugas ─ proyek. Tugas selesai tidak ikut supaya graf tetap terbaca.
  * Hanya struktur penugasan dan keahlian, bukan aktivitas atau kinerja per orang (01-PRD §8).
  */
 export function buildGraph(members: Member[], competencies: Competency[], tasks: Task[], projects: Project[]): Graph {
   const open = tasks.filter(t => t.status !== "selesai");
   const raw: Omit<GraphNode, "x" | "y" | "vx" | "vy" | "r">[] = [
     ...projects.map(p => ({ id: `proyek:${p.id}`, kind: "proyek" as const, ref: p.id, label: p.name })),
-    ...members.map(m => ({ id: `anggota:${m.id}`, kind: "anggota" as const, ref: m.id, label: m.name.split(" ")[0] })),
+    ...members.map(m => ({ id: `karyawan:${m.id}`, kind: "karyawan" as const, ref: m.id, label: m.name.split(" ")[0], photo: m.photo })),
     ...competencies.map(c => ({ id: `kompetensi:${c.id}`, kind: "kompetensi" as const, ref: c.id, label: c.name })),
     ...open.map(t => ({ id: `tugas:${t.id}`, kind: "tugas" as const, ref: t.id, label: t.title })),
   ];
   const byKind = (k: NodeKind) => raw.filter(n => n.kind === k).length;
-  const seen: Record<NodeKind, number> = { anggota: 0, kompetensi: 0, tugas: 0, proyek: 0 };
+  const seen: Record<NodeKind, number> = { karyawan: 0, kompetensi: 0, tugas: 0, proyek: 0 };
   const nodes: GraphNode[] = raw.map(n => {
     const angle = (seen[n.kind]++ / byKind(n.kind)) * Math.PI * 2 + (n.kind === "tugas" ? 0.4 : n.kind === "kompetensi" ? 0.2 : 0);
     // Dibulatkan: Math.cos/sin berbeda di digit terakhir antara Node (server) dan browser, yang memicu galat hidrasi.
@@ -36,10 +36,10 @@ export function buildGraph(members: Member[], competencies: Competency[], tasks:
   const edges: GraphEdge[] = [];
   const known = new Set(nodes.map(n => n.id));
   const link = (source: string, target: string, kind: EdgeKind, level?: Level) => { if (known.has(source) && known.has(target)) edges.push({ source, target, kind, level }); };
-  for (const m of members) for (const c of m.competencies) if (c.level > 0) link(`anggota:${m.id}`, `kompetensi:${c.id}`, "menguasai", c.level);
+  for (const m of members) for (const c of m.competencies) if (c.level > 0) link(`karyawan:${m.id}`, `kompetensi:${c.id}`, "menguasai", c.level);
   for (const t of open) {
     link(`tugas:${t.id}`, `proyek:${t.projectId}`, "milik");
-    for (const a of t.assignments) if (a.hours > 0) link(`tugas:${t.id}`, `anggota:${a.memberId}`, "dikerjakan");
+    for (const a of t.assignments) if (a.hours > 0) link(`tugas:${t.id}`, `karyawan:${a.memberId}`, "dikerjakan");
     for (const r of t.dna?.requirements ?? []) link(`tugas:${t.id}`, `kompetensi:${r.competencyId}`, "membutuhkan");
   }
   return { nodes, edges };

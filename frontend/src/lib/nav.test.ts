@@ -38,7 +38,7 @@ describe("matchPage", () => {
 
 describe("activeNav", () => {
   it("memilih menu paling spesifik", () => {
-    expect(activeNav("/tugas/alokasi-batch")).toBe("/tugas/alokasi-batch");
+    expect(activeNav("/tugas/massal")).toBe("/tugas/massal");
     expect(activeNav("/tugas/TGS-0142/kandidat")).toBe("/tugas");
   });
 
@@ -53,7 +53,7 @@ describe("activeSub", () => {
     expect(activeSub("/tim/kompetensi")).toBe("/tim/kompetensi");
   });
 
-  it("profil anggota termasuk sub-menu Anggota", () => {
+  it("profil karyawan termasuk sub-menu Karyawan", () => {
     expect(activeSub("/tim")).toBe("/tim");
     expect(activeSub("/tim/bima")).toBe("/tim");
   });
@@ -64,14 +64,14 @@ describe("activeSub", () => {
   });
 
   it("tidak ada sub-menu aktif di luar Tim", () => {
-    expect(activeSub("/dasbor")).toBeUndefined();
+    expect(activeSub("/dashboard")).toBeUndefined();
   });
 });
 
 describe("trailOf", () => {
   it("halaman tingkat atas tanpa induk", () => {
     expect(trailOf("/tugas")).toEqual({ trail: [{ label: "Ruang kerja" }, { label: "Tugas" }], back: undefined });
-    expect(trailOf("/tugas/alokasi-batch").back).toBeUndefined();
+    expect(trailOf("/tugas/massal").back).toBeUndefined();
   });
 
   it("Buat tugas berinduk Tugas", () => {
@@ -87,7 +87,13 @@ describe("trailOf", () => {
     expect(trailOf("/tugas/TGS-0143").trail.at(-1)?.label).toBe("Detail tugas");
   });
 
-  it("profil anggota dan detail proyek membawa entitasnya", () => {
+  it("detail tugas berinduk Tugas, bukan dirinya sendiri", () => {
+    const { trail, back } = trailOf("/tugas/TGS-0143");
+    expect(trail.map(c => c.label)).toEqual(["Ruang kerja", "Tugas", "Detail tugas"]);
+    expect(back).toEqual({ label: "Tugas", href: "/tugas" });
+  });
+
+  it("profil karyawan dan detail proyek membawa entitasnya", () => {
     expect(trailOf("/tim/ayu").trail.at(-1)?.entity).toEqual({ kind: "tim", id: "ayu" });
     expect(trailOf("/proyek/klinik").back?.href).toBe("/proyek");
   });

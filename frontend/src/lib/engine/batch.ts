@@ -16,9 +16,9 @@ export function allocateBatch(open: Task[], members: Member[], tasks: Task[], se
     const { candidates, filtered, effort } = rankCandidates(task, members, working, settings, names);
     const best = candidates[0];
     if (!best) {
-      // Jelaskan lewat anggota yang paling dekat lolos (gagal syarat paling sedikit).
+      // Jelaskan lewat karyawan yang paling dekat lolos (gagal syarat paling sedikit).
       const closest = [...filtered].sort((x, y) => x.failures.length - y.failures.length)[0];
-      const reason = closest ? `Tidak ada yang lolos syarat wajib. Paling dekat ${closest.member.name}: ${closest.failures[0].toLowerCase()}` : "Tidak ada anggota";
+      const reason = closest ? `Tidak ada yang lolos syarat wajib. Paling dekat ${closest.member.name}: ${closest.failures[0].toLowerCase()}` : "Tidak ada karyawan";
       return { task, memberId: null, score: 0, reason };
     }
     working = working.map(t => t.id === task.id ? { ...t, status: "menunggu", assignments: [{ memberId: best.member.id, hours: effort }] } : t);

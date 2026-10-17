@@ -1,7 +1,7 @@
 /** Alasan memilih di luar tiga teratas (override). */
 export const OVERRIDE_REASONS = [
   { value: "klien", label: "Pertimbangan klien" },
-  { value: "pengembangan", label: "Pengembangan anggota" },
+  { value: "pengembangan", label: "Pengembangan karyawan" },
   { value: "info", label: "Info yang tidak ada di sistem" },
   { value: "lainnya", label: "Lainnya" },
 ];

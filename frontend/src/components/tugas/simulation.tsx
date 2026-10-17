@@ -26,13 +26,13 @@ export function Simulation({ params }: { params: Promise<{ id: string }> }) {
   const { taskById, members, tasks, settings, names, memberById, flowStart, decisions, dispatch } = useDemo();
   const task = taskById(id);
   const preset = (search.get("preset") as PresetId | null) ?? settings.preset;
-  const chosen = search.get("anggota");
+  const chosen = search.get("karyawan");
   const [active, setActive] = useState<string | null>(null);
   const [dialog, setDialog] = useState(false);
   const [reason, setReason] = useState("");
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
-  if (!task?.dna?.confirmed) return <EmptyState icon={CircleAlert} title="Belum ada kandidat untuk disimulasikan" text="Konfirmasi kebutuhan tugas dulu, lalu pilih kandidat." action={<Link className="button secondary" href={task ? `/tugas/${id}/dna` : "/tugas"}>Kembali</Link>} />;
+  if (!task?.dna?.confirmed) return <EmptyState icon={CircleAlert} title="Belum ada kandidat untuk disimulasikan" text="Konfirmasi kebutuhan tugas dulu, lalu pilih kandidat." action={<Link className="button secondary" href={task ? `/tugas/${id}/kebutuhan` : "/tugas"}>Kembali</Link>} />;
   if (task.status !== "belum") return <EmptyState icon={CircleCheck} title="Tugas ini sudah ditugaskan" text="Simulasi hanya untuk tugas yang belum punya penanggung jawab." action={<Link className="button secondary" href={`/tugas/${id}`}>Buka detail tugas</Link>} />;
 
   const { candidates, effort } = rankCandidates(task, members, tasks, { ...settings, preset }, names);
@@ -81,17 +81,17 @@ export function Simulation({ params }: { params: Promise<{ id: string }> }) {
       <div className="highlight-top"><span>Kalau ditugaskan ke {names2}</span><Badge tone={crit ? "crit" : sim.conflicts.length ? "warn" : "ok"}>{crit ? "Ada konflik kritis" : sim.conflicts.length ? `${sim.conflicts.length} perlu diperhatikan` : "Aman"}</Badge></div>
       <div className="comparison-grid">
         {mainRow && <Metric label={`Beban ${mainRow.member.name.split(" ")[0]}`} before={percent(mainRow.before / mainRow.available)} after={percent(mainRow.after / mainRow.available)} />}
-        <Metric label="Beban tertinggi anggota" before={percent(sim.peakBefore)} after={percent(sim.peakAfter)} />
-        <Metric label="Rata-rata semua anggota" before={percent(sim.teamBefore, 1)} after={percent(sim.teamAfter, 1)} />
+        <Metric label="Beban tertinggi karyawan" before={percent(sim.peakBefore)} after={percent(sim.peakAfter)} />
+        <Metric label="Rata-rata semua karyawan" before={percent(sim.teamBefore, 1)} after={percent(sim.teamAfter, 1)} />
         <Metric label="Konflik terdeteksi" before="0" after={String(sim.conflicts.length)} />
       </div>
     </section>
 
     <div className="split-detail spaced">
       <section className="card">
-        <SectionTitle title="Sebaran beban anggota" subtitle="Batang atas sebelum, batang bawah sesudah penugasan." />
-        <Paged items={sim.rows} unit="anggota">{(paged) => <><div className="table-scroll stack-table"><table>
-          <thead><tr><th>Anggota</th><th>Sebelum → sesudah</th><th className="numeric">Perubahan</th></tr></thead>
+        <SectionTitle title="Sebaran beban karyawan" subtitle="Batang atas sebelum, batang bawah sesudah penugasan." />
+        <Paged items={sim.rows} unit="karyawan">{(paged) => <><div className="table-scroll stack-table"><table>
+          <thead><tr><th>Karyawan</th><th>Sebelum → sesudah</th><th className="numeric">Perubahan</th></tr></thead>
           <tbody>{paged.map(r => <tr key={r.member.id} className={r.added ? "row-highlight" : ""}>
             <td><Person member={r.member} /></td>
             <td data-label="Beban"><div className="compare-bars"><div className="capacity-bar before"><span style={{ width: `${Math.min(r.before / r.available, 1) * 100}%` }} /></div><CapacityBar allocated={r.before} available={r.available} added={r.added} /></div></td>
@@ -105,13 +105,13 @@ export function Simulation({ params }: { params: Promise<{ id: string }> }) {
         <ul className="conflict-list">
           {sim.conflicts.length ? sim.conflicts.map(c => <li key={c.text} className={c.tone}><Icon icon={TriangleAlert} size={15} />{c.text}</li>) : <li className="ok"><Icon icon={CircleCheck} size={15} />Tidak ada konflik kapasitas, tenggat, atau dependensi.</li>}
         </ul>
-        <p className="small muted spaced">Asumsi: kapasitas {number(32)} jam per anggota per periode, estimasi dari Task DNA yang sudah dikonfirmasi ({hours(effort)}).</p>
+        <p className="small muted spaced">Asumsi: kapasitas {number(32)} jam per karyawan per periode, estimasi dari Analisis kebutuhan yang sudah dikonfirmasi ({hours(effort)}).</p>
       </section>
     </div>
 
     {dialog && <Modal title="Tetapkan penugasan" onClose={() => setDialog(false)}>
       <form onSubmit={submit}>
-        <p className="dialog-summary"><strong>{task.title}</strong> ditugaskan ke {people.map(p => `${p.name} (${hours(current.assignments.find(a => a.memberId === p.id)!.hours)})`).join(" dan ")}. Anggota menerima notifikasi dan bisa menerima atau menolak dengan alasan.</p>
+        <p className="dialog-summary"><strong>{task.title}</strong> ditugaskan ke {people.map(p => `${p.name} (${hours(current.assignments.find(a => a.memberId === p.id)!.hours)})`).join(" dan ")}. Karyawan menerima notifikasi dan bisa menerima atau menolak dengan alasan.</p>
         {sim.conflicts.length > 0 && <div className={`decision-banner ${crit ? "crit" : "warn"}`}><Icon icon={TriangleAlert} /><span><strong>{sim.conflicts.length} catatan konflik</strong><span>Tetap bisa ditetapkan. Keputusan ada di tanganmu.</span></span></div>}
         {isOverride && <fieldset className="field"><legend className="field-label">Alasan memilih di luar tiga teratas (wajib)</legend>
           <div className="radio-pills">{OVERRIDE_REASONS.map(r => <label key={r.value}><input type="radio" name="reason" checked={reason === r.value} onChange={() => { setReason(r.value); setError(""); }} />{r.label}</label>)}</div>

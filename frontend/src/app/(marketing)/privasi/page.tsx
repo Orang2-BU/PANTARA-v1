@@ -14,13 +14,13 @@ export default function PrivasiPage() {
         <h2>Data yang diproses</h2>
         <ul>
           <li>Data akun: nama, email, peran di ruang kerja.</li>
-          <li>Work Twin: kompetensi dan levelnya, jam tersedia per periode, tanggal cuti, batas kerja, preferensi jenis tugas, dan riwayat tugas di ruang kerja.</li>
+          <li>Profil kerja: kompetensi dan levelnya, jam tersedia per periode, tanggal cuti, batas kerja, preferensi jenis tugas, dan riwayat tugas di ruang kerja.</li>
           <li>Data tugas: judul, deskripsi, tenggat, prioritas, dan log keputusan penugasan.</li>
         </ul>
         <h2>Tujuan</h2>
-        <p>Hanya untuk membantu manajer membagi tugas dengan adil dan menghindari beban berlebih. Data jam kerja <strong>tidak</strong> dipakai untuk menilai kinerja atau produktivitas, dan Pantara tidak melacak aktivitas komputer anggota.</p>
+        <p>Hanya untuk membantu manajer membagi tugas dengan adil dan menghindari beban berlebih. Data jam kerja <strong>tidak</strong> dipakai untuk menilai kinerja atau produktivitas, dan Pantara tidak melacak aktivitas komputer karyawan.</p>
         <h2>Pemrosesan oleh AI</h2>
-        <p>Untuk mengurai kebutuhan tugas, teks judul dan deskripsi tugas dikirim ke penyedia model bahasa. Data pribadi anggota tidak ikut dikirim. AI tidak memilih siapa yang ditugaskan.</p>
+        <p>Untuk mengurai kebutuhan tugas, teks judul dan deskripsi tugas dikirim ke penyedia model bahasa. Data pribadi karyawan tidak ikut dikirim. AI tidak memilih siapa yang ditugaskan.</p>
         <h2>Hakmu</h2>
         <ul>
           <li>Melihat data dirimu yang dilihat manajer (menu Profil kerja saya).</li>

@@ -82,7 +82,7 @@ function DnaEditor({ task }: { task: Task }) {
         <div className="evidence-note"><Icon icon={Info} size={14} /><span>AI hanya mengurai kebutuhan. Penerima tugas dipilih oleh perhitungan skor dan keputusanmu, bukan oleh AI.</span></div>
       </section>
       <section className="card">
-        <SectionTitle title="Task DNA" subtitle={unsure.length ? `${pending.length} dari ${unsure.length} isian ragu belum dicek` : "Semua isian yakin"} action={<Badge tone={pending.length ? "warn" : "ok"}>{pending.length ? "Perlu dicek" : "Siap dikonfirmasi"}</Badge>} />
+        <SectionTitle title="Analisis kebutuhan" subtitle={unsure.length ? `${pending.length} dari ${unsure.length} isian ragu belum dicek` : "Semua isian yakin"} action={<Badge tone={pending.length ? "warn" : "ok"}>{pending.length ? "Perlu dicek" : "Siap dikonfirmasi"}</Badge>} />
         <h3>Kompetensi & level minimum</h3>
         <div>{dna.requirements.map(r => {
           const key = `req-${r.competencyId}`;

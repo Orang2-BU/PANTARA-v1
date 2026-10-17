@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fitRows, paginate } from "./paginate";
+import { paginate } from "./paginate";
 
 const items = [1, 2, 3, 4, 5, 6];
 
@@ -26,16 +26,3 @@ describe("paginate", () => {
   });
 });
 
-describe("fitRows", () => {
-  it("semua baris muat → satu halaman, tanpa pager", () => {
-    expect(fitRows(500, 60, 50, 6)).toBe(6);
-  });
-
-  it("tidak muat → baris dikurangi jatah pager", () => {
-    expect(fitRows(300, 60, 50, 6)).toBe(4);
-  });
-
-  it("area sangat pendek tetap menampilkan minimal 1 baris", () => {
-    expect(fitRows(40, 60, 50, 6)).toBe(1);
-  });
-});

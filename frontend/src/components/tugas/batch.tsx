@@ -30,15 +30,15 @@ export function BatchAllocation() {
       n += 1;
       dispatch({ type: "assign", id: p.task.id, assignments: [{ memberId: p.memberId, hours: p.task.dna?.effortHours ?? 0 }], decision: {
         id: `KPT-${String(26 + n).padStart(3, "0")}`, taskId: p.task.id, memberIds: [p.memberId], rank: 1, preset: settings.preset,
-        note: "Alokasi batch", decidedAt: NOW, decisionMs: 3 * 60_000, conflictsSeen: 0,
+        note: "Penugasan massal", decidedAt: NOW, decisionMs: 3 * 60_000, conflictsSeen: 0,
       } });
     }
     router.push("/tugas?status=menunggu");
   }
 
   return <div className="page-enter">
-    <PageHeading title="Alokasi batch" subtitle="Usulan pasangan untuk semua tugas yang belum ditugaskan, dengan kapasitas diperbarui setiap pasangan." actions={<button className="button primary" disabled={!picked.length} onClick={assignPicked}><Icon icon={CheckCheck} />Tetapkan {picked.length} terpilih</button>} />
-    {unconfirmed.length > 0 && <p className="small muted">{unconfirmed.length} tugas belum ikut karena Task DNA-nya belum dikonfirmasi: {unconfirmed.map(t => <Link key={t.id} className="inline-link" href={`/tugas/${t.id}/dna`}>{t.title}</Link>)}</p>}
+    <PageHeading title="Penugasan massal" subtitle="Usulan pasangan untuk semua tugas yang belum ditugaskan, dengan kapasitas diperbarui setiap pasangan." actions={<button className="button primary" disabled={!picked.length} onClick={assignPicked}><Icon icon={CheckCheck} />Tetapkan {picked.length} terpilih</button>} />
+    {unconfirmed.length > 0 && <p className="small muted">{unconfirmed.length} tugas belum ikut karena Analisis kebutuhan-nya belum dikonfirmasi: {unconfirmed.map(t => <Link key={t.id} className="inline-link" href={`/tugas/${t.id}/kebutuhan`}>{t.title}</Link>)}</p>}
     {pairs.length ? <section className="card spaced">
       <Paged items={pairs} unit="tugas">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Pilih</th><th>Tugas</th><th>Usulan penanggung jawab</th><th className="numeric">Skor</th><th>Beban setelah semua pasangan</th></tr></thead>

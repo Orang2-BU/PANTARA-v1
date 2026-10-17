@@ -35,8 +35,8 @@ export function TaskList() {
   );
   const count = (s: TaskStatus | "semua") => s === "semua" ? current.length : current.filter(t => t.status === s).length;
   return <div className="page-enter">
-    <PageHeading title="Tugas" subtitle="Kelola daftar tugas, alokasi kerja anggota, dan status penugasan adaptif." actions={<>
-      <Link className="button secondary" href="/tugas/alokasi-batch"><Icon icon={Layers} />Alokasi batch</Link>
+    <PageHeading title="Tugas" subtitle="Kelola daftar tugas, alokasi kerja karyawan, dan status penugasan adaptif." actions={<>
+      <Link className="button secondary" href="/tugas/massal"><Icon icon={Layers} />Penugasan massal</Link>
       <Link className="button primary" href="/tugas/baru"><Icon icon={Plus} />Buat tugas</Link>
     </>} />
     <section className="card">
@@ -63,7 +63,7 @@ export function TaskList() {
             <td data-label="Penanggung jawab">{assignees.length ? assignees.map(m => <Person key={m.id} member={m} />) : <span className="muted">Belum ada penanggung jawab</span>}</td>
             <td data-label="Sisa estimasi" className="numeric">{t.status === "selesai" ? <span className="muted">0 jam ({hours(t.assignments.reduce((s, a) => s + a.hours, 0))})</span> : t.status === "berjalan" ? `${hours(t.remainingHours)} tersisa` : hours(t.dna?.effortHours ?? t.remainingHours)}</td>
             <td data-label="Tenggat" title={date(t.dueDate)}>{shortDate(t.dueDate)}</td>
-            <td className="numeric">{t.status === "belum" ? <Link className="row-link accent" href={t.dna?.confirmed ? `/tugas/${t.id}/kandidat` : `/tugas/${t.id}/dna`}>Cari kandidat</Link> : t.status === "draf" ? <Link className="row-link" href={`/tugas/${t.id}/dna`}>Lanjutkan</Link> : <Link className="row-link" href={`/tugas/${t.id}`}>Buka tugas</Link>}</td>
+            <td className="numeric">{t.status === "belum" ? <Link className="row-link accent" href={t.dna?.confirmed ? `/tugas/${t.id}/kandidat` : `/tugas/${t.id}/kebutuhan`}>Cari kandidat</Link> : t.status === "draf" ? <Link className="row-link" href={`/tugas/${t.id}/kebutuhan`}>Lanjutkan</Link> : <Link className="row-link" href={`/tugas/${t.id}`}>Buka tugas</Link>}</td>
           </tr>;
         })}</tbody>
       </table></div></>}</Paged> : <EmptyState icon={SearchX} title="Tidak ada tugas yang cocok" text="Ubah kata kunci atau filter status dan prioritas." action={<button className="button secondary" onClick={() => { setQuery(""); setPriority("semua"); router.replace("/tugas"); }}>Hapus filter</button>} />}

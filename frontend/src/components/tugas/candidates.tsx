@@ -12,7 +12,8 @@ import { REJECT_REASONS } from "@/lib/demo/reasons";
 import { NOW } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
 import type { PresetId } from "@/lib/demo/types";
-import { PRESETS, rankCandidates, type Candidate } from "@/lib/engine/score";
+import { overrunFactor } from "@/lib/engine/capacity";
+import { PRESETS, effectiveWeights, rankCandidates, TIE_GAP, type Candidate } from "@/lib/engine/score";
 import { elapsedSince, hours, number, score, shortDate } from "@/lib/format";
 
 const FACTORS: { key: keyof Candidate["factors"]; label: string; minus?: boolean }[] = [
@@ -36,12 +37,14 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
   const [error, setError] = useState("");
   useEffect(() => { dispatch({ type: "startFlow", id, at: Date.now() }); }, [dispatch, id]);
   if (!task) return <EmptyState icon={CircleAlert} title="Tugas tidak ditemukan" text={`Tidak ada tugas dengan ID ${id}.`} action={<Link className="button secondary" href="/tugas">Kembali ke Tugas</Link>} />;
-  if (!task.dna?.confirmed) return <EmptyState icon={CircleAlert} title="Kebutuhan belum dikonfirmasi" text="Tinjau Task DNA dulu supaya kandidat dihitung dari kebutuhan yang benar." action={<Link className="button primary" href={`/tugas/${id}/dna`}>Tinjau kebutuhan</Link>} />;
+  if (!task.dna?.confirmed) return <EmptyState icon={CircleAlert} title="Kebutuhan belum dikonfirmasi" text="Tinjau Analisis kebutuhan dulu supaya kandidat dihitung dari kebutuhan yang benar." action={<Link className="button primary" href={`/tugas/${id}/kebutuhan`}>Tinjau kebutuhan</Link>} />;
 
   const { candidates, filtered, effort } = rankCandidates(task, members, tasks, { ...settings, preset }, names);
+  const w = effectiveWeights(preset, task.dna.complexity);
+  const overrun = overrunFactor(tasks);
   const top = candidates.slice(0, 3);
   const best = top[0];
-  const simHref = (memberId: string) => `/tugas/${id}/simulasi?anggota=${memberId}&preset=${preset}`;
+  const simHref = (memberId: string) => `/tugas/${id}/simulasi?karyawan=${memberId}&preset=${preset}`;
 
   function reject(e: React.FormEvent) {
     e.preventDefault();
@@ -55,10 +58,10 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
       conflictsSeen: 0,
     } });
     if (reason === "tunda") dispatch({ type: "updateTask", id, patch: { status: "draf" } });
-    router.push(reason === "kebutuhan" ? `/tugas/${id}/dna` : `/tugas/${id}`);
+    router.push(reason === "kebutuhan" ? `/tugas/${id}/kebutuhan` : `/tugas/${id}`);
   }
   return <div className="page-enter">
-    <PageHeading title="Rekomendasi kandidat" subtitle={`${task.title} · ${hours(effort)} · tenggat ${shortDate(task.dueDate)}`} actions={<>
+    <PageHeading title="Rekomendasi kandidat" subtitle={`${task.title} · ${hours(effort)}, bisa sampai ${hours(Math.round(effort * overrun.factor))} bila molor seperti biasanya · tenggat ${shortDate(task.dueDate)}`} actions={<>
       <button className="button secondary" onClick={() => { setRejecting(true); setError(""); }}><Icon icon={CircleX} size={16} />Tolak rekomendasi</button>
       <button className="button secondary" onClick={() => setOther(true)}><Icon icon={UserRoundSearch} size={16} />Pilih orang lain</button>
       {best && <Link className="button primary" href={simHref(best.member.id)}><Icon icon={GitCompareArrows} size={16} />Simulasikan #1</Link>}
@@ -68,22 +71,24 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
       <div className="toggle" role="group" aria-label="Preset bobot">
         {(Object.keys(PRESETS) as PresetId[]).map(p => <button key={p} className={preset === p ? "selected" : ""} aria-pressed={preset === p} onClick={() => setPreset(p)}>{PRESETS[p].label}</button>)}
       </div>
-      <span className="small muted">{PRESETS[preset].when} · bobot K {number(PRESETS[preset].weights.k, 2)}, C {number(PRESETS[preset].weights.c, 2)}, A {number(PRESETS[preset].weights.a, 2)}, R {number(PRESETS[preset].weights.r, 2)}, F {number(PRESETS[preset].weights.f, 2)}</span>
+      <span className="small muted">{PRESETS[preset].when} · bobot K {number(w.k, 2)}, C {number(w.c, 2)}, A {number(w.a, 2)}, R {number(w.r, 2)}, F {number(w.f, 2)}{w !== PRESETS[preset].weights ? " (kompetensi dinaikkan karena tugas kompleks)" : ""}</span>
     </div>
 
-    {!best ? <section className="card"><EmptyState icon={UserX} title="Tidak ada kandidat yang lolos syarat wajib" text="Coba pecah tugas jadi lebih kecil, geser tenggat, atau lengkapi data ketersediaan anggota. Rincian syarat yang gagal ada di bawah." /></section> : <>
+    {!best ? <section className="card"><EmptyState icon={UserX} title="Tidak ada kandidat yang lolos syarat wajib" text="Coba pecah tugas jadi lebih kecil, geser tenggat, atau lengkapi data ketersediaan karyawan. Rincian syarat yang gagal ada di bawah." /></section> : <>
       <section className="highlight-card" aria-label="Kandidat teratas"><FluidArt className="highlight-art" style="streak" seed={7} w={720} h={360} />
         <div className="highlight-top"><span>Kandidat #1 · preset {PRESETS[preset].label}</span><span className="mono">S = w1K + w2C + w3A + w4R − w5F</span></div>
         <div className="highlight-row">
           <div><h2>{best.member.name}</h2><p>{best.member.role} · beban {number(best.allocated)} → {number(best.allocated + effort)} dari {number(best.available)} jam</p></div>
           <div className="highlight-score" aria-label={`Skor ${score(best.score)}`}>{score(best.score)}</div>
         </div>
+        {top[1]?.tiedWithPrev && <p>#1 dan #2 praktis setara (selisih skor di bawah {number(TIE_GAP, 2)}). Pilih berdasarkan alasan dan akibatnya, bukan angka.</p>}
         <ul className="highlight-list">{best.reasons.slice(0, 3).map(r => <li key={r}><Icon icon={Check} size={14} />{r}</li>)}</ul>
         <Link className="button inverse" href={simHref(best.member.id)}>Lihat akibatnya sebelum menetapkan<span className="button-circle"><Icon icon={ArrowUpRight} size={16} /></span></Link>
       </section>
-      <SectionTitle title={top.length === 1 ? "Satu kandidat lolos syarat" : `${top.length} kandidat teratas`} subtitle={candidates.length > top.length ? `Dari ${candidates.length} anggota yang lolos syarat wajib` : `Semua anggota yang lolos syarat wajib (${filtered.length} tersaring)`} />
+      <SectionTitle title={top.length === 1 ? "Satu kandidat lolos syarat" : `${top.length} kandidat teratas`} subtitle={candidates.length > top.length ? `Dari ${candidates.length} karyawan yang lolos syarat wajib` : `Semua karyawan yang lolos syarat wajib (${filtered.length} tersaring)`} />
       <div className="candidate-grid">{top.map((c, i) => <section key={c.member.id} className={`card candidate-card mesh mesh-${i}`}>
         <div className="score-row"><span className="rank-person"><span className="rank">{i + 1}</span><Person member={c.member} /></span><span className="score-value">{score(c.score)}</span></div>
+        {c.tiedWithPrev && <Badge>Praktis setara dengan #{i}</Badge>}
         <div className="factor-bars">{FACTORS.map(f => <div key={f.key} className={`factor-bar ${f.minus ? "minus" : ""}`}><span>{f.label}</span><div><span style={{ width: `${c.factors[f.key] * 100}%` }} /></div><strong>{f.minus ? "−" : ""}{score(c.factors[f.key])}</strong></div>)}</div>
         <CapacityBar allocated={c.allocated} available={c.available} added={effort} />
         <ul className="reason-list">
@@ -97,8 +102,8 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
     <section className="card">
       <details className="disclosure" open={!best}>
         <summary>Tidak lolos syarat wajib ({filtered.length})</summary>
-        <Paged items={filtered} unit="anggota">{(paged) => <><div className="table-scroll stack-table"><table>
-          <thead><tr><th>Anggota</th><th>Syarat yang tidak terpenuhi</th></tr></thead>
+        <Paged items={filtered} unit="karyawan">{(paged) => <><div className="table-scroll stack-table"><table>
+          <thead><tr><th>Karyawan</th><th>Syarat yang tidak terpenuhi</th></tr></thead>
           <tbody>{paged.map(f => <tr key={f.member.id}><td><Person member={f.member} /></td><td data-label="Alasan">{f.failures.join(" · ")}</td></tr>)}</tbody>
         </table></div></>}</Paged>
         <p className="small muted spaced">Syarat wajib: ketersediaan terisi, sisa kapasitas ≥ separuh estimasi, level kompetensi ≥ level dibutuhkan − {settings.levelTolerance}, tidak melewati batas kerja mingguan, tidak cuti sebelum tenggat. Atur di <Link className="inline-link" href="/pengaturan/rekomendasi">Aturan rekomendasi</Link>.</p>
@@ -121,7 +126,7 @@ export function Candidates({ params }: { params: Promise<{ id: string }> }) {
         <label className="field spaced"><span className="field-label">Catatan {reason === "lainnya" ? "(wajib)" : "(opsional)"}</span><textarea value={note} onChange={e => { setNote(e.target.value); setError(""); }} placeholder="Mis. Bima sedang ditarik ke proyek klien lain minggu ini." /></label>
         {error && <p className="field-error spaced" role="alert">{error}</p>}
         <div className="dialog-actions"><button type="button" className="button secondary" onClick={() => setRejecting(false)}>Batal</button><button type="submit" className="button primary"><Icon icon={CircleX} size={16} />Tolak rekomendasi</button></div>
-        <p className="small muted spaced">{reason === "kebutuhan" ? "Setelah ini kamu diarahkan ke Task DNA untuk mengubah kebutuhan." : reason === "tunda" ? "Tugas dipindah ke draf." : "Tugas tetap di daftar belum ditugaskan."}</p>
+        <p className="small muted spaced">{reason === "kebutuhan" ? "Setelah ini kamu diarahkan ke Analisis kebutuhan untuk mengubah kebutuhan." : reason === "tunda" ? "Tugas dipindah ke draf." : "Tugas tetap di daftar belum ditugaskan."}</p>
       </form>
     </Modal>}
   </div>;

@@ -21,7 +21,7 @@ export function Account() {
         {saved && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Profil tersimpan</strong></span></div>}
         <div className="form-grid">
           <label className="field full"><span className="field-label">Nama</span><input className="input" defaultValue="Krisna Panca Dewa" onChange={() => setSaved(false)} /></label>
-          <label className="field full"><span className="field-label">Email</span><input className="input" type="email" defaultValue="krisna@positifprofesional.id" onChange={() => setSaved(false)} /></label>
+          <label className="field full"><span className="field-label">Email</span><input className="input" type="email" defaultValue="krisna@arunika.id" onChange={() => setSaved(false)} /></label>
         </div>
         <div className="form-actions"><button className="button primary" type="submit">Simpan profil</button></div>
       </form>
@@ -44,7 +44,7 @@ export function Account() {
     </div>
     <section className="card">
       <SectionTitle title="Notifikasi" />
-      {([["assigned", "Penugasan dijawab anggota", "Saat anggota menerima atau menolak penugasan."], ["rejected", "Penugasan ditolak", "Dengan alasan dari anggota."], ["reminder", "Pengingat data belum lengkap", "Ringkasan tiap Senin pagi."]] as const).map(([k, t, d]) => <label key={k} className="switch-row"><span><strong>{t}</strong><p>{d}</p></span><input type="checkbox" checked={prefs[k]} onChange={() => setPrefs(p => ({ ...p, [k]: !p[k] }))} /></label>)}
+      {([["assigned", "Penugasan dijawab karyawan", "Saat karyawan menerima atau menolak penugasan."], ["rejected", "Penugasan ditolak", "Dengan alasan dari karyawan."], ["reminder", "Pengingat data belum lengkap", "Ringkasan tiap Senin pagi."]] as const).map(([k, t, d]) => <label key={k} className="switch-row"><span><strong>{t}</strong><p>{d}</p></span><input type="checkbox" checked={prefs[k]} onChange={() => setPrefs(p => ({ ...p, [k]: !p[k] }))} /></label>)}
     </section>
   </div>;
 }
@@ -72,17 +72,17 @@ export function Help() {
         <SectionTitle title="Alur penugasan" />
         <ol className="steps-list">
           <li><strong>Buat tugas</strong><p>Tulis judul, deskripsi, tenggat, dan prioritas.</p></li>
-          <li><strong>Tinjau Task DNA</strong><p>AI mengurai kompetensi, level, estimasi, dan dependensi. Isian ragu ditandai dan wajib dicek.</p></li>
-          <li><strong>Bandingkan kandidat</strong><p>Anggota yang gagal syarat wajib dibuang; tiga teratas ditampilkan dengan skor dan alasan.</p></li>
-          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibatnya ke beban anggota. Memilih di luar tiga teratas boleh, dengan alasan.</p></li>
-          <li><strong>Anggota menjawab</strong><p>Anggota menerima atau menolak dengan alasan. Kapasitas anggota langsung diperbarui.</p></li>
+          <li><strong>Tinjau Analisis kebutuhan</strong><p>AI mengurai kompetensi, level, estimasi, dan dependensi. Isian ragu ditandai dan wajib dicek.</p></li>
+          <li><strong>Bandingkan kandidat</strong><p>Karyawan yang gagal syarat wajib dibuang; tiga teratas ditampilkan dengan skor dan alasan.</p></li>
+          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibatnya ke beban karyawan. Memilih di luar tiga teratas boleh, dengan alasan.</p></li>
+          <li><strong>Karyawan menjawab</strong><p>Karyawan menerima atau menolak dengan alasan. Kapasitas karyawan langsung diperbarui.</p></li>
         </ol>
       </section>
       <section className="card">
         <SectionTitle title="Cara skor dihitung" />
         <p className="mono">S = w1·K + w2·C + w3·A + w4·R − w5·F</p>
         <ul className="factor-list spaced">
-          {[["K", "Kesesuaian kompetensi", "Rata-rata level anggota dibanding level dibutuhkan."], ["C", "Kapasitas setelah penugasan", "1 dikurangi beban sesudah tugas ini."], ["A", "Ketersediaan", "Jam tersisa dibanding estimasi sampai tenggat."], ["R", "Riwayat & preferensi", "Tugas sejenis yang pernah selesai (70%) dan preferensi anggota (30%)."], ["F", "Risiko konflik", "Beban ≥ ambang dan tenggat lain yang berdekatan."]].map(([k, t, d]) => <li key={k}><span className="factor-number">{k}</span><div><h4>{t}</h4><p>{d}</p></div></li>)}
+          {[["K", "Kesesuaian kompetensi", "Rata-rata level karyawan dibanding level dibutuhkan."], ["C", "Kapasitas setelah penugasan", "1 dikurangi beban sesudah tugas ini."], ["A", "Ketersediaan", "Jam tersisa dibanding estimasi sampai tenggat."], ["R", "Riwayat & preferensi", "Tugas sejenis yang pernah selesai (70%) dan preferensi karyawan (30%)."], ["F", "Risiko konflik", "Beban ≥ ambang dan tenggat lain yang berdekatan."]].map(([k, t, d]) => <li key={k}><span className="factor-number">{k}</span><div><h4>{t}</h4><p>{d}</p></div></li>)}
         </ul>
         <p className="small muted spaced with-icon"><Icon icon={ShieldAlert} size={13} />AI tidak pernah memilih penerima tugas. Keputusan akhir selalu di manajer.</p>
       </section>

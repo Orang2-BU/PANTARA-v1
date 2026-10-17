@@ -14,11 +14,11 @@ import type { Level } from "@/lib/demo/types";
 import { allocatedHours, LEVEL_LABEL, rankCandidates } from "@/lib/engine/score";
 import { hours, shortDate } from "@/lib/format";
 
-/** Anggota demo untuk sisi karyawan (P24-P27). */
+/** Karyawan demo untuk sisi karyawan (P24-P27). */
 const DEMO_MEMBER_ID = "bima";
 
 function DemoNotice() {
-  return <div className="decision-banner"><Icon icon={UserRound} /><span><strong>Tampilan anggota (demo)</strong><span>Kamu melihat Pantara sebagai Bima Pradana. Menu sidebar tetap milik manajer.</span></span><Link className="row-link" href="/dasbor">Kembali ke manajer</Link></div>;
+  return <div className="decision-banner"><Icon icon={UserRound} /><span><strong>Tampilan karyawan (demo)</strong><span>Kamu melihat Pantara sebagai Bima Pradana. Menu sidebar tetap milik manajer.</span></span><Link className="row-link" href="/dashboard">Kembali ke manajer</Link></div>;
 }
 
 export function MyHome() {
@@ -146,7 +146,7 @@ export function MyProfile() {
   return <div className="page-enter">
     <PageHeading title="Profil kerja saya" subtitle="Kompetensi, preferensi, dan batas kerja yang dipakai rekomendasi. Kamu yang mengisi, manajer bisa memverifikasi." actions={<button className="button primary" onClick={() => { dispatch({ type: "upsertMember", member: draft }); setSaved(true); }}>Simpan profil</button>} />
     <DemoNotice />
-    {saved && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Profil tersimpan</strong><span>Klaim baru ditandai &ldquo;Klaim anggota&rdquo; sampai diverifikasi manajer.</span></span></div>}
+    {saved && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Profil tersimpan</strong><span>Klaim baru ditandai &ldquo;Klaim karyawan&rdquo; sampai diverifikasi manajer.</span></span></div>}
     <section className="card">
       <Paged items={competencies} unit="kompetensi">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Kompetensi</th><th>Level saya</th><th>Sumber</th><th className="numeric">Saya suka mengerjakan</th></tr></thead>

@@ -13,7 +13,7 @@ import type { Member } from "@/lib/demo/types";
 import { allocatedHours, LEVEL_LABEL } from "@/lib/engine/score";
 import { hours, shortDate } from "@/lib/format";
 
-const SOURCE = { klaim: "Klaim anggota", verifikasi: "Diverifikasi manajer", riwayat: "Dari riwayat tugas" } as const;
+const SOURCE = { klaim: "Klaim karyawan", verifikasi: "Diverifikasi manajer", riwayat: "Dari riwayat tugas" } as const;
 
 export function MemberProfile({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -22,7 +22,7 @@ export function MemberProfile({ params }: { params: Promise<{ id: string }> }) {
   const member = memberById(id);
   const [editing, setEditing] = useState(search.get("lengkapi") === "1");
   const [reminded, setReminded] = useState(false);
-  if (!member) return <EmptyState icon={CircleAlert} title="Anggota tidak ditemukan" text="Anggota ini tidak ada di ruang kerja." action={<Link className="button secondary" href="/tim">Kembali ke Tim</Link>} />;
+  if (!member) return <EmptyState icon={CircleAlert} title="Karyawan tidak ditemukan" text="Karyawan ini tidak ada di ruang kerja." action={<Link className="button secondary" href="/tim">Kembali ke Tim</Link>} />;
   const allocated = allocatedHours(member.id, tasks);
   const mine = tasks.filter(t => t.assignments.some(a => a.memberId === member.id));
   const active = mine.filter(t => t.status === "berjalan" || t.status === "menunggu");
@@ -47,7 +47,7 @@ export function MemberProfile({ params }: { params: Promise<{ id: string }> }) {
               <td className="numeric">{c.source !== "verifikasi" && <button className="row-link" onClick={() => verify(c.id)}><Icon icon={BadgeCheck} size={14} />Verifikasi</button>}</td>
             </tr>)}</tbody>
           </table></div></>}</Paged>
-          {!member.competencies.length && <p className="small muted">Belum ada kompetensi. Anggota mengisinya di Profil kerja saya.</p>}
+          {!member.competencies.length && <p className="small muted">Belum ada kompetensi. Karyawan mengisinya di Profil kerja saya.</p>}
         </section>
         <section className="card">
           <SectionTitle title="Tugas aktif" subtitle={`${active.length} tugas berjalan atau menunggu jawaban`} />
@@ -74,7 +74,7 @@ export function MemberProfile({ params }: { params: Promise<{ id: string }> }) {
           <div className="chips">{member.avoids.length ? member.avoids.map(p => <span key={p} className="chip">{names[p]}</span>) : <span className="chip">Tidak ada</span>}</div>
         </section>
         <section className="card">
-          <p className="small muted with-icon"><Icon icon={ShieldCheck} size={14} />Data jam kerja dipakai untuk membagi tugas, bukan menilai produktivitas. Anggota bisa melihat data yang sama di Profil kerja saya.</p>
+          <p className="small muted with-icon"><Icon icon={ShieldCheck} size={14} />Data jam kerja dipakai untuk membagi tugas, bukan menilai produktivitas. Karyawan bisa melihat data yang sama di Profil kerja saya.</p>
         </section>
       </div>
     </div>
@@ -95,7 +95,7 @@ export function AvailabilityModal({ member, onClose, onSave }: { member: Member;
   }
   return <Modal title={`Ketersediaan ${member.name.split(" ")[0]}`} onClose={onClose}>
     <form onSubmit={submit} noValidate>
-      <p className="dialog-summary">Periode {PERIOD.label}. Di produk, anggota mengisi ini sendiri; manajer mengisi hanya atas persetujuannya.</p>
+      <p className="dialog-summary">Periode {PERIOD.label}. Di produk, karyawan mengisi ini sendiri; manajer mengisi hanya atas persetujuannya.</p>
       <div className="form-grid">
         <label className="field"><span className="field-label">Jam tersedia</span><input className="input" type="number" value={available} onChange={e => { setAvailable(e.target.value); setError(""); }} /></label>
         <label className="field"><span className="field-label">Batas kerja mingguan</span><input className="input" type="number" value={limit} onChange={e => { setLimit(e.target.value); setError(""); }} /></label>

@@ -45,7 +45,7 @@ export function TaskForm() {
     };
     dispatch({ type: "createTask", task });
     dispatch({ type: "startFlow", id, at: Date.now() });
-    router.push(draft ? "/tugas?status=draf" : `/tugas/${id}/dna`);
+    router.push(draft ? "/tugas?status=draf" : `/tugas/${id}/kebutuhan`);
   }
 
   const field = (key: keyof Errors) => ({ "aria-invalid": errors[key] ? true : undefined, "aria-describedby": errors[key] ? `${key}-error` : undefined });

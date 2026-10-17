@@ -1,6 +1,6 @@
 import type { EffortSize, Level, Priority, Requirement, TaskDna } from "./types";
 
-// Simulasi Task DNA untuk mockup M0 (tanpa LLM): pencocokan kata kunci deterministik.
+// Simulasi Analisis kebutuhan untuk mockup M0 (tanpa LLM): pencocokan kata kunci deterministik.
 // MVP menggantinya dengan primitif AI di docs/03-ARCHITECTURE.md §5.
 
 const KEYWORDS: Record<string, string[]> = {

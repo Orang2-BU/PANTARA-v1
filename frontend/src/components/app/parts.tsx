@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowUpRight, type LucideIcon } from "lucide-react";
@@ -27,8 +28,8 @@ export function MetricCard({ icon, label, value, unit, note, tone, href }: { ico
   return href ? <Link href={href} className="card metric-card mesh">{body}</Link> : <section className="card metric-card mesh">{body}</section>;
 }
 
-function Avatar({ member, large = false }: { member: Pick<Member, "initials" | "availableHours">; large?: boolean }) {
-  return <span className={`avatar ${large ? "large" : ""}`}>{member.initials}</span>;
+function Avatar({ member }: { member: Pick<Member, "initials" | "photo"> }) {
+  return <span className="avatar">{member.photo ? <Image src={member.photo} alt="" width={36} height={36} /> : member.initials}</span>;
 }
 
 export function Person({ member, sub }: { member: Member; sub?: string }) {

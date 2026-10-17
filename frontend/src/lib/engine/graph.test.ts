@@ -6,9 +6,9 @@ const graph = buildGraph(MEMBERS, COMPETENCIES, TASKS, PROJECTS);
 const has = (a: string, b: string) => graph.edges.some(e => (e.source === a && e.target === b) || (e.source === b && e.target === a));
 
 describe("buildGraph", () => {
-  it("membuat node untuk semua anggota, kompetensi, proyek, dan tugas yang belum selesai", () => {
+  it("membuat node untuk semua karyawan, kompetensi, proyek, dan tugas yang belum selesai", () => {
     const open = TASKS.filter(t => t.status !== "selesai").length;
-    expect(graph.nodes.filter(n => n.kind === "anggota")).toHaveLength(MEMBERS.length);
+    expect(graph.nodes.filter(n => n.kind === "karyawan")).toHaveLength(MEMBERS.length);
     expect(graph.nodes.filter(n => n.kind === "kompetensi")).toHaveLength(COMPETENCIES.length);
     expect(graph.nodes.filter(n => n.kind === "proyek")).toHaveLength(PROJECTS.length);
     expect(graph.nodes.filter(n => n.kind === "tugas")).toHaveLength(open);
@@ -19,15 +19,15 @@ describe("buildGraph", () => {
     expect(graph.nodes.some(n => n.id === `tugas:${done.id}`)).toBe(false);
   });
 
-  it("menghubungkan anggota ke kompetensi yang dikuasai (level ≥ Dasar) lengkap dengan level", () => {
+  it("menghubungkan karyawan ke kompetensi yang dikuasai (level ≥ Dasar) lengkap dengan level", () => {
     const ayu = MEMBERS.find(m => m.id === "ayu")!;
     const c = ayu.competencies.find(x => x.level > 0)!;
-    expect(graph.edges.find(e => e.source === "anggota:ayu" && e.target === `kompetensi:${c.id}`)?.level).toBe(c.level);
+    expect(graph.edges.find(e => e.source === "karyawan:ayu" && e.target === `kompetensi:${c.id}`)?.level).toBe(c.level);
   });
 
   it("menghubungkan tugas ke penanggung jawab, proyek, dan kompetensi yang dibutuhkan", () => {
     const t = TASKS.find(x => x.id === "TGS-0131")!;
-    expect(has("tugas:TGS-0131", "anggota:ayu")).toBe(true);
+    expect(has("tugas:TGS-0131", "karyawan:ayu")).toBe(true);
     expect(has("tugas:TGS-0131", `proyek:${t.projectId}`)).toBe(true);
   });
 
@@ -46,9 +46,9 @@ describe("posisi awal", () => {
 
 describe("connections", () => {
   it("mengembalikan node tetangga dengan jenis hubungannya", () => {
-    const list = connections(graph, "anggota:ayu");
+    const list = connections(graph, "karyawan:ayu");
     expect(list.length).toBeGreaterThan(0);
-    expect(list.every(c => c.node.id !== "anggota:ayu")).toBe(true);
+    expect(list.every(c => c.node.id !== "karyawan:ayu")).toBe(true);
   });
 });
 

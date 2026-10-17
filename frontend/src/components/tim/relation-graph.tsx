@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Pin } from "lucide-react";
 import { PageHeading } from "@/components/app/parts";
 import { Badge, Icon } from "@/components/ui";
@@ -11,18 +11,24 @@ import { buildGraph, connections, layoutStep, settle, type EdgeKind, type Graph,
 
 const SIZE = { w: 900, h: 560 };
 const KINDS: { kind: NodeKind; label: string }[] = [
-  { kind: "anggota", label: "Anggota" }, { kind: "kompetensi", label: "Kompetensi" }, { kind: "tugas", label: "Tugas" }, { kind: "proyek", label: "Proyek" },
+  { kind: "karyawan", label: "Karyawan" }, { kind: "kompetensi", label: "Kompetensi" }, { kind: "tugas", label: "Tugas" }, { kind: "proyek", label: "Proyek" },
 ];
 const EDGE_LABEL: Record<EdgeKind, string> = { menguasai: "menguasai", membutuhkan: "membutuhkan", dikerjakan: "dikerjakan oleh", milik: "bagian dari" };
 
-const hrefOf = (n: GraphNode) => n.kind === "anggota" ? `/tim/${n.ref}` : n.kind === "tugas" ? `/tugas/${n.ref}` : n.kind === "proyek" ? `/proyek/${n.ref}` : "/tim/kompetensi";
+const hrefOf = (n: GraphNode) => n.kind === "karyawan" ? `/tim/${n.ref}` : n.kind === "tugas" ? `/tugas/${n.ref}` : n.kind === "proyek" ? `/proyek/${n.ref}` : "/tim/kompetensi";
 
-/** Bentuk node berbeda per jenis (bukan hanya warna): anggota lingkaran, kompetensi belah ketupat, tugas lingkaran kecil, proyek kotak. */
+/** Bentuk node berbeda per jenis (bukan hanya warna): karyawan lingkaran, kompetensi belah ketupat, tugas lingkaran kecil, proyek kotak. */
 function Shape({ node }: { node: GraphNode }) {
   const r = node.r;
   if (node.kind === "kompetensi") return <rect className="kg-shape" x={-r} y={-r} width={r * 2} height={r * 2} rx={2} transform="rotate(45)" />;
   if (node.kind === "proyek") return <rect className="kg-shape" x={-r} y={-r} width={r * 2} height={r * 2} rx={5} />;
-  return <circle className="kg-shape" r={r} />;
+  if (!node.photo) return <circle className="kg-shape" r={r} />;
+  const clip = `kg-clip-${node.ref}`;
+  return <g className="kg-shape">
+    <clipPath id={clip}><circle r={r} /></clipPath>
+    <circle r={r} />
+    <image href={node.photo} x={-r} y={-r} width={r * 2} height={r * 2} clipPath={`url(#${clip})`} preserveAspectRatio="xMidYMid slice" />
+  </g>;
 }
 
 function useRelationGraph(): Graph {
@@ -30,8 +36,14 @@ function useRelationGraph(): Graph {
   return useMemo(() => buildGraph(members, competencies, tasks, projects), [members, competencies, tasks, projects]);
 }
 
+/** Pemanasan: penataan dihitung sebelum frame pertama sampai `alpha` ini; sisanya jadi animasi singkat. */
+const WARM_ALPHA = 0.18;
+const px = (v: number) => v.toFixed(2);
+
 /**
  * Kanvas graf: simulasi fisika hidup (node meredam menuju mapan, bisa diseret) + SVG.
+ * Performa: sebagian besar penataan dihitung sekali sebelum frame pertama (±10 ms), dan tiap frame animasi menggeser
+ * elemen SVG langsung lewat atribut (tanpa render ulang React); state React disinkronkan sekali saat gerak selesai.
  * `onPick` dipanggil saat node diklik/Enter (bukan setelah diseret). Reduced-motion: layout statis hasil `settle`.
  */
 function GraphCanvas({ graph, hidden, picked, onPick }: { graph: Graph; hidden: Set<NodeKind>; picked: string | null; onPick: (id: string) => void }) {
@@ -43,20 +55,38 @@ function GraphCanvas({ graph, hidden, picked, onPick }: { graph: Graph; hidden: 
   const alpha = useRef(1);
   const raf = useRef(0);
   const tick = useRef<() => void>(() => {});
+  const nodeEls = useRef(new Map<string, SVGGElement>());
+  const edgeEls = useRef(new Map<number, SVGLineElement>());
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    sim.current = graph.nodes.map(n => ({ ...n }));
+    // Gerak ditulis langsung ke atribut elemen; props React yang usang tidak menimpanya (nilainya tidak berubah antar render).
+    const paint = () => {
+      const byId = new Map(sim.current.map(n => [n.id, n]));
+      for (const n of sim.current) nodeEls.current.get(n.id)?.setAttribute("transform", `translate(${px(n.x)} ${px(n.y)})`);
+      graph.edges.forEach((e, i) => {
+        const el = edgeEls.current.get(i), a = byId.get(e.source), b = byId.get(e.target);
+        if (!el || !a || !b) return;
+        el.setAttribute("x1", px(a.x)); el.setAttribute("y1", px(a.y)); el.setAttribute("x2", px(b.x)); el.setAttribute("y2", px(b.y));
+      });
+    };
+    const finish = () => { raf.current = 0; setView(sim.current.map(n => ({ ...n }))); };
     tick.current = () => {
       alpha.current = Math.max(0.02, alpha.current * 0.985);
       const energy = layoutStep(sim.current, graph.edges, SIZE, alpha.current);
-      setView(sim.current.map(n => ({ ...n })));
-      raf.current = energy > 0.05 || drag.current || alpha.current > 0.05 ? requestAnimationFrame(() => tick.current()) : 0;
+      paint();
+      if (energy > 0.05 || drag.current || alpha.current > 0.05) raf.current = requestAnimationFrame(() => tick.current());
+      else finish();
     };
-    sim.current = graph.nodes.map(n => ({ ...n }));
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
       settle(sim.current, graph.edges, SIZE);
-      raf.current = requestAnimationFrame(() => { raf.current = 0; setView(sim.current.map(n => ({ ...n }))); });
+      paint();
+      raf.current = requestAnimationFrame(finish);
     } else {
-      alpha.current = 1;
+      let a = 1;
+      while (a > WARM_ALPHA) { a *= 0.985; layoutStep(sim.current, graph.edges, SIZE, a); }
+      alpha.current = a;
+      paint();
       raf.current = requestAnimationFrame(() => tick.current());
     }
     return () => cancelAnimationFrame(raf.current);
@@ -107,12 +137,12 @@ function GraphCanvas({ graph, hidden, picked, onPick }: { graph: Graph; hidden: 
       const a = live.get(e.source), b = live.get(e.target);
       if (!a || !b || !shown(a) || !shown(b)) return null;
       const on = focus && (e.source === focus || e.target === focus);
-      return <line key={i} className={`kg-edge kg-e-${e.kind} ${on ? "on" : focus ? "dim" : ""}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} strokeWidth={e.level ? 0.8 + e.level * 0.5 : 1} />;
+      return <line key={i} ref={el => { if (el) edgeEls.current.set(i, el); else edgeEls.current.delete(i); }} className={`kg-edge kg-e-${e.kind} ${on ? "on" : focus ? "dim" : ""}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} strokeWidth={e.level ? 0.8 + e.level * 0.5 : 1} />;
     })}</g>
     <g>{view.filter(shown).map(n => {
       const dim = focus && !near.has(n.id);
-      const labelled = n.kind === "anggota" || n.kind === "proyek" || (!!focus && near.has(n.id)) || picked === n.id;
-      return <g key={n.id} className={`kg-node kg-${n.kind} ${dim ? "dim" : ""} ${picked === n.id ? "picked" : ""}`} transform={`translate(${n.x} ${n.y})`}
+      const labelled = n.kind === "karyawan" || n.kind === "proyek" || (!!focus && near.has(n.id)) || picked === n.id;
+      return <g key={n.id} ref={el => { if (el) nodeEls.current.set(n.id, el); else nodeEls.current.delete(n.id); }} className={`kg-node kg-${n.kind} ${dim ? "dim" : ""} ${picked === n.id ? "picked" : ""}`} transform={`translate(${n.x} ${n.y})`}
         tabIndex={0} role="button" aria-pressed={picked === n.id} aria-label={`${n.label}, ${n.kind}`}
         onPointerDown={e => start(e, n.id)} onPointerUp={() => end(n.id)} onPointerCancel={() => end(n.id)}
         onPointerEnter={() => setHover(n.id)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(n.id)} onBlur={() => setHover(null)}
@@ -125,7 +155,7 @@ function GraphCanvas({ graph, hidden, picked, onPick }: { graph: Graph; hidden: 
   </svg></div>;
 }
 
-/** P41: graf relasi gaya Obsidian — node anggota, kompetensi, tugas, proyek yang saling terhubung. */
+/** P41: graf relasi gaya Obsidian — node karyawan, kompetensi, tugas, proyek yang saling terhubung. */
 export function RelationGraph() {
   const graph = useRelationGraph();
   const [hidden, setHidden] = useState<Set<NodeKind>>(new Set());
@@ -134,7 +164,7 @@ export function RelationGraph() {
   const list = picked ? connections(graph, picked) : [];
 
   return <div className="page-enter">
-    <PageHeading title="Graf relasi" subtitle="Anggota, kompetensi, tugas, dan proyek yang saling terhubung. Seret node untuk menggeser, klik untuk melihat hubungannya. Menunjukkan struktur keahlian dan penugasan, bukan kinerja." />
+    <PageHeading title="Graf relasi" subtitle="Karyawan, kompetensi, tugas, dan proyek yang saling terhubung. Seret node untuk menggeser, klik untuk melihat hubungannya. Menunjukkan struktur keahlian dan penugasan, bukan kinerja." />
     <section className="card">
       <div className="kg-toolbar">
         <div className="toggle" role="group" aria-label="Tampilkan jenis node">
@@ -159,7 +189,7 @@ export function RelationGraph() {
           </> : <>
             <p className="small with-icon"><Icon icon={Pin} size={14} />Pilih node untuk melihat hubungannya.</p>
             <ul className="kg-legend">{KINDS.map(k => <li key={k.kind}><span className={`kg-key kg-${k.kind}`} aria-hidden="true" />{k.label}</li>)}</ul>
-            <p className="small muted">Garis tebal = level kompetensi lebih tinggi. Node yang hanya terhubung ke satu anggota adalah titik rawan konsentrasi pengetahuan.</p>
+            <p className="small muted">Garis tebal = level kompetensi lebih tinggi. Node yang hanya terhubung ke satu karyawan adalah titik rawan konsentrasi pengetahuan.</p>
           </>}
         </aside>
       </div>

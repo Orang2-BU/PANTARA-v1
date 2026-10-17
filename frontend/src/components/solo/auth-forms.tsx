@@ -21,7 +21,7 @@ export function RegisterForm() {
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
-  if (done) return <Done title="Ruang kerja dibuat (simulasi)" text={`${f.org} siap. Langkah berikutnya: isi periode dan data anggota.`} />;
+  if (done) return <Done title="Ruang kerja dibuat (simulasi)" text={`${f.org} siap. Langkah berikutnya: isi periode dan data karyawan.`} />;
   return <form noValidate onSubmit={e => {
     e.preventDefault();
     if (f.org.trim().length < 3) return setError("Tulis nama organisasi.");
@@ -81,7 +81,7 @@ export function InviteForm({ params }: { params: Promise<{ token: string }> }) {
   const [done, setDone] = useState(false);
   if (done) return <Done title={`Selamat bergabung, ${name.split(" ")[0]}`} text="Isi kompetensi dan ketersediaanmu supaya ikut rekomendasi." />;
   return <form noValidate onSubmit={e => { e.preventDefault(); if (name.trim().length < 3) return setError("Tulis nama lengkap."); if (pw.length < 8) return setError("Sandi minimal 8 karakter."); setDone(true); }}>
-    <div><h1>Terima undangan</h1><p>Krisna Panca mengundangmu ke ruang kerja <strong>Positif & Profesional</strong> sebagai anggota.</p></div>
+    <div><h1>Terima undangan</h1><p>Krisna Panca mengundangmu ke ruang kerja <strong>Arunika Digital</strong> sebagai karyawan.</p></div>
     <p className="small muted mono spaced">Kode undangan {token}</p>
     <label className="field spaced"><span className="field-label">Nama lengkap</span><input className="input" autoComplete="name" value={name} onChange={e => { setName(e.target.value); setError(""); }} /></label>
     <label className="field spaced"><span className="field-label">Buat sandi</span><input className="input" type="password" autoComplete="new-password" value={pw} onChange={e => { setPw(e.target.value); setError(""); }} /></label>

@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   function renderNavigation(mobile = false) {
     return <>
       <div className="brand-row">
-        <Link href="/dasbor" className="brand" aria-label="Pantara, ke Dasbor" onClick={closeDrawer}>
+        <Link href="/dashboard" className="brand" aria-label="Pantara, ke Dashboard" onClick={closeDrawer}>
           <BrandLockup />
         </Link>
         {mobile && <button className="icon-button" aria-label="Tutup menu" onClick={closeDrawer}><Icon icon={X} /></button>}
@@ -78,7 +78,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Icon icon={collapsed === false ? ChevronsLeft : ChevronsRight} />
           </button>
           <button ref={menuButton} className="icon-button mobile-menu" aria-label="Buka menu" aria-expanded={drawer} aria-controls="mobile-navigation" onClick={() => setDrawer(true)}><Icon icon={Menu} /></button>
-          <Link href="/dasbor" className="mobile-brand" aria-label="Pantara, ke Dasbor">
+          <Link href="/dashboard" className="mobile-brand" aria-label="Pantara, ke Dashboard">
             <BrandWordmark />
           </Link>
           <Suspense fallback={<span className="breadcrumb">Ruang kerja</span>}>
@@ -106,7 +106,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     {panel && <Modal title={{ period: "Pilih periode", notifications: "Notifikasi", profile: "Profil pengguna", help: "Panduan demo" }[panel]} onClose={() => setPanel(null)}>
       {panel === "period" && <>
         <p className="muted">Baru satu periode mingguan yang tersedia.</p>
-        <button className="period-choice" onClick={() => setPanel(null)}><strong>{PERIOD.label}</strong><span>{PERIOD.range} · 32 jam per anggota</span><Badge tone="ok">Dipilih</Badge></button>
+        <button className="period-choice" onClick={() => setPanel(null)}><strong>{PERIOD.label}</strong><span>{PERIOD.range} · 32 jam per karyawan</span><Badge tone="ok">Dipilih</Badge></button>
         <p className="small muted">Periode lain belum tersedia di mockup.</p>
       </>}
       {panel === "notifications" && <div className="notification-list">
@@ -115,7 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {panel === "profile" && <div className="profile-info">
         <span className="avatar large">{DEMO_USER.initials}</span>
         <h3>{DEMO_USER.name}</h3>
-        <p>{DEMO_USER.role} · Positif & Profesional</p>
+        <p>{DEMO_USER.role} · Arunika Digital</p>
         <Badge>Pengguna demo</Badge>
         <p className="muted">Rekomendasi membantu, kamu yang memutuskan. Data jam kerja bukan ukuran produktivitas.</p>
         <div className="profile-links">
@@ -128,9 +128,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <p>Alur penugasan dari tugas baru sampai keputusan.</p>
         <ol className="guide-list">
           <li><strong>Buat tugas</strong><p>Tulis judul, deskripsi, tenggat, dan prioritas seperti biasa.</p></li>
-          <li><strong>Tinjau kebutuhan (Task DNA)</strong><p>Periksa kompetensi, estimasi, dan dependensi. Isian yang ragu ditandai untuk dicek.</p></li>
+          <li><strong>Tinjau kebutuhan (Analisis kebutuhan)</strong><p>Periksa kompetensi, estimasi, dan dependensi. Isian yang ragu ditandai untuk dicek.</p></li>
           <li><strong>Bandingkan kandidat</strong><p>Tiga kandidat teratas beserta skor dan alasan per faktor.</p></li>
-          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibat ke kapasitas anggota sebelum menetapkan. Keputusan tetap di manajer.</p></li>
+          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibat ke kapasitas karyawan sebelum menetapkan. Keputusan tetap di manajer.</p></li>
         </ol>
         <Badge>Semua data adalah contoh</Badge>
         <p className="spaced"><button className="button secondary" onClick={() => { demo.dispatch({ type: "reset" }); setPanel(null); }}>Reset data contoh</button></p>

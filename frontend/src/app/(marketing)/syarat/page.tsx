@@ -12,12 +12,12 @@ export default function SyaratPage() {
       <p className="lead">Ketentuan memakai Pantara. Draf untuk mockup, berlaku efektif setelah ditinjau.</p>
       <div className="prose">
         <h2>Layanan</h2>
-        <p>Pantara membantu manajer menentukan penugasan dengan menguraikan kebutuhan tugas, membandingkan kondisi kerja anggota, dan mensimulasikan akibat penugasan. Pantara adalah alat pendukung keputusan: keputusan penugasan dan akibatnya tetap menjadi tanggung jawab organisasi pengguna.</p>
+        <p>Pantara membantu manajer menentukan penugasan dengan menguraikan kebutuhan tugas, membandingkan kondisi kerja karyawan, dan mensimulasikan akibat penugasan. Pantara adalah alat pendukung keputusan: keputusan penugasan dan akibatnya tetap menjadi tanggung jawab organisasi pengguna.</p>
         <h2>Akun dan ruang kerja</h2>
         <ul>
           <li>Admin ruang kerja bertanggung jawab atas siapa yang diundang dan peran aksesnya.</li>
           <li>Setiap pengguna menjaga kerahasiaan sandinya sendiri.</li>
-          <li>Data anggota hanya dimasukkan dengan sepengetahuan anggota yang bersangkutan.</li>
+          <li>Data karyawan hanya dimasukkan dengan sepengetahuan karyawan yang bersangkutan.</li>
         </ul>
         <h2>Pemakaian yang tidak diperbolehkan</h2>
         <ul>
