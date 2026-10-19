@@ -7,3 +7,20 @@
 Thumbs.db
 .vscode/
 .claude/settings.local.json
+
+# Python & Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+*.sqlite3-journal
+*.log
+venv/
+.venv/
+env/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
