@@ -37,6 +37,7 @@
 | T24 | Landing L8 CTA penutup + `content/landing.ts` + meta SEO/OG | — | Must | ⬜ | — |
 | T25 | Uji responsif, a11y, Standar UI A1-A13 + perbaikan | — | Must | ⬜ | — |
 | T26 | Deploy preview + video cadangan + latihan demo | — | Must | ⬜ | Deploy butuh izin user |
+| D1 | Paket frontend-only Dokploy + audit kebutuhan backend | — | Must | ✅ | Dockerfile + allowlist context + standalone + `/health`; 90 test, lint, typecheck, knip, build native/Linux lulus; container healthy non-root; alur Chrome TGS-0173 ke Bima (+3 jam), 0 API call/error, 375/768/1440 tanpa overflow. Panduan `09-DEPLOY-DOKPLOY.md`; belum commit/push/deploy VPS |
 | T27 | Pengingat "data belum lengkap" satu klik (F17) | — | Could | ✅ | Ingatkan lengkapi data di profil anggota, 16 Okt |
 | T28 | Pintasan keyboard alur inti (F20) | — | Could | ⬜ | A12 |
 
