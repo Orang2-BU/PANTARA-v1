@@ -26,16 +26,16 @@
 | T13 | P18 Tim + P19 Profil kerja | — | Must | ✅ | Tim (filter, tambah anggota) + profil Work Twin (verifikasi kompetensi, ubah ketersediaan), 16 Okt |
 | T14 | P21 Kapasitas | — | Must | ✅ | Kapasitas: 160/110/68,8% sesuai prototipe, filter, lengkapi data, 16 Okt |
 | T15 | P5 Masuk (demo) + P36/P38 | — | Must | ✅ | Masuk demo, daftar/lupa/reset/undangan dengan validasi, 404, 403, 16 Okt |
-| T16 | Landing: token Area Landing, `Section`, navbar, footer | — | Must | ⛔ | Menunggu inspirasi landing (00-BRIEF P2) |
-| T17 | Landing L1 Hero | — | Must | ⬜ | — |
-| T18 | Landing L2 Masalah | — | Must | ⬜ | — |
-| T19 | Landing L3 Cara kerja | — | Must | ⬜ | — |
-| T20 | Landing L4 Kamu yang memutuskan | — | Must | ⬜ | — |
-| T21 | Landing L5 Untuk siapa | — | Should | ⬜ | — |
-| T22 | Landing L6 Harga | — | Should | ⬜ | Tanpa angka harga sampai rancangan bisnis masuk (00-BRIEF P8) |
-| T23 | Landing L7 FAQ | — | Should | ⬜ | — |
-| T24 | Landing L8 CTA penutup + `content/landing.ts` + meta SEO/OG | — | Must | ⬜ | — |
-| T25 | Uji responsif, a11y, Standar UI A1-A13 + perbaikan | — | Must | ⬜ | — |
+| T16 | Landing: token Area Landing, `Section`, navbar, footer | — | Must | ✅ | SoloFrame + PublicNav anchor, token Area Landing, 27 Okt |
+| T17 | Landing L1 Hero | — | Must | ✅ | Hero interaktif + browser mockup + tab switcher preview retina (Dashboard, Kandidat, Simulasi, Task DNA), 27 Okt |
+| T18 | Landing L2 Masalah | — | Must | ✅ | 3 kartu masalah nyata penugasan agensi (info tersebar, dev langganan burnout, konflik telat), 27 Okt |
+| T19 | Landing L3 Cara kerja | — | Must | ✅ | 4 langkah alur inti bergantian dengan screenshot riil (Task DNA, Work Twin, Top 3, Simulasi What-If), 27 Okt |
+| T20 | Landing L4 Kamu yang memutuskan | — | Must | ✅ | Band gelap surface-inverse (#122B29) + FluidArt streak + 3 kartu prinsip kendali manajer & non-surveillance, 27 Okt |
+| T21 | Landing L5 Untuk siapa | — | Should | ✅ | Sasaran agensi multi-proyek + studi kasus nyata Arunika Digital (20 staf, 5 proyek), 27 Okt |
+| T22 | Landing L6 Harga | — | Should | ✅ | Ajukan pilot evaluasi tim tanpa risiko (tanpa angka harga sesuai 00-BRIEF P8), 27 Okt |
+| T23 | Landing L7 FAQ | — | Should | ✅ | 4 FAQ esensial (Jira, privasi kode, rumus skor, durasi setup), 27 Okt |
+| T24 | Landing L8 CTA penutup + `content/landing.ts` + meta SEO/OG | — | Must | ✅ | CTA penutup + meta SEO/OG lengkap, 27 Okt |
+| T25 | Uji responsif, a11y, Standar UI A1-A13 + perbaikan | — | Must | ✅ | Uji 375/768/1440 tanpa scrollbar horizontal, rasio kontras tinggi, bebas emoji/em-dash, a11y keyboard, 27 Okt |
 | T26 | Deploy preview + video cadangan + latihan demo | — | Must | ⬜ | Deploy butuh izin user |
 | D1 | Paket frontend-only Dokploy + audit kebutuhan backend | — | Must | ✅ | Dockerfile + allowlist context + standalone + `/health`; 90 test, lint, typecheck, knip, build native/Linux lulus; container healthy non-root; alur Chrome TGS-0173 ke Bima (+3 jam), 0 API call/error, 375/768/1440 tanpa overflow. Panduan `09-DEPLOY-DOKPLOY.md`; belum commit/push/deploy VPS |
 | T27 | Pengingat "data belum lengkap" satu klik (F17) | — | Could | ✅ | Ingatkan lengkapi data di profil anggota, 16 Okt |
@@ -82,7 +82,7 @@
 
 | # | Halaman | Prioritas | Status | Catatan |
 |---|---|---|---|---|
-| P1 | Landing | Must | ⬜ | Menunggu inspirasi |
+| P1 | Landing | Must | ✅ | Section L1-L8 lengkap, showcase browser preview retina, anti-slop lulus |
 | P2 | Harga | Should | ⬜ | — |
 | P3 | Kebijakan privasi | Should | ✅ | Mockup M0 dengan data contoh |
 | P4 | Syarat layanan | Could | ✅ | Draf syarat, perlu ditinjau ahli hukum, 16 Okt |
