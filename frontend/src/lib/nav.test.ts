@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activeNav, activeSub, isActive, matchPage, trailOf } from "./nav";
+import { EMPLOYEE_NAVIGATION, activeNav, activeSub, canAccess, isActive, matchPage, trailOf } from "./nav";
 
 describe("isActive", () => {
   it("menandai link aktif pada halamannya sendiri", () => {
@@ -44,6 +44,26 @@ describe("activeNav", () => {
 
   it("tidak menandai apa pun untuk halaman di luar menu", () => {
     expect(activeNav("/saya")).toBeUndefined();
+  });
+
+  it("memakai menu karyawan bila diberikan", () => {
+    expect(activeNav("/saya/tugas/TGS-0142", EMPLOYEE_NAVIGATION)).toBe("/saya");
+    expect(activeNav("/saya/profil", EMPLOYEE_NAVIGATION)).toBe("/saya/profil");
+  });
+});
+
+describe("canAccess", () => {
+  it("membatasi karyawan ke area /saya dan halaman akun", () => {
+    expect(canAccess("karyawan", "/saya/tugas/TGS-0142")).toBe(true);
+    expect(canAccess("karyawan", "/notifikasi")).toBe(true);
+    expect(canAccess("karyawan", "/dashboard")).toBe(false);
+    expect(canAccess("karyawan", "/tugas/TGS-0142/kandidat")).toBe(false);
+  });
+
+  it("membuka semua halaman manajer kecuali area karyawan", () => {
+    expect(canAccess("manajer", "/pengaturan/tagihan")).toBe(true);
+    expect(canAccess("manajer", "/akun")).toBe(true);
+    expect(canAccess("manajer", "/saya")).toBe(false);
   });
 });
 

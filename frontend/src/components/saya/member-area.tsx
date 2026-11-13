@@ -5,31 +5,30 @@ import { DatePicker } from "@/components/ui/date-picker";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
-import { CalendarRange, Check, CircleAlert, CircleCheck, Copy, Inbox, MessageSquareWarning, ShieldCheck, UserRound, X } from "lucide-react";
+import { CalendarRange, Check, CircleAlert, CircleCheck, Copy, Inbox, MessageSquareWarning, ShieldCheck, X } from "lucide-react";
 import { CapacityBar, EmptyState, PageHeading, PriorityBadge, SectionTitle, StatusBadge } from "@/components/app/parts";
 import { Badge, Icon, Modal } from "@/components/ui";
 import { PERIOD } from "@/lib/demo/seed";
 import { useDemo } from "@/lib/demo/store";
+import { useSession } from "@/lib/session";
 import type { Level } from "@/lib/demo/types";
 import { allocatedHours, LEVEL_LABEL, rankCandidates } from "@/lib/engine/score";
 import { hours, shortDate } from "@/lib/format";
 
-/** Karyawan demo untuk sisi karyawan (P24-P27). */
-const DEMO_MEMBER_ID = "bima";
-
-function DemoNotice() {
-  return <div className="decision-banner"><Icon icon={UserRound} /><span><strong>Tampilan karyawan (demo)</strong><span>Kamu melihat Pantara sebagai Bima Pradana. Menu sidebar tetap milik manajer.</span></span><Link className="row-link" href="/dashboard">Kembali ke manajer</Link></div>;
+/** Karyawan yang sedang masuk (shell sudah memastikan perannya karyawan). */
+function useMemberId() {
+  return useSession()?.memberId ?? "";
 }
 
 export function MyHome() {
+  const memberId = useMemberId();
   const { tasks, memberById } = useDemo();
-  const me = memberById(DEMO_MEMBER_ID)!;
+  const me = memberById(memberId)!;
   const mine = tasks.filter(t => t.assignments.some(a => a.memberId === me.id));
   const waiting = mine.filter(t => t.status === "menunggu");
   const running = mine.filter(t => t.status === "berjalan");
   return <div className="page-enter">
     <PageHeading title="Beranda saya" subtitle={`Halo, ${me.name.split(" ")[0]}. Penugasan baru, tugas berjalan, dan kapasitasmu periode ${PERIOD.label}.`} />
-    <DemoNotice />
     <div className="split-main">
       <div className="stack">
         <section className="card">
@@ -55,8 +54,9 @@ export function MyHome() {
 }
 
 export function MyAvailability() {
+  const memberId = useMemberId();
   const { memberById, dispatch } = useDemo();
-  const me = memberById(DEMO_MEMBER_ID)!;
+  const me = memberById(memberId)!;
   const [available, setAvailable] = useState(String(me.availableHours ?? 32));
   const [limit, setLimit] = useState(String(me.weeklyLimit));
   const [leave, setLeave] = useState<string[]>(me.leaveDates);
@@ -73,7 +73,6 @@ export function MyAvailability() {
   }
   return <div className="page-enter">
     <PageHeading title="Ketersediaan saya" subtitle={`Isi jam tersedia dan cuti untuk periode ${PERIOD.label}.`} />
-    <DemoNotice />
     <form className="card form-card" onSubmit={save} noValidate>
       {saved && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Ketersediaan tersimpan</strong><span>Rekomendasi berikutnya memakai data ini.</span></span></div>}
       <div className="form-grid">
@@ -96,20 +95,21 @@ export function MyAvailability() {
 export function IncomingAssignment({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const { taskById, members, tasks, settings, names, dispatch } = useDemo();
+  const memberId = useMemberId();
+  const { taskById, memberById, members, tasks, settings, names, dispatch } = useDemo();
   const task = taskById(id);
+  const me = memberById(memberId);
   const [rejecting, setRejecting] = useState(false);
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   if (!task) return <EmptyState icon={CircleAlert} title="Penugasan tidak ditemukan" text="Penugasan ini tidak ada." action={<Link className="button secondary" href="/saya">Kembali ke Beranda saya</Link>} />;
-  const mine = task.assignments.find(a => a.memberId === DEMO_MEMBER_ID);
-  const why = rankCandidates({ ...task, status: "belum", assignments: [] }, members, tasks.map(t => t.id === id ? { ...t, status: "belum" as const, assignments: [] } : t), settings, names).candidates.find(c => c.member.id === DEMO_MEMBER_ID);
+  const mine = task.assignments.find(a => a.memberId === memberId);
+  const why = rankCandidates({ ...task, status: "belum", assignments: [] }, members, tasks.map(t => t.id === id ? { ...t, status: "belum" as const, assignments: [] } : t), settings, names).candidates.find(c => c.member.id === memberId);
   return <div className="page-enter">
     <PageHeading title="Penugasan masuk" subtitle={task.title} actions={task.status === "menunggu" && mine ? <>
       <button className="button secondary" onClick={() => setRejecting(true)}><Icon icon={X} size={16} />Tolak dengan alasan</button>
       <button className="button primary" onClick={() => { dispatch({ type: "setStatus", id, status: "berjalan" }); router.push("/saya"); }}><Icon icon={Check} />Terima penugasan</button>
     </> : undefined} />
-    <DemoNotice />
     {task.status !== "menunggu" && <div className="decision-banner"><Icon icon={CircleCheck} /><span><strong>Penugasan sudah dijawab</strong><span>Status sekarang: {task.status === "belum" ? "dikembalikan ke manajer" : task.status}.</span></span></div>}
     <div className="split-detail">
       <section className="card">
@@ -126,7 +126,7 @@ export function IncomingAssignment({ params }: { params: Promise<{ id: string }>
       </section>
     </div>
     {rejecting && <Modal title="Tolak penugasan" onClose={() => setRejecting(false)}>
-      <form onSubmit={e => { e.preventDefault(); if (reason.trim().length < 10) return setError("Tulis alasan minimal 10 karakter supaya manajer bisa menyesuaikan."); dispatch({ type: "setStatus", id, status: "belum", reason: `Ditolak Bima Pradana: ${reason.trim()}` }); router.push("/saya"); }}>
+      <form onSubmit={e => { e.preventDefault(); if (reason.trim().length < 10) return setError("Tulis alasan minimal 10 karakter supaya manajer bisa menyesuaikan."); dispatch({ type: "setStatus", id, status: "belum", reason: `Ditolak ${me?.name ?? "karyawan"}: ${reason.trim()}` }); router.push("/saya"); }}>
         <p className="dialog-summary">Tugas kembali ke manajer untuk dicarikan kandidat lain. Alasanmu ditampilkan di detail tugas.</p>
         <label className="field"><span className="field-label">Alasan (wajib)</span><textarea value={reason} onChange={e => { setReason(e.target.value); setError(""); }} placeholder="Minggu ini saya fokus menutup webhook WhatsApp koperasi, belum bisa ambil tambahan 8 jam." /></label>
         {error && <p className="field-error spaced" role="alert">{error}</p>}
@@ -137,15 +137,15 @@ export function IncomingAssignment({ params }: { params: Promise<{ id: string }>
 }
 
 export function MyProfile() {
+  const memberId = useMemberId();
   const { memberById, competencies, names, dispatch } = useDemo();
-  const me = memberById(DEMO_MEMBER_ID)!;
+  const me = memberById(memberId)!;
   const [draft, setDraft] = useState(me);
   const [saved, setSaved] = useState(false);
   const setLevel = (id: string, level: Level) => { setSaved(false); setDraft(d => ({ ...d, competencies: level === 0 ? d.competencies.filter(c => c.id !== id) : d.competencies.some(c => c.id === id) ? d.competencies.map(c => c.id === id ? { ...c, level, source: c.level === level ? c.source : "klaim" } : c) : [...d.competencies, { id, level, source: "klaim" }] })); };
   const togglePref = (id: string) => { setSaved(false); setDraft(d => ({ ...d, prefers: d.prefers.includes(id) ? d.prefers.filter(x => x !== id) : [...d.prefers, id], avoids: d.avoids.filter(x => x !== id) })); };
   return <div className="page-enter">
     <PageHeading title="Profil kerja saya" subtitle="Kompetensi, preferensi, dan batas kerja yang dipakai rekomendasi. Kamu yang mengisi, manajer bisa memverifikasi." actions={<button className="button primary" onClick={() => { dispatch({ type: "upsertMember", member: draft }); setSaved(true); }}>Simpan profil</button>} />
-    <DemoNotice />
     {saved && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Profil tersimpan</strong><span>Klaim baru ditandai &ldquo;Klaim karyawan&rdquo; sampai diverifikasi manajer.</span></span></div>}
     <section className="card">
       <Paged items={competencies} unit="kompetensi">{(paged) => <><div className="table-scroll stack-table"><table>

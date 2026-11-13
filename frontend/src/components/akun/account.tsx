@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowUpRight, BellOff, CircleCheck, Lock, RotateCcw, ShieldAlert } from "lucide-react";
+import { ArrowUpRight, BellOff, CircleCheck, Lock, ShieldAlert } from "lucide-react";
 import { EmptyState, PageHeading, SectionTitle } from "@/components/app/parts";
 import { Icon } from "@/components/ui";
-import { managerNotices } from "@/lib/demo/notifications";
+import { noticesFor } from "@/lib/demo/notifications";
 import { useDemo } from "@/lib/demo/store";
+import { useSession } from "@/lib/session";
 
 export function Account() {
+  const account = useSession();
   const [saved, setSaved] = useState(false);
   const [pw, setPw] = useState({ current: "", next: "", again: "" });
   const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -20,8 +22,8 @@ export function Account() {
         <SectionTitle title="Profil" />
         {saved && <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>Profil tersimpan</strong></span></div>}
         <div className="form-grid">
-          <label className="field full"><span className="field-label">Nama</span><input className="input" defaultValue="Krisna Panca Dewa" onChange={() => setSaved(false)} /></label>
-          <label className="field full"><span className="field-label">Email</span><input className="input" type="email" defaultValue="krisna@arunika.id" onChange={() => setSaved(false)} /></label>
+          <label className="field full"><span className="field-label">Nama</span><input className="input" defaultValue={account?.name} onChange={() => setSaved(false)} /></label>
+          <label className="field full"><span className="field-label">Email</span><input className="input" type="email" defaultValue={account?.email} onChange={() => setSaved(false)} /></label>
         </div>
         <div className="form-actions"><button className="button primary" type="submit">Simpan profil</button></div>
       </form>
@@ -30,7 +32,7 @@ export function Account() {
         if (!pw.current) return setPwMsg({ ok: false, text: "Isi sandi saat ini." });
         if (pw.next.length < 8) return setPwMsg({ ok: false, text: "Sandi baru minimal 8 karakter." });
         if (pw.next !== pw.again) return setPwMsg({ ok: false, text: "Konfirmasi sandi tidak sama." });
-        setPwMsg({ ok: true, text: "Sandi diganti (simulasi mockup)." }); setPw({ current: "", next: "", again: "" });
+        setPwMsg({ ok: true, text: "Sandi diganti. Pakai sandi baru saat masuk berikutnya." }); setPw({ current: "", next: "", again: "" });
       }}>
         <SectionTitle title="Ganti sandi" action={<Icon icon={Lock} />} />
         <div className="form-grid">
@@ -51,7 +53,8 @@ export function Account() {
 
 export function Notifications() {
   const demo = useDemo();
-  const notices = managerNotices(demo);
+  const account = useSession();
+  const notices = account ? noticesFor(demo, account) : [];
   const unread = notices.filter(n => !demo.readNotifications.includes(n.id));
   return <div className="page-enter">
     <PageHeading title="Notifikasi" subtitle={`${unread.length} belum dibaca`} actions={<button className="button secondary" disabled={!unread.length} onClick={() => demo.dispatch({ type: "readAll", ids: notices.map(n => n.id) })}>Tandai semua dibaca</button>} />
@@ -63,8 +66,6 @@ export function Notifications() {
 }
 
 export function Help() {
-  const { dispatch } = useDemo();
-  const [reset, setReset] = useState(false);
   return <div className="page-enter">
     <PageHeading title="Bantuan" subtitle="Panduan singkat alur penugasan dan cara kandidat dihitung." />
     <div className="split-even">
@@ -87,9 +88,5 @@ export function Help() {
         <p className="small muted spaced with-icon"><Icon icon={ShieldAlert} size={13} />AI tidak pernah memilih penerima tugas. Keputusan akhir selalu di manajer.</p>
       </section>
     </div>
-    <section className="card">
-      <SectionTitle title="Data contoh" subtitle="Semua perubahan di mockup tersimpan di browser ini sampai tab ditutup." action={<button className="button secondary" onClick={() => { dispatch({ type: "reset" }); setReset(true); }}><Icon icon={RotateCcw} size={16} />Reset data contoh</button>} />
-      {reset && <p className="ok-text small" role="status">Data contoh dikembalikan ke awal.</p>}
-    </section>
   </div>;
 }

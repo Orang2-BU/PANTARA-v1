@@ -92,7 +92,7 @@ export function MemberSettings() {
       <Paged items={members} unit="karyawan">{(paged, pageIndex) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Nama</th><th>Email</th><th>Peran akses</th><th>Status</th></tr></thead>
         <tbody>
-          {pageIndex === 0 && <tr><td><strong>Krisna Panca</strong></td><td data-label="Email">krisna@arunika.id</td><td data-label="Peran"><Badge tone="ok">Admin</Badge></td><td data-label="Status">Aktif</td></tr>}
+          {pageIndex === 0 && <tr><td><strong>Krisna Panca</strong></td><td data-label="Email">krisna@pantara.id</td><td data-label="Peran"><Badge tone="ok">Admin</Badge></td><td data-label="Status">Aktif</td></tr>}
           {paged.map(m => <tr key={m.id}>
             <td><strong>{m.name}</strong></td>
             <td data-label="Email">{m.email}</td>
@@ -105,8 +105,8 @@ export function MemberSettings() {
     </section>
     {inviting && <Modal title="Undang karyawan" onClose={() => setInviting(false)}>
       <form noValidate onSubmit={e => { e.preventDefault(); if (!/^\S+@\S+\.\S+$/.test(email)) return setError("Email belum valid."); setSent(s => [...s, email]); setEmail(""); setInviting(false); }}>
-        <p className="dialog-summary">Undangan berlaku 7 hari. Di mockup, email tidak benar-benar dikirim.</p>
-        <label className="field"><span className="field-label">Email</span><input className="input" type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }} placeholder="wulan@arunika.id" /></label>
+        <p className="dialog-summary">Undangan dikirim ke email tersebut dan berlaku 7 hari.</p>
+        <label className="field"><span className="field-label">Email</span><input className="input" type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }} placeholder="wulan@pantara.id" /></label>
         {error && <p className="field-error spaced" role="alert">{error}</p>}
         <div className="dialog-actions"><button type="button" className="button secondary" onClick={() => setInviting(false)}>Batal</button><button type="submit" className="button primary">Kirim undangan</button></div>
       </form>

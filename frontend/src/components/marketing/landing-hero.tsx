@@ -1,137 +1,50 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { ArrowRight, CheckCircle2, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui";
+import { Ceiling } from "@/components/ui/ceiling";
+import { AppShot } from "@/components/ui/app-shot";
+import { usePointerDrift } from "@/components/ui/use-pointer-drift";
+import { useScene } from "./use-scene";
 
-const TABS = [
-  {
-    id: "dashboard",
-    label: "Dashboard Tim",
-    url: "pantara.app/dashboard",
-    src: "/marketing/preview-dashboard.png",
-    alt: "Pratinjau Dashboard Pantara",
-    caption: "Arunika Digital · Kapasitas total 20 karyawan · Periode 28 Sep - 2 Okt 2026",
-  },
-  {
-    id: "kandidat",
-    label: "Top 3 Rekomendasi",
-    url: "pantara.app/tugas/TGS-0142/kandidat",
-    src: "/marketing/preview-kandidat.png",
-    alt: "Pratinjau Rekomendasi Kandidat Pantara",
-    caption: "TGS-0142: Integrasi autentikasi · Ayu Pramesti skor 0,94 dengan 5 faktor terhitung",
-  },
-  {
-    id: "simulasi",
-    label: "Simulasi What-If",
-    url: "pantara.app/tugas/TGS-0142/simulasi",
-    src: "/marketing/preview-simulasi.png",
-    alt: "Pratinjau Simulasi Beban Pantara",
-    caption: "Uji dampak beban sebelum menetapkan · Perbandingan pemanfaatan kapasitas sebelum versus sesudah",
-  },
-  {
-    id: "dna",
-    label: "Task DNA Otomatis",
-    url: "pantara.app/tugas/TGS-0142/kebutuhan",
-    src: "/marketing/preview-dna.png",
-    alt: "Pratinjau Task DNA Pantara",
-    caption: "AI mengurai deskripsi tugas menjadi tag keahlian terstruktur · Manajer mengonfirmasi asumsi",
-  },
+const LINES = [
+  "Setiap minggu, manajer memutuskan berulang kali",
+  "siapa yang mengerjakan tugas berikutnya.",
+  "Kompetensi, jam kosong, cuti, dan tenggat",
+  "tersebar di spreadsheet, chat, dan ingatan.",
+  "PANTARA menyatukannya di satu layar,",
+  "lalu menunjukkan siapa yang paling pas",
+  "dan apa akibatnya, sebelum tugas diberikan.",
 ];
 
+/** Adegan pembuka: ruang gelap berlampu, judul mengapit kartu dashboard, lalu masuk ke cahaya. */
 export function LandingHero() {
-  const [activeTab, setActiveTab] = useState(0);
-  const current = TABS[activeTab];
-
-  return (
-    <section className="landing-section landing-hero no-border">
-      <div className="landing-hero-center">
-        <span className="landing-tag">
-          <Icon icon={Sparkles} size={14} />
-          Sistem Pendukung Keputusan Penugasan
-        </span>
-        <h1>Tahu siapa yang paling pas, sebelum tugas diberikan.</h1>
-        <p className="lead">
-          Pantara mengurai kebutuhan tugas, mencocokkannya dengan ketersediaan dan keahlian tim, lalu menyajikan tiga rekomendasi objektif beserta konsekuensi beban. Manajer yang memegang keputusan akhir.
-        </p>
-        <div className="landing-hero-actions">
-          <Link className="button primary" href="/dashboard">
-            Coba demo langsung
-            <Icon icon={ArrowRight} size={16} />
-          </Link>
-          <a className="button secondary" href="#alur-kerja">
-            Pelajari alur kerja
-          </a>
+  const { ref, step } = useScene<HTMLElement>(20);
+  usePointerDrift(ref);
+  return <section ref={ref} id="beranda" className="lp-hero" data-tone={step >= 18 ? "light" : "dark"} data-chapter="0" aria-labelledby="lp-hero-title">
+    <div className="lp-stage">
+      <div className="lp-hero-frame">
+        <Ceiling />
+        <p className="lp-side left">Sistem pendukung keputusan penugasan</p>
+        <p className="lp-side right">Untuk PM software house dan agensi</p>
+        <h1 id="lp-hero-title" className="lp-hero-title">
+          <span className="top">Tahu siapa yang paling pas,</span>
+          <span className="bottom"><em>sebelum</em> tugas diberikan.</span>
+        </h1>
+        <div className="lp-hero-object">
+          <span className="lp-paren" aria-hidden="true">(</span>
+          <span className="lp-hero-card"><AppShot id="cand-1" preload sizes="(max-width: 767px) 56vw, 300px" /></span>
+          <span className="lp-paren" aria-hidden="true">)</span>
         </div>
-        <p className="landing-hero-note">
-          Tanpa kartu kredit · Dilengkapi data simulasi agensi nyata · Bebas time-tracking
-        </p>
+        <p className="lp-hero-tag">Rekomendasi dan simulasi dari data tim. Keputusan tetap di tanganmu.</p>
+        <a className="lp-scroll" href="#tentang" aria-label="Lanjut ke bagian Tentang"><Icon icon={ChevronDown} size={20} /></a>
       </div>
-
-      <div className="landing-browser">
-        <div className="landing-browser-chrome">
-          <div className="landing-browser-dots">
-            <span className="landing-browser-dot" />
-            <span className="landing-browser-dot" />
-            <span className="landing-browser-dot" />
-          </div>
-          <div className="landing-browser-url">
-            <span>https://{current.url}</span>
-          </div>
-          <Link className="text-link with-icon small" href="/dashboard">
-            <span>Buka aplikasi</span>
-            <Icon icon={ChevronRight} size={12} />
-          </Link>
-        </div>
-
-        <div className="landing-browser-tabs" role="tablist" aria-label="Tampilan aplikasi">
-          {TABS.map((tab, idx) => (
-            <button
-              key={tab.id}
-              role="tab"
-              aria-selected={activeTab === idx}
-              className={`landing-browser-tab ${activeTab === idx ? "active" : ""}`}
-              onClick={() => setActiveTab(idx)}
-              type="button"
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="landing-browser-screen">
-          <Image
-            src={current.src}
-            alt={current.alt}
-            width={1280}
-            height={800}
-            priority
-            quality={90}
-          />
-        </div>
-
-        <div className="landing-browser-caption">
-          <span>{current.caption}</span>
-          <span className="mono">M0 Mockup · Arunika Digital</span>
-        </div>
+      <div className="lp-orb" aria-hidden="true" />
+      <div className="lp-orb-text">
+        <p className="lp-orb-lead">Orkestrasi kerja adaptif: tugas sampai ke orang yang paling pas, dengan <strong>kamu</strong> sebagai penentu.</p>
+        <p className="lp-lines">{LINES.map((line, i) => <span key={line} style={{ "--i": i } as CSSProperties}>{line} </span>)}</p>
       </div>
-
-      <div className="landing-browser-chips">
-        <div className="data-badge-pill with-icon">
-          <Icon icon={CheckCircle2} size={14} />
-          <span><strong>0,94 Skor Teratas:</strong> Ayu Pramesti (5 faktor terhitung)</span>
-        </div>
-        <div className="data-badge-pill with-icon">
-          <Icon icon={CheckCircle2} size={14} />
-          <span><strong>28 / 32 jam:</strong> Beban kapasitas teralokasi sehat</span>
-        </div>
-        <div className="data-badge-pill with-icon">
-          <Icon icon={CheckCircle2} size={14} />
-          <span><strong>0 Konflik:</strong> Tenggat dan cuti diverifikasi aman</span>
-        </div>
-      </div>
-    </section>
-  );
+    </div>
+  </section>;
 }

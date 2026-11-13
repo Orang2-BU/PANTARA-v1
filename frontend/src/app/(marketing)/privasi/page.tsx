@@ -9,7 +9,7 @@ export default function PrivasiPage() {
   return <SoloFrame nav={<PublicNav />}>
     <section className="public-main">
       <h1>Kebijakan privasi</h1>
-      <p className="lead">Data apa yang Pantara proses, untuk apa, dan hakmu sebagai pemilik data. Draf untuk mockup, berlaku efektif setelah ditinjau.</p>
+      <p className="lead">Data apa yang Pantara proses, untuk apa, dan hakmu sebagai pemilik data.</p>
       <div className="prose">
         <h2>Data yang diproses</h2>
         <ul>

@@ -2,6 +2,7 @@ import { replanRisks, type ReplanRisk } from "@/lib/engine/capacity";
 import { clashingDeadline } from "@/lib/engine/score";
 import { shortDate } from "@/lib/format";
 import { NOW } from "./seed";
+import type { Account } from "@/lib/session";
 import type { DemoState } from "./store";
 
 export interface Notice { id: string; title: string; subtitle: string; href: string }
@@ -14,8 +15,20 @@ export function replanMessage(r: ReplanRisk): string {
     : `${name} kekurangan ${Math.ceil(r.shortfall)} jam sampai tenggat ${shortDate(r.task.dueDate)}. Bagi atau pindahkan sebagian.`;
 }
 
+/** Notifikasi sesuai peran akun yang masuk. */
+export function noticesFor(s: DemoState, account: Account): Notice[] {
+  return account.memberId ? memberNotices(s, account.memberId) : managerNotices(s);
+}
+
+/** Notifikasi karyawan: penugasan yang menunggu jawabannya. */
+function memberNotices(s: DemoState, memberId: string): Notice[] {
+  return s.tasks
+    .filter(t => t.status === "menunggu" && t.assignments.some(a => a.memberId === memberId))
+    .map(t => ({ id: `masuk-${t.id}`, title: `Penugasan baru: "${t.title}"`, subtitle: `Tenggat ${shortDate(t.dueDate)} · terima atau tolak dengan alasan`, href: `/saya/tugas/${t.id}` }));
+}
+
 /** Notifikasi manajer diturunkan dari data (bukan daftar statis). */
-export function managerNotices(s: DemoState): Notice[] {
+function managerNotices(s: DemoState): Notice[] {
   const notices: Notice[] = [];
   const open = s.tasks.filter(t => t.status === "belum");
   if (open.length) notices.push({ id: `open-${open.length}`, title: `${open.length} tugas belum ditugaskan`, subtitle: open.map(t => t.title).slice(0, 2).join(" · "), href: "/tugas?status=belum" });

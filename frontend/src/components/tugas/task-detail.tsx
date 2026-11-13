@@ -73,7 +73,7 @@ export function TaskDetail({ params }: { params: Promise<{ id: string }> }) {
         <div className="dna-row"><span className="muted small with-icon"><Icon icon={FolderKanban} size={13} />Proyek</span>{project && <Link className="text-link" href={`/proyek/${project.id}`}>{project.name}</Link>}</div>
         <h3 className="spaced">Penanggung jawab</h3>
         {assignees.length ? assignees.map(a => <div key={a.member!.id} className="dna-row"><Link href={`/tim/${a.member!.id}`}><Person member={a.member!} /></Link><span className="small">{hours(a.hours)}</span></div>) : <p className="small muted">Belum ada penanggung jawab.</p>}
-        {task.status === "menunggu" && <p className="small muted spaced"><Badge>Menunggu jawaban karyawan</Badge> <Link className="inline-link" href={`/saya/tugas/${task.id}`}>Lihat sebagai karyawan</Link></p>}
+        {task.status === "menunggu" && <p className="small muted spaced"><Badge>Menunggu jawaban karyawan</Badge></p>}
       </section>
     </div>
     {finishing && <Modal title="Tandai selesai" onClose={() => setFinishing(false)}>

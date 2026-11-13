@@ -1,11 +1,16 @@
 import Image from "next/image";
 
 /** Simbol "Cincin Tepat" (docs/brand): cincin kapasitas terbuka, titik penugasan pas di celahnya. */
-function BrandSymbol() {
+export function BrandSymbol() {
   return <svg className="brand-symbol" viewBox="28 28 200 200" aria-hidden="true">
     <path fill="var(--color-primary)" d="M222.37 101.56A98 98 0 1 1 154.44 33.63A16 16 0 0 1 145.81 64.45A66 66 0 1 0 191.55 110.19A16 16 0 0 1 222.37 101.56Z" />
     <circle fill="var(--color-primary)" cx="185.98" cy="70.02" r="17" />
   </svg>;
+}
+
+/** Wordmark sebagai mask: warnanya mengikuti `color`, jadi bisa putih di latar gelap. */
+export function Wordmark({ className = "" }: { className?: string }) {
+  return <span className={`wordmark-mask ${className}`} role="img" aria-label="Pantara" />;
 }
 
 export function BrandWordmark({ priority = false }: { priority?: boolean }) {

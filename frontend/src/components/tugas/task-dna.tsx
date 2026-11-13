@@ -143,7 +143,7 @@ function DnaEditor({ task }: { task: Task }) {
             </div>
           </div>;
         }) : <p className="small muted">Tidak ada dependensi terdeteksi.</p>}
-        <p className="meta-line spaced"><span className="mono">{dna.model}</span>·<span className="mono">{dna.prompt}</span>·<span>5 sampel</span>{dna.model.includes("simulasi") && <Badge>Simulasi AI di mockup</Badge>}</p>
+        <p className="meta-line spaced"><span className="mono">{dna.model}</span>·<span className="mono">{dna.prompt}</span>·<span>5 sampel</span></p>
       </section>
     </div>}
   </div>;

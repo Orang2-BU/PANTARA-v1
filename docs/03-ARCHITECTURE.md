@@ -39,7 +39,7 @@
 | Test BE *(M1+)* | `uv run pytest` |
 | Lint & dead code BE *(M1+)* | `uv run ruff check . && uv run vulture apps` |
 | Eval AI *(M2+)* | `uv run python eval/run_task_dna.py` → akurasi per primitif |
-| Alur inti | Manual: Masuk (demo manajer) → Buat tugas "Integrasi autentikasi" → konfirmasi Task DNA → pilih kandidat #1 → simulasi → Tetapkan → cek utilisasi Bima naik di Dasbor, Tim, Kapasitas. M1+: test e2e Playwright `[asumsi]` |
+| Alur inti | Manual: Masuk sebagai manajer (krisna@pantara.id) → Buat tugas "Integrasi autentikasi" → konfirmasi Task DNA → pilih kandidat #1 → simulasi → Tetapkan → cek utilisasi Bima naik di Dasbor, Tim, Kapasitas. M1+: test e2e Playwright `[asumsi]` |
 
 ## 3. Model Data
 > Entitas sama dengan matriks entitas 01-PRD §5c. Di M0, bentuk yang sama ditulis sebagai tipe TypeScript di `src/lib/demo/types.ts`.

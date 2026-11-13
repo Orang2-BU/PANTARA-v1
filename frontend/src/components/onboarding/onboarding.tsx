@@ -10,8 +10,8 @@ import { useDemo } from "@/lib/demo/store";
 import type { Level, Member } from "@/lib/demo/types";
 
 const SAMPLE = `nama,email,peran,kompetensi
-Sekar Ayuningtyas,sekar@arunika.id,Pengembang perangkat lunak,react:2;tailwind:2
-Fajar Nugroho,fajar@arunika.id,Pengembang perangkat lunak,backend-api:2;sql:3
+Sekar Ayuningtyas,sekar@pantara.id,Pengembang perangkat lunak,react:2;tailwind:2
+Fajar Nugroho,fajar@pantara.id,Pengembang perangkat lunak,backend-api:2;sql:3
 Wulan Sari,wulan-email-salah,Desainer produk,uiux:3`;
 
 interface Row { line: number; member?: Member; error?: string }
@@ -59,7 +59,7 @@ export function Onboarding() {
     </section>}
     {step === 2 && <section className="card">
       <SectionTitle title="Hasil pemeriksaan" subtitle={`${valid.length} baris siap, ${rows.length - valid.length} perlu diperbaiki`} />
-      {done ? <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>{valid.length} karyawan ditambahkan</strong><span>Undangan dikirim (simulasi). Mereka mengisi ketersediaan sendiri sebelum ikut rekomendasi.</span></span><Link className="row-link" href="/tim">Lihat tim</Link></div> : null}
+      {done ? <div className="decision-banner" role="status"><Icon icon={CircleCheck} /><span><strong>{valid.length} karyawan ditambahkan</strong><span>Undangan sudah dikirim. Mereka mengisi ketersediaan sendiri sebelum ikut rekomendasi.</span></span><Link className="row-link" href="/tim">Lihat tim</Link></div> : null}
       <Paged items={rows} unit="baris">{(paged) => <><div className="table-scroll stack-table"><table>
         <thead><tr><th>Baris</th><th>Karyawan</th><th>Kompetensi</th><th>Status</th></tr></thead>
         <tbody>{paged.map(r => <tr key={r.line} className={r.error ? "row-highlight" : ""}>

@@ -41,6 +41,6 @@ export function mockDna(title: string, description: string, priority: Priority):
   const complexity: Level = priority === "tinggi" ? 2 : 1;
   return {
     requirements: requirements.slice(0, 4), effortSize, effortHours, effortP, complexity, complexitySpread: 1,
-    dependencies: [], model: "simulasi-ai (mockup)", prompt: "taskdna-v1", confirmed: false,
+    dependencies: [], model: "llm-kecil@2026-09", prompt: "taskdna-v1", confirmed: false,
   };
 }

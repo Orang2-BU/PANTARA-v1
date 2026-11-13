@@ -9,7 +9,7 @@ export default function SyaratPage() {
   return <SoloFrame nav={<PublicNav />}>
     <section className="public-main">
       <h1>Syarat layanan</h1>
-      <p className="lead">Ketentuan memakai Pantara. Draf untuk mockup, berlaku efektif setelah ditinjau.</p>
+      <p className="lead">Ketentuan memakai Pantara.</p>
       <div className="prose">
         <h2>Layanan</h2>
         <p>Pantara membantu manajer menentukan penugasan dengan menguraikan kebutuhan tugas, membandingkan kondisi kerja karyawan, dan mensimulasikan akibat penugasan. Pantara adalah alat pendukung keputusan: keputusan penugasan dan akibatnya tetap menjadi tanggung jawab organisasi pengguna.</p>

@@ -18,7 +18,7 @@ Jalankan semua pemeriksaan yang tersedia di projek ini (dari folder `frontend/`;
 | Dead code | `npx knip` · BE: `uv run vulture apps` |
 | Token desain (bila 08-DESIGN berubah) | `npx -p @google/design.md designmd lint ../docs/08-DESIGN.md` lalu `export` ulang |
 | Cek fungsi terkait | Buka halaman yang berubah di browser; untuk perubahan engine/alur: jalankan **cek alur inti** |
-| Cek alur inti | Masuk (demo manajer) → buat tugas → konfirmasi Task DNA → pilih kandidat → simulasi → Tetapkan → utilisasi berubah di Dasbor, Tim, Kapasitas |
+| Cek alur inti | Masuk sebagai manajer (krisna@pantara.id) → buat tugas → konfirmasi Task DNA → pilih kandidat → simulasi → Tetapkan → utilisasi berubah di Dasbor, Tim, Kapasitas |
 
 ## 3. Siklus Perbaikan Error
 Jika ada pemeriksaan yang gagal:

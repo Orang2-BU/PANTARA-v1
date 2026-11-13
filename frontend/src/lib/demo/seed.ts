@@ -1,6 +1,6 @@
 import type { Competency, Decision, Member, Project, Task } from "./types";
 
-// Simulasi pemakaian nyata: Arunika Digital, agensi pengembangan perangkat lunak di Jember dengan 20 karyawan
+// Simulasi pemakaian nyata: agensi pengembangan perangkat lunak di Jember dengan 20 karyawan
 // dan 5 proyek klien. Data sengaja memuat kondisi sehari-hari: karyawan belum mengisi ketersediaan, karyawan baru
 // tanpa kompetensi, pemula yang levelnya masih klaim, magang dan paruh waktu, cuti di tengah minggu, beban hampir
 // penuh, penugasan yang ditolak karyawan, dan penugasan yang dipindah dalam 7 hari.
@@ -8,7 +8,7 @@ import type { Competency, Decision, Member, Project, Task } from "./types";
 export const PERIOD = { start: "2026-09-28", end: "2026-10-02", label: "28 Sep - 2 Okt 2026" };
 /** "Sekarang" di mockup: Selasa, 29 Sep 2026 09.15 WIB. */
 export const NOW = "2026-09-29T09:15:00+07:00";
-export const WORKSPACE = { name: "Arunika Digital", hoursPerWeek: 32 };
+export const WORKSPACE = { name: "Pantara", hoursPerWeek: 32 };
 
 export const COMPETENCIES: Competency[] = [
   { id: "backend-api", name: "Backend API", category: "Backend" },
@@ -43,7 +43,7 @@ const person = (m: Seed): Member => ({
   ...(PHOTOS[m.id] && { photo: `https://randomuser.me/api/portraits/${PHOTOS[m.id]}.jpg` }),
   ...m,
   initials: m.name.split(" ").map(w => w[0]).slice(0, 2).join(""),
-  email: `${m.id}@arunika.id`,
+  email: `${m.id}@pantara.id`,
 });
 
 export const MEMBERS: Member[] = [
@@ -115,7 +115,7 @@ export const PROJECTS: Project[] = [
   { id: "koperasi", name: "Aplikasi Simpan Pinjam Tani Makmur", client: "Koperasi Tani Makmur Ambulu", dueDate: "2026-11-20" },
   { id: "smk", name: "Portal Penerimaan Siswa SMK Bina Karya", client: "SMK Bina Karya Jember", dueDate: "2026-11-06" },
   { id: "batik", name: "Toko Online Batik Tanjung", client: "Batik Tanjung Banyuwangi", dueDate: "2026-10-23" },
-  { id: "internal", name: "Peningkatan platform internal", client: "Arunika Digital", dueDate: "2026-10-16" },
+  { id: "internal", name: "Peningkatan platform internal", client: "Internal", dueDate: "2026-10-16" },
 ];
 
 const AUTH_DESC = "Tambahkan login dengan akun Google untuk staf klinik memakai OAuth2. Backend API perlu endpoint callback dan penyimpanan sesi yang aman. Sesi lama dari login email tetap berjalan sampai staf pindah. Perlu dicek juga apakah integrasi ke API kepegawaian klinik dibutuhkan.";

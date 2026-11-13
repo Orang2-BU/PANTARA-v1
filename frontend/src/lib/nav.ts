@@ -89,6 +89,19 @@ export const NAVIGATION: { group: string; routes: PageRoute[] }[] = [
   { group: "Sistem", routes: ["/pengaturan"] },
 ];
 
+/** Menu sidebar karyawan: hanya halaman miliknya sendiri. */
+export const EMPLOYEE_NAVIGATION: { group: string; routes: PageRoute[] }[] = [
+  { group: "Karyawan", routes: ["/saya", "/saya/ketersediaan", "/saya/profil"] },
+];
+
+const SHARED_ROUTES = ["/akun", "/notifikasi", "/bantuan", "/403"];
+
+/** Hak akses per peran: karyawan hanya area /saya + halaman akun; manajer semua kecuali /saya. */
+export function canAccess(role: "manajer" | "karyawan", pathname: string): boolean {
+  if (SHARED_ROUTES.some(href => isActive(pathname, href))) return true;
+  return role === "karyawan" ? isActive(pathname, "/saya") : !isActive(pathname, "/saya");
+}
+
 /** Link menu aktif untuk halaman itu sendiri dan semua sub-halamannya. */
 export function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -116,8 +129,8 @@ function mostSpecific(pathname: string, hrefs: string[]) {
 }
 
 /** Menu sidebar yang aktif. */
-export function activeNav(pathname: string): string | undefined {
-  return mostSpecific(pathname, NAVIGATION.flatMap(g => g.routes));
+export function activeNav(pathname: string, navigation = NAVIGATION): string | undefined {
+  return mostSpecific(pathname, navigation.flatMap(g => g.routes));
 }
 
 /** Sub-menu yang aktif; profil karyawan (/tim/[id]) termasuk "Karyawan". */

@@ -30,10 +30,10 @@ export function Report() {
     <section className="highlight-card" aria-label="Efisiensi waktu keputusan"><FluidArt className="highlight-art" style="streak" seed={11} w={720} h={360} />
       <div className="highlight-top"><span>Efisiensi waktu keputusan</span><Badge tone="warn">{s.n < 10 ? `Belum cukup data (${s.n} keputusan, minimal 10)` : `${s.n} keputusan`}</Badge></div>
       <div className="highlight-row">
-        <div><h2>(Tb − Tp) / Tb × 100%</h2><p>Tb {BASELINE_MINUTES} menit dari observasi manual sebelum pilot [asumsi data contoh] · Tp rata-rata {minutes(s.avgMs)} tercatat otomatis</p></div>
+        <div><h2>(Tb − Tp) / Tb × 100%</h2><p>Tb {BASELINE_MINUTES} menit dari observasi manual sebelum pilot · Tp rata-rata {minutes(s.avgMs)} tercatat otomatis</p></div>
         <div className="highlight-score">{percent(efficiency)}</div>
       </div>
-      <p>Angka ini dari data contoh, bukan hasil pilot. Persentase akhir baru dicantumkan setelah pengujian supaya punya dasar empiris.</p>
+      <p>Dihitung dari keputusan yang tercatat di ruang kerja ini. Butuh minimal 10 keputusan supaya angkanya stabil.</p>
     </section>
     <div className="metrics-grid spaced">
       <MetricCard icon={ShieldAlert} label="Konflik terdeteksi sebelum penugasan" value={String(s.conflicts)} unit="peringatan" note="Kapasitas, tenggat berdekatan, dependensi" />

@@ -1,33 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, Bell, CalendarDays, ChevronDown, ChevronLeft, ChevronsLeft, ChevronsRight, CircleHelp, Menu, X } from "lucide-react";
 import { lockScroll } from "@/lib/scroll-lock";
-import { NAVIGATION, PAGES, SUBNAV, activeNav, activeSub, trailOf, type PageRoute } from "@/lib/nav";
+import { EMPLOYEE_NAVIGATION, NAVIGATION, PAGES, SUBNAV, activeNav, activeSub, canAccess, trailOf, type PageRoute } from "@/lib/nav";
 import { Badge, Icon, Modal } from "@/components/ui";
-import { managerNotices } from "@/lib/demo/notifications";
+import { noticesFor } from "@/lib/demo/notifications";
 import { useDemo } from "@/lib/demo/store";
+import { useSession, type Account } from "@/lib/session";
 import { BrandLockup, BrandWordmark } from "./brand";
 
 // Port shell template Soft Op Dashboard (acuan: K-DASP/MilkGraph components/shell/app-shell.tsx).
 
-// Akun & periode demo M0 (prototipe proposal); diganti sesi login dan data nyata di M1.
-const DEMO_USER = { name: "Krisna Panca", role: "Manajer tim", initials: "KP" };
 const PERIOD = { label: "Minggu aktif", range: "28 Sep - 2 Okt 2026" };
 
 type Panel = "period" | "notifications" | "profile" | "help";
 
+/** Shell hanya tampil untuk sesi yang sah; tanpa sesi diarahkan ke Masuk, halaman di luar peran ke 403/beranda. */
 export function AppShell({ children }: { children: ReactNode }) {
+  const account = useSession();
+  const guarded = <Suspense fallback={null}><Guard account={account}>{children}</Guard></Suspense>;
+  return account ? <Shell account={account}>{guarded}</Shell> : <div className="app-boot" aria-busy="true">{guarded}</div>;
+}
+
+function Guard({ account, children }: { account: Account | null | undefined; children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const allowed = !!account && canAccess(account.role, pathname);
+  useEffect(() => {
+    if (account === null) router.replace("/masuk");
+    else if (account && !allowed) router.replace(account.role === "karyawan" ? "/403" : account.home);
+  }, [account, allowed, router]);
+  return allowed ? children : null;
+}
+
+function Shell({ account, children }: { account: Account; children: ReactNode }) {
   const [collapsed, setCollapsed] = useState<boolean | null>(null);
   const [drawer, setDrawer] = useState(false);
   const [panel, setPanel] = useState<Panel | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDialogElement>(null);
   const demo = useDemo();
-  const notices = managerNotices(demo);
+  const notices = noticesFor(demo, account);
   const unread = notices.filter(n => !demo.readNotifications.includes(n.id));
+  const navigation = account.role === "karyawan" ? EMPLOYEE_NAVIGATION : NAVIGATION;
 
   useEffect(() => {
     if (!drawer) return;
@@ -47,21 +65,21 @@ export function AppShell({ children }: { children: ReactNode }) {
   function renderNavigation(mobile = false) {
     return <>
       <div className="brand-row">
-        <Link href="/dashboard" className="brand" aria-label="Pantara, ke Dashboard" onClick={closeDrawer}>
+        <Link href={account.home} className="brand" aria-label="Pantara, ke beranda ruang kerja" onClick={closeDrawer}>
           <BrandLockup />
         </Link>
         {mobile && <button className="icon-button" aria-label="Tutup menu" onClick={closeDrawer}><Icon icon={X} /></button>}
       </div>
-      <Suspense fallback={<NavLinks pathname="" onNavigate={closeDrawer} />}>
-        <CurrentNavLinks onNavigate={closeDrawer} />
+      <Suspense fallback={<NavLinks navigation={navigation} pathname="" onNavigate={closeDrawer} />}>
+        <CurrentNavLinks navigation={navigation} onNavigate={closeDrawer} />
       </Suspense>
       <div className="sidebar-bottom">
-        <button className="nav-item" onClick={() => openPanel("help")} aria-label="Panduan demo">
-          <span className="nav-icon"><Icon icon={CircleHelp} size={19} /></span><span className="nav-label">Panduan demo</span>
+        <button className="nav-item" onClick={() => openPanel("help")} aria-label="Panduan">
+          <span className="nav-icon"><Icon icon={CircleHelp} size={19} /></span><span className="nav-label">Panduan</span>
         </button>
-        <button className="account" onClick={() => openPanel("profile")} aria-label={`Lihat akun ${DEMO_USER.name}`}>
-          <span className="avatar">{DEMO_USER.initials}</span>
-          <span className="account-copy nav-label"><strong>{DEMO_USER.name}</strong><span>{DEMO_USER.role}</span></span>
+        <button className="account" onClick={() => openPanel("profile")} aria-label={`Lihat akun ${account.name}`}>
+          <span className="avatar">{account.initials}</span>
+          <span className="account-copy nav-label"><strong>{account.name}</strong><span>{account.title}</span></span>
           <Icon icon={ChevronDown} size={15} className="nav-label" />
         </button>
       </div>
@@ -78,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Icon icon={collapsed === false ? ChevronsLeft : ChevronsRight} />
           </button>
           <button ref={menuButton} className="icon-button mobile-menu" aria-label="Buka menu" aria-expanded={drawer} aria-controls="mobile-navigation" onClick={() => setDrawer(true)}><Icon icon={Menu} /></button>
-          <Link href="/dashboard" className="mobile-brand" aria-label="Pantara, ke Dashboard">
+          <Link href={account.home} className="mobile-brand" aria-label="Pantara, ke beranda ruang kerja">
             <BrandWordmark />
           </Link>
           <Suspense fallback={<span className="breadcrumb">Ruang kerja</span>}>
@@ -90,7 +108,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Icon icon={CalendarDays} size={16} /><span>{PERIOD.label}<span className="period-date">, {PERIOD.range}</span></span><Icon icon={ChevronDown} size={14} />
           </button>
           <button className="icon-button notification" aria-label={`Lihat ${unread.length} notifikasi belum dibaca`} onClick={() => setPanel("notifications")}><Icon icon={Bell} />{unread.length > 0 && <span>{unread.length}</span>}</button>
-          <button className="avatar top-avatar" aria-label="Lihat profil" onClick={() => setPanel("profile")}>{DEMO_USER.initials}</button>
+          <button className="avatar top-avatar" aria-label="Lihat profil" onClick={() => setPanel("profile")}>{account.initials}</button>
         </div>
       </header>
       <main id="main-content" tabIndex={-1}>
@@ -103,52 +121,62 @@ export function AppShell({ children }: { children: ReactNode }) {
       </footer>
     </div>
     {drawer && <dialog ref={drawerRef} id="mobile-navigation" aria-label="Menu navigasi" className="mobile-drawer" onCancel={closeDrawer} onClick={e => { if (e.target === e.currentTarget) closeDrawer(); }}><div className="drawer-content">{renderNavigation(true)}</div></dialog>}
-    {panel && <Modal title={{ period: "Pilih periode", notifications: "Notifikasi", profile: "Profil pengguna", help: "Panduan demo" }[panel]} onClose={() => setPanel(null)}>
+    {panel && <Modal title={{ period: "Pilih periode", notifications: "Notifikasi", profile: "Profil pengguna", help: "Panduan" }[panel]} onClose={() => setPanel(null)}>
       {panel === "period" && <>
         <p className="muted">Baru satu periode mingguan yang tersedia.</p>
         <button className="period-choice" onClick={() => setPanel(null)}><strong>{PERIOD.label}</strong><span>{PERIOD.range} · 32 jam per karyawan</span><Badge tone="ok">Dipilih</Badge></button>
-        <p className="small muted">Periode lain belum tersedia di mockup.</p>
+        <p className="small muted">Periode berikutnya dibuka otomatis setiap Senin.</p>
       </>}
       {panel === "notifications" && <div className="notification-list">
         {notices.length ? notices.map(n => <Link key={n.id} href={n.href} onClick={() => { demo.dispatch({ type: "readAll", ids: [n.id] }); setPanel(null); }}><span><strong>{n.title}</strong><span>{n.subtitle}</span></span><Icon icon={ArrowUpRight} /></Link>) : <p className="muted">Tidak ada notifikasi.</p>}
       </div>}
       {panel === "profile" && <div className="profile-info">
-        <span className="avatar large">{DEMO_USER.initials}</span>
-        <h3>{DEMO_USER.name}</h3>
-        <p>{DEMO_USER.role} · Arunika Digital</p>
-        <Badge>Pengguna demo</Badge>
+        <span className="avatar large">{account.initials}</span>
+        <h3>{account.name}</h3>
+        <p>{account.title}</p>
+        <p className="small muted">{account.email}</p>
         <p className="muted">Rekomendasi membantu, kamu yang memutuskan. Data jam kerja bukan ukuran produktivitas.</p>
         <div className="profile-links">
           <Link className="button secondary" href="/akun" onClick={() => setPanel(null)}>Akun saya</Link>
           <Link className="button secondary" href="/notifikasi" onClick={() => setPanel(null)}>Semua notifikasi</Link>
-          <Link className="button secondary" href="/masuk" onClick={() => setPanel(null)}>Keluar</Link>
+          <Link className="button secondary" href="/masuk" transitionTypes={["to-login"]} onClick={() => setPanel(null)}>Keluar</Link>
         </div>
       </div>}
       {panel === "help" && <>
-        <p>Alur penugasan dari tugas baru sampai keputusan.</p>
-        <ol className="guide-list">
-          <li><strong>Buat tugas</strong><p>Tulis judul, deskripsi, tenggat, dan prioritas seperti biasa.</p></li>
-          <li><strong>Tinjau kebutuhan (Analisis kebutuhan)</strong><p>Periksa kompetensi, estimasi, dan dependensi. Isian yang ragu ditandai untuk dicek.</p></li>
-          <li><strong>Bandingkan kandidat</strong><p>Tiga kandidat teratas beserta skor dan alasan per faktor.</p></li>
-          <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibat ke kapasitas karyawan sebelum menetapkan. Keputusan tetap di manajer.</p></li>
-        </ol>
-        <Badge>Semua data adalah contoh</Badge>
-        <p className="spaced"><button className="button secondary" onClick={() => { demo.dispatch({ type: "reset" }); setPanel(null); }}>Reset data contoh</button></p>
-        <p className="small muted"><Link className="inline-link" href="/bantuan" onClick={() => setPanel(null)}>Buka halaman bantuan</Link></p>
+        {account.role === "karyawan" ? <>
+          <p>Menjawab penugasan dan menjaga data kerjamu.</p>
+          <ol className="guide-list">
+            <li><strong>Cek penugasan baru</strong><p>Beranda saya menampilkan penugasan yang menunggu jawabanmu beserta alasan kamu dipilih.</p></li>
+            <li><strong>Terima atau tolak</strong><p>Menolak wajib dengan alasan supaya manajer bisa mencari kandidat lain.</p></li>
+            <li><strong>Isi ketersediaan</strong><p>Jam tersedia dan cuti dipakai untuk menghitung kapasitasmu.</p></li>
+            <li><strong>Rawat profil kerja</strong><p>Kompetensi dan preferensi yang kamu isi ikut menentukan rekomendasi.</p></li>
+          </ol>
+        </> : <>
+          <p>Alur penugasan dari tugas baru sampai keputusan.</p>
+          <ol className="guide-list">
+            <li><strong>Buat tugas</strong><p>Tulis judul, deskripsi, tenggat, dan prioritas seperti biasa.</p></li>
+            <li><strong>Tinjau kebutuhan (Analisis kebutuhan)</strong><p>Periksa kompetensi, estimasi, dan dependensi. Isian yang ragu ditandai untuk dicek.</p></li>
+            <li><strong>Bandingkan kandidat</strong><p>Tiga kandidat teratas beserta skor dan alasan per faktor.</p></li>
+            <li><strong>Simulasi lalu tetapkan</strong><p>Lihat akibat ke kapasitas karyawan sebelum menetapkan. Keputusan tetap di manajer.</p></li>
+          </ol>
+        </>}
+        <p className="small muted spaced"><Link className="inline-link" href="/bantuan" onClick={() => setPanel(null)}>Buka halaman bantuan</Link></p>
       </>}
     </Modal>}
   </div>;
 }
 
 // usePathname butuh Suspense di rute ber-param dinamis (Next 16 cacheComponents).
-function CurrentNavLinks({ onNavigate }: { onNavigate: () => void }) {
-  return <NavLinks pathname={usePathname()} onNavigate={onNavigate} />;
+type Navigation = typeof NAVIGATION;
+
+function CurrentNavLinks({ navigation, onNavigate }: { navigation: Navigation; onNavigate: () => void }) {
+  return <NavLinks navigation={navigation} pathname={usePathname()} onNavigate={onNavigate} />;
 }
 
-function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate: () => void }) {
-  const current = activeNav(pathname);
+function NavLinks({ navigation, pathname, onNavigate }: { navigation: Navigation; pathname: string; onNavigate: () => void }) {
+  const current = activeNav(pathname, navigation);
   return <nav aria-label="Navigasi utama">
-    {NAVIGATION.map(({ group, routes }) => <div className="nav-group" key={group}>
+    {navigation.map(({ group, routes }) => <div className="nav-group" key={group}>
       <p className="group-title nav-label">{group}</p>
       {routes.map(href => {
         const item = PAGES[href];

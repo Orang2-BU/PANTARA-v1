@@ -5,8 +5,8 @@ import { DEFAULT_SETTINGS, type EngineSettings } from "@/lib/engine/score";
 import { COMPETENCIES, DECISIONS, MEMBERS, PROJECTS, TASKS } from "./seed";
 import type { Assignment, Competency, Decision, Member, Project, Task, TaskDna, TaskStatus } from "./types";
 
-// State mockup M0 di browser. Disimpan di sessionStorage supaya pindah halaman/muat ulang
-// tidak menghapus keputusan demo; "Reset data contoh" mengembalikan seed.
+// State ruang kerja di browser (M0, tanpa server). Disimpan di sessionStorage supaya pindah
+// halaman/muat ulang tidak menghapus keputusan yang sudah dibuat.
 
 export interface DemoState {
   tasks: Task[];
@@ -22,7 +22,6 @@ export interface DemoState {
 
 type Action =
   | { type: "load"; state: DemoState }
-  | { type: "reset" }
   | { type: "createTask"; task: Task }
   | { type: "updateTask"; id: string; patch: Partial<Task> }
   | { type: "updateDna"; id: string; dna: TaskDna }
@@ -46,7 +45,6 @@ const mapTask = (s: DemoState, id: string, fn: (t: Task) => Task) => ({ ...s, ta
 function reducer(s: DemoState, a: Action): DemoState {
   switch (a.type) {
     case "load": return a.state;
-    case "reset": return INITIAL;
     case "createTask": return { ...s, tasks: [a.task, ...s.tasks] };
     case "updateTask": return mapTask(s, a.id, t => ({ ...t, ...a.patch }));
     case "updateDna": return mapTask(s, a.id, t => ({ ...t, dna: a.dna, remainingHours: a.dna.effortHours }));
@@ -62,7 +60,7 @@ function reducer(s: DemoState, a: Action): DemoState {
   }
 }
 
-const KEY = "pantara-demo-v1";
+const KEY = "pantara-workspace-v1";
 
 const DemoContext = createContext<{ state: DemoState; dispatch: (a: Action) => void } | null>(null);
 
@@ -76,15 +74,11 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => {
     // State awal tidak disimpan: efek dev (strict mode) berjalan dua kali dan
-    // akan menimpa data tersimpan sebelum sempat dimuat. Reset menghapus storage sendiri.
+    // akan menimpa data tersimpan sebelum sempat dimuat.
     if (state === INITIAL) return;
     try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* abaikan */ }
   }, [state]);
-  const send = useCallback((action: Action) => {
-    if (action.type === "reset") { try { sessionStorage.removeItem(KEY); } catch { /* abaikan */ } }
-    dispatch(action);
-  }, []);
-  const value = useMemo(() => ({ state, dispatch: send }), [state, send]);
+  const value = useMemo(() => ({ state, dispatch }), [state]);
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
 }
 

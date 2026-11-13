@@ -79,7 +79,7 @@ function AddMember({ onClose, onSave }: { onClose: () => void; onSave: (m: Membe
       <p className="dialog-summary">Karyawan baru menerima undangan untuk mengisi kompetensi dan ketersediaannya sendiri. Sampai diisi, ia tidak ikut rekomendasi.</p>
       <div className="form-grid">
         <label className="field full"><span className="field-label">Nama lengkap</span><input className="input" value={name} onChange={e => { setName(e.target.value); setError(""); }} placeholder="Sekar Ayuningtyas" /></label>
-        <label className="field full"><span className="field-label">Email kerja</span><input className="input" type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }} placeholder="sekar@arunika.id" /></label>
+        <label className="field full"><span className="field-label">Email kerja</span><input className="input" type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }} placeholder="sekar@pantara.id" /></label>
         <label className="field full"><span className="field-label">Peran</span><select className="select" value={role} onChange={e => setRole(e.target.value)}><option>Pengembang perangkat lunak</option><option>Desainer produk</option><option>Penguji perangkat lunak / QA</option></select></label>
       </div>
       {error && <p className="field-error spaced" role="alert">{error}</p>}

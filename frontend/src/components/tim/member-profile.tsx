@@ -95,7 +95,7 @@ export function AvailabilityModal({ member, onClose, onSave }: { member: Member;
   }
   return <Modal title={`Ketersediaan ${member.name.split(" ")[0]}`} onClose={onClose}>
     <form onSubmit={submit} noValidate>
-      <p className="dialog-summary">Periode {PERIOD.label}. Di produk, karyawan mengisi ini sendiri; manajer mengisi hanya atas persetujuannya.</p>
+      <p className="dialog-summary">Periode {PERIOD.label}. Karyawan biasanya mengisi ini sendiri; manajer mengisi hanya atas persetujuannya.</p>
       <div className="form-grid">
         <label className="field"><span className="field-label">Jam tersedia</span><input className="input" type="number" value={available} onChange={e => { setAvailable(e.target.value); setError(""); }} /></label>
         <label className="field"><span className="field-label">Batas kerja mingguan</span><input className="input" type="number" value={limit} onChange={e => { setLimit(e.target.value); setError(""); }} /></label>
